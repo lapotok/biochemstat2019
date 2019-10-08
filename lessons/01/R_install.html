@@ -1551,15 +1551,22 @@ div.tocify {
 </div>
 
 
+<div class="section level1">
+<h1><span class="header-section-number">1</span> Пункты</h1>
+<ul>
+<li>установка r/rstudio/пакеты CRAN/пакеты github/conda</li>
+<li>замеченные проблемы (кодировка, путь к файлам)</li>
+</ul>
+</div>
 <div id="----rstudio" class="section level1">
-<h1><span class="header-section-number">1</span> Установка базового пакета и RStudio</h1>
+<h1><span class="header-section-number">2</span> Установка базового пакета и RStudio</h1>
 <ol style="list-style-type: decimal">
 <li>Установить <code>R-base</code> последней версии (<a href="https://cran.r-project.org/bin/windows/base/">Windows</a>, <a href="https://cran.r-project.org/bin/macosx/">MacOS</a>)</li>
 <li>Установить <code>R-tools</code> последней версии (<a href="https://cran.r-project.org/bin/windows/Rtools/">Windows</a>, <a href="https://cran.r-project.org/bin/macosx/tools">MacOS (clang, gfortran)</a>)</li>
 <li>Установить <code>RStudio</code> последней версии для своей операционной системы (<a href="https://www.rstudio.com/products/rstudio/download/#download">Windows/MacOS</a>)</li>
 </ol>
 <div id="-" class="section level2">
-<h2><span class="header-section-number">1.1</span> Возможные проблемы</h2>
+<h2><span class="header-section-number">2.1</span> Возможные проблемы</h2>
 <ol style="list-style-type: decimal">
 <li>Русские имена в пути установки, решение - поставить в папку C:/R</li>
 <li>Locale</li>
@@ -1572,9 +1579,30 @@ brew install gcc # (gcc49, если старый mac)</code></pre>
 </div>
 </div>
 <div id="--" class="section level1">
-<h1><span class="header-section-number">2</span> Установка необходимых пакетов</h1>
-<p>Выполнить команду в <code>R</code></p>
-<pre class="rw"><code>source('https://tiny.cc/lpt_rpkgs')</code></pre>
+<h1><span class="header-section-number">3</span> Установка необходимых пакетов</h1>
+<p>Есть два основных источника пакетов в <code>R</code>:</p>
+<ul>
+<li><p><code>CRAN</code> - это основная коллекция пакетов, для установки которых нужно выполнить комманду</p>
+<pre class="r"><code>install.package('package_name')</code></pre></li>
+<li><p><code>Github</code> - это хранилище дополнительных пакетов от различных разработчиков (там же хранятся последние версии, еще не вошедшие в CRAN). Чтобы установить пакеты оттуда нужно выполнить комманду</p>
+<pre class="r"><code>devtools::install_github('author/package_name')</code></pre></li>
+</ul>
+<p>Для установки необходимых пакетов нужно выполнить следующий код</p>
+<pre class="r"><code># список пакетов базового репозитория
+base.packages = c('ggplot2', 'scales', 'plotly', 'openxlsx', 'httr', 'rvest', 'ggpubr', 'lattice', 'reshape2', 'repr', 'car', 'sinaplot', 'cowplot', 'dplyr', 'curl', 'ggforce', 'gridExtra', 'knitr', 'multcomp', 'drc', 'RColorBrewer', 'rmarkdown', 'boot', 'nlme', 'caret', 'ipred', 'e1071', 'readxl', 'naniar', 'effsize', 'dunn.test', 'magrittr', 'officer', 'rvg', 'profvis', 'lubridate', 'remedy', 'glue', 'esquisse', 'ggalt', 'devtools', 'ggExtra', 'tidyverse', 'broom', 'gsheet', 'jtools', 'huxtable')
+
+# список пакетов из github
+git.packages = list(`patchwork`='thomasp85/patchwork', `crayon`='r-lib/crayon', `rstatix`='kassambara/rstatix')
+
+# составляем списки того, что надо поставить
+installed = as.character(installed.packages()[,&quot;Package&quot;])
+uninstalled = setdiff(c(base.packages, names(git.packages)), installed)
+
+# ставим
+if (length(uninstalled)&gt;0) {
+  install.packages(intersect(uninstalled, base.packages), dependencies = TRUE)
+  for (p in intersect(uninstalled, names(git.packages))) devtools::install_github(git.packages[[p]])
+}</code></pre>
 </div>
 
 

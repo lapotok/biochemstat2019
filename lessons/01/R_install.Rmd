@@ -17,6 +17,12 @@ output:
 source("../../imports/style.R")
 ```
 
+# Пункты
+
+* установка r/rstudio/пакеты CRAN/пакеты github/conda
+* замеченные проблемы (кодировка, путь к файлам)
+
+
 # Установка базового пакета и RStudio
 
 1. Установить `R-base` последней версии ([Windows](https://cran.r-project.org/bin/windows/base/), [MacOS](https://cran.r-project.org/bin/macosx/))
@@ -43,8 +49,37 @@ brew install gcc # (gcc49, если старый mac)
 
 # Установка необходимых пакетов
 
-Выполнить команду в `R`
+Есть два основных источника пакетов в `R`:
 
-```rw
-source('https://tiny.cc/lpt_rpkgs')
+* `CRAN` - это основная коллекция пакетов, для установки которых нужно выполнить комманду
+  ```r
+  install.package('package_name')
+  ```
+  
+* `Github` - это хранилище дополнительных пакетов от различных разработчиков (там же хранятся последние версии, еще не вошедшие в CRAN). Чтобы установить пакеты оттуда нужно выполнить комманду
+  ```r
+  devtools::install_github('author/package_name')
+  ```
+
+Для установки необходимых пакетов нужно выполнить следующий код
+
+```r
+# список пакетов базового репозитория
+base.packages = c('ggplot2', 'scales', 'plotly', 'openxlsx', 'httr', 'rvest', 'ggpubr', 'lattice', 'reshape2', 'repr', 'car', 'sinaplot', 'cowplot', 'dplyr', 'curl', 'ggforce', 'gridExtra', 'knitr', 'multcomp', 'drc', 'RColorBrewer', 'rmarkdown', 'boot', 'nlme', 'caret', 'ipred', 'e1071', 'readxl', 'naniar', 'effsize', 'dunn.test', 'magrittr', 'officer', 'rvg', 'profvis', 'lubridate', 'remedy', 'glue', 'esquisse', 'ggalt', 'devtools', 'ggExtra', 'tidyverse', 'broom', 'gsheet', 'jtools', 'huxtable')
+
+# список пакетов из github
+git.packages = list(`patchwork`='thomasp85/patchwork', `crayon`='r-lib/crayon', `rstatix`='kassambara/rstatix')
+
+# составляем списки того, что надо поставить
+installed = as.character(installed.packages()[,"Package"])
+uninstalled = setdiff(c(base.packages, names(git.packages)), installed)
+
+# ставим
+if (length(uninstalled)>0) {
+  install.packages(intersect(uninstalled, base.packages), dependencies = TRUE)
+  for (p in intersect(uninstalled, names(git.packages))) devtools::install_github(git.packages[[p]])
+}
 ```
+
+**Комментарий для тех, кто использует MacOS или Linux.**
+
