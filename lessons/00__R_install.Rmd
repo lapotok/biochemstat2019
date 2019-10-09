@@ -1,0 +1,55 @@
+---
+title: "Установка R"
+date: "`r format(Sys.Date(), '%Y.%m.%d')`"
+---
+
+```{r setup, include=FALSE}
+source(paste0(here::here(), "/imports/style.R"))
+```
+
+# Установка базового пакета и RStudio
+
+1. Установить `R-base` последней версии ([Windows](https://cran.r-project.org/bin/windows/base/), [MacOS](https://cran.r-project.org/bin/macosx/))
+2. Установить `R-tools` последней версии ([Windows](https://cran.r-project.org/bin/windows/Rtools/), [MacOS (clang, gfortran)](https://cran.r-project.org/bin/macosx/tools))
+3. Установить `RStudio` последней версии для своей операционной системы ([Windows/MacOS](https://www.rstudio.com/products/rstudio/download/#download))
+
+# Установка необходимых пакетов
+
+Есть два основных источника пакетов в `R`:
+
+* `CRAN` - это основная коллекция пакетов, для установки которых нужно выполнить комманду
+  ```r
+  install.package('package_name')
+  ```
+  
+* `Github` - это хранилище дополнительных пакетов от различных разработчиков (там же хранятся последние версии, еще не вошедшие в CRAN). Чтобы установить пакеты оттуда нужно выполнить комманду
+  ```r
+  devtools::install_github('author/package_name')
+  ```
+
+Для установки необходимых пакетов нужно выполнить следующий код
+
+  ```{r echo=F, eval=T}
+  source('../imports/pkg_list.R')
+  options(repos = c(CRAN = "http://cran.rstudio.com"))
+  build_list(from_scratch=T)
+  print_pkg_list()
+  ```
+
+## Возможные проблемы
+
+1. Русские имена в пути установки, решение - поставить в папку C:/R
+2. Locale
+
+```bash
+echo "export LANG=en_US.UTF-8" >> ~/.bashrc && echo "export LC_ALL=en_US.UTF-8" >> ~/.bashrc && source ~/.bashrc
+```
+
+Еще, если жалуется на отсутствие gfortran, решение для MacOS (если R-tools не поможет)
+
+```bash
+/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+brew install gcc # (gcc49, если старый mac)
+```
+
+Или тут еще есть ряд советов (https://thecoatlessprofessor.com/programming/)
