@@ -30,10 +30,18 @@ source(paste0(here::here(), "/imports/style.R"))
 Для установки необходимых пакетов нужно выполнить следующий код
 
   ```{r echo=F, eval=T}
-  source('../imports/pkg_list.R')
-  options(repos = c(CRAN = "http://cran.rstudio.com"))
+  source('http://tiny.cc/lpt_rpkgs')
   build_list(from_scratch=T)
   print_pkg_list()
+  ```
+Для упрощения процедуры, а также для возможности проверки успешности установки я написал скрипт, который все делает и печатает результат.
+
+  ```r
+  source('http://tiny.cc/lpt_rpkgs')
+  build_list()
+  print_pkg_list()
+  install_pkgs()
+  installation_report()
   ```
 
 ## Возможные проблемы

@@ -1,7 +1,8 @@
-# Shortcut: source('https://tiny.cc/lpt_rpkgs')
+# Shortcut: source('https://raw.githubusercontent.com/lapotok/biochemstat2019/master/imports/pkg_list.R')
 
 suppressMessages(suppressWarnings(library(tidyverse)))
 suppressMessages(suppressWarnings(library(glue)))
+options(repos = c(CRAN = "http://cran.rstudio.com"))
 
 build_list = function(from_scratch = F){
   # список пакетов базового репозитория
@@ -32,7 +33,6 @@ install_pkgs = function(){
   install.packages(uninstalled_cran, dependencies = TRUE)
   devtools::install_github(git.packages[uninstalled_git], upgrade = "never", dependencies = TRUE)
 }
-
 
 installation_report = function(){
   # составляем списки того, что осталось непоставленным
