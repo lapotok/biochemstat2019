@@ -1,13 +1,11 @@
 # Shortcut: source('https://raw.githubusercontent.com/lapotok/biochemstat2019/master/imports/pkg_list.R')
 
-suppressMessages(suppressWarnings(library(tidyverse)))
-suppressMessages(suppressWarnings(library(glue)))
 options(repos = c(CRAN = "http://cran.rstudio.com"))
 
 build_list = function(from_scratch = F){
   # список пакетов базового репозитория
   base.packages <<- c("Amelia","boot","broom","car","caret","corrplot","cowplot","curl","devtools","esquisse","furrr","gdtools","GGally","ggforce","ggplot2","ggpubr","ggrepel","ggridges","ggstance","ggthemes","glue","gridExtra","gtools","hexbin","httr","investr","jsonlite","kableExtra","knitr","lme4","lmtest","lubridate","magrittr","mice","missForest","modelr","mvtnorm","naniar","officer","openxlsx","plotly","prettydoc","profvis","purrr","randomForest","readr","readxl","repr","reprex","reshape","reshape2","rio","rmarkdown","rvest","rvg","sandwich","scales","selectr","shiny","sinaplot","sjPlot","tidyverse","multcomp","drc","RColorBrewer","nlme","caret","ipred","effsize","dunn.test","magrittr","remedy","ggalt","ggExtra","gsheet","jtools")
-  dependencies_ <<- tools::package_dependencies(base.packages) %>% unlist()
+  dependencies_ <<- unlist(tools::package_dependencies(base.packages))
   base.packages.minimal <<- base.packages[!(base.packages %in% dependencies_)]
   
   # список пакетов из github
@@ -20,12 +18,12 @@ build_list = function(from_scratch = F){
   uninstalled <<- c(uninstalled_cran, uninstalled_git)
 }
 print_pkg_list = function(){
-  if (length(uninstalled_cran)) cat(glue("install.packages( c(\"{paste0(uninstalled_cran, collapse='\", \"')}\"), dependencies = TRUE )\n\n"))
-  if (length(git.packages[uninstalled_git])) cat(glue("devtools::install_github( c(\"{paste0(git.packages[uninstalled_git], collapse='\", \"')}\"), dependencies = TRUE )\n"))
+  if (length(uninstalled_cran))  cat( paste0("install.packages( c(\"", paste0(uninstalled_cran, collapse='\", \"'), "\"), dependencies = TRUE )\n\n"))
+  if (length(git.packages[uninstalled_git])) cat( paste0("install.packages( c(\"", paste0(git.packages[uninstalled_git], collapse='\", \"'), "\"), dependencies = TRUE )\n\n"))
 }
 
 print_conda_list = function(){
-  cat(glue("conda install r-{paste0(stringr::str_to_lower(base.packages.minimal), collapse=' r-')}\n"))
+  cat(paste0("conda install r-", paste0(tolower(base.packages.minimal), collapse=' r-'), "\n"))
 }
 
 # ставим

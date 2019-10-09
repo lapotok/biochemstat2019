@@ -10,8 +10,34 @@ source(paste0(here::here(), "/imports/style.R"))
 # Установка базового пакета и RStudio
 
 1. Установить `R-base` последней версии ([Windows](https://cran.r-project.org/bin/windows/base/), [MacOS](https://cran.r-project.org/bin/macosx/))
+
+> *Во избежание последующих проблем, советую ставить в папку <tt>"C:\R"</tt> (чтобы гарантированно в пути к файлам не было ни пробелов, ни русских букв). Остальные пункты установки - по умолчанию.*
+  
 2. Установить `R-tools` последней версии ([Windows](https://cran.r-project.org/bin/windows/Rtools/), [MacOS (clang, gfortran)](https://cran.r-project.org/bin/macosx/tools))
+
+> *Во избежание последующих проблем, советую ставить в папку <tt>"C:\Rtools"</tt> (чтобы гарантированно в пути к файлам не было ни пробелов, ни русских букв). Остальные пункты установки - по умолчанию.*
+
 3. Установить `RStudio` последней версии для своей операционной системы ([Windows/MacOS](https://www.rstudio.com/products/rstudio/download/#download))
+
+> *Во избежание последующих проблем, советую ставить в папку <tt>"C:\RStudio"</tt> (чтобы гарантированно в пути к файлам не было ни пробелов, ни русских букв). Остальные пункты установки - по умолчанию.*
+
+## Возможные проблемы
+
+1. Windows: Русские имена в пути установки, решение - см. рекоммендации выше.
+2. Mac/Linux: Проблемы с отображением русских букв
+
+```bash
+echo "export LANG=en_US.UTF-8" >> ~/.bashrc && echo "export LC_ALL=en_US.UTF-8" >> ~/.bashrc && source ~/.bashrc
+```
+
+Еще, если жалуется на отсутствие gfortran, решение для MacOS (если R-tools не поможет)
+
+```bash
+/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+brew install gcc # (gcc49, если старый mac)
+```
+
+Или тут еще есть ряд советов (https://thecoatlessprofessor.com/programming/)
 
 # Установка необходимых пакетов
 
@@ -44,24 +70,6 @@ print_pkg_list()
   installation_report()
   ```
 
-## Возможные проблемы
-
-1. Русские имена в пути установки, решение - поставить в папку C:/R
-2. Locale
-
-```bash
-echo "export LANG=en_US.UTF-8" >> ~/.bashrc && echo "export LC_ALL=en_US.UTF-8" >> ~/.bashrc && source ~/.bashrc
-```
-
-Еще, если жалуется на отсутствие gfortran, решение для MacOS (если R-tools не поможет)
-
-```bash
-/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-brew install gcc # (gcc49, если старый mac)
-```
-
-Или тут еще есть ряд советов (https://thecoatlessprofessor.com/programming/)
-
 ## Установка пакетов на Mac
 
 Пакеты для Windows устанавливаются в уже скомпилированном виде, поэтому это происходит быстро, а вот пакеты для Mac устанавливаются из "исходников". Поэтому может быть удобнее для этого использовать установщик `conda`.
@@ -71,11 +79,21 @@ brew install gcc # (gcc49, если старый mac)
   ```sh
   conda config --env --append channels r
   conda config --env --append channels conda-forge
-  ``
+  ```
 2. Установить необходимые пакеты с помощью команды
 
 ```{r echo=F, eval=T, cache=F}
-source('http://tiny.cc/lpt_rpkgs')
+# source('http://tiny.cc/lpt_rpkgs')
+source("../imports/pkg_list.R")
 build_list(from_scratch=T)
 print_conda_list()
 ```
+
+# Online инструменты
+
+Зам
+
+* Rstudio cloud https://rstudio.cloud/
+* RRdio
+  * Rsnippet https://rdrr.io/snippets/
+  * R notebook https://rnotebook.io/

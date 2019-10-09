@@ -1350,7 +1350,8 @@ h6 {
 h1 {font-size: 30px;}
 h2 {font-size: 24px;}
 code {background-color: white; }
-pre code {font-family:Consolas,monaco,monospace; font-size: 11px; padding-top: 0; padding-bottom: 0; margin-top: 0; margin-bottom: 0; line-height: 0.5 em;}</style>
+pre code {font-family:Consolas,monaco,monospace; font-size: 11px; padding-top: 0; padding-bottom: 0; margin-top: 0; margin-bottom: 0; line-height: 0.5 em;}
+blockquote {font-size: 14px;}</style>
 
 
 
@@ -1577,9 +1578,34 @@ div.tocify {
 <h1><span class="header-section-number">1</span> Установка базового пакета и RStudio</h1>
 <ol style="list-style-type: decimal">
 <li>Установить <code>R-base</code> последней версии (<a href="https://cran.r-project.org/bin/windows/base/">Windows</a>, <a href="https://cran.r-project.org/bin/macosx/">MacOS</a>)</li>
+</ol>
+<blockquote>
+<p><em>Во избежание последующих проблем, советую ставить в папку <tt>“C:/R”</tt> (чтобы гарантированно в пути к файлам не было ни пробелов, ни русских букв). Остальные пункты установки - по умолчанию.</em></p>
+</blockquote>
+<ol start="2" style="list-style-type: decimal">
 <li>Установить <code>R-tools</code> последней версии (<a href="https://cran.r-project.org/bin/windows/Rtools/">Windows</a>, <a href="https://cran.r-project.org/bin/macosx/tools">MacOS (clang, gfortran)</a>)</li>
+</ol>
+<blockquote>
+<p><em>Во избежание последующих проблем, советую ставить в папку <tt>“C:/Rtools”</tt> (чтобы гарантированно в пути к файлам не было ни пробелов, ни русских букв). Остальные пункты установки - по умолчанию.</em></p>
+</blockquote>
+<ol start="3" style="list-style-type: decimal">
 <li>Установить <code>RStudio</code> последней версии для своей операционной системы (<a href="https://www.rstudio.com/products/rstudio/download/#download">Windows/MacOS</a>)</li>
 </ol>
+<blockquote>
+<p><em>Во избежание последующих проблем, советую ставить в папку <tt>“C:/RStudio”</tt> (чтобы гарантированно в пути к файлам не было ни пробелов, ни русских букв). Остальные пункты установки - по умолчанию.</em></p>
+</blockquote>
+<div id="-" class="section level2">
+<h2><span class="header-section-number">1.1</span> Возможные проблемы</h2>
+<ol style="list-style-type: decimal">
+<li>Windows: Русские имена в пути установки, решение - см. рекоммендации выше.</li>
+<li>Mac/Linux: Проблемы с отображением русских букв</li>
+</ol>
+<pre class="bash"><code>echo &quot;export LANG=en_US.UTF-8&quot; &gt;&gt; ~/.bashrc &amp;&amp; echo &quot;export LC_ALL=en_US.UTF-8&quot; &gt;&gt; ~/.bashrc &amp;&amp; source ~/.bashrc</code></pre>
+<p>Еще, если жалуется на отсутствие gfortran, решение для MacOS (если R-tools не поможет)</p>
+<pre class="bash"><code>/usr/bin/ruby -e &quot;$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)&quot;
+brew install gcc # (gcc49, если старый mac)</code></pre>
+<p>Или тут еще есть ряд советов (<a href="https://thecoatlessprofessor.com/programming/" class="uri">https://thecoatlessprofessor.com/programming/</a>)</p>
+</div>
 </div>
 <div id="--" class="section level1">
 <h1><span class="header-section-number">2</span> Установка необходимых пакетов</h1>
@@ -1599,25 +1625,31 @@ build_list()
 print_pkg_list()
 install_pkgs()
 installation_report()</code></pre>
-<div id="-" class="section level2">
-<h2><span class="header-section-number">2.1</span> Возможные проблемы</h2>
-<ol style="list-style-type: decimal">
-<li>Русские имена в пути установки, решение - поставить в папку C:/R</li>
-<li>Locale</li>
-</ol>
-<pre class="bash"><code>echo &quot;export LANG=en_US.UTF-8&quot; &gt;&gt; ~/.bashrc &amp;&amp; echo &quot;export LC_ALL=en_US.UTF-8&quot; &gt;&gt; ~/.bashrc &amp;&amp; source ~/.bashrc</code></pre>
-<p>Еще, если жалуется на отсутствие gfortran, решение для MacOS (если R-tools не поможет)</p>
-<pre class="bash"><code>/usr/bin/ruby -e &quot;$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)&quot;
-brew install gcc # (gcc49, если старый mac)</code></pre>
-<p>Или тут еще есть ряд советов (<a href="https://thecoatlessprofessor.com/programming/" class="uri">https://thecoatlessprofessor.com/programming/</a>)</p>
-</div>
 <div id="---mac" class="section level2">
-<h2><span class="header-section-number">2.2</span> Установка пакетов на Mac</h2>
+<h2><span class="header-section-number">2.1</span> Установка пакетов на Mac</h2>
 <p>Пакеты для Windows устанавливаются в уже скомпилированном виде, поэтому это происходит быстро, а вот пакеты для Mac устанавливаются из “исходников”. Поэтому может быть удобнее для этого использовать установщик <code>conda</code>.</p>
 <ol style="list-style-type: decimal">
 <li>Установить <code>conda</code> (см. <a href="https://docs.conda.io/projects/conda/en/latest/user-guide/install/">инструкцию</a>)</li>
+<li>Настроить каналы с пакетами</li>
 </ol>
+<pre class="sh"><code>conda config --env --append channels r
+conda config --env --append channels conda-forge</code></pre>
+<ol start="2" style="list-style-type: decimal">
+<li>Установить необходимые пакеты с помощью команды</li>
+</ol>
+<pre><code>conda install r-amelia r-caret r-corrplot r-devtools r-esquisse r-furrr r-ggally r-ggforce r-ggpubr r-ggridges r-ggstance r-investr r-kableextra r-lmtest r-mice r-missforest r-naniar r-prettydoc r-profvis r-repr r-rvg r-sinaplot r-sjplot r-tidyverse r-drc r-caret r-ipred r-effsize r-dunn.test r-remedy r-ggalt r-ggextra r-gsheet r-jtools</code></pre>
 </div>
+</div>
+<div id="online-" class="section level1">
+<h1><span class="header-section-number">3</span> Online инструменты</h1>
+<ul>
+<li>Rstudio cloud <a href="https://rstudio.cloud/" class="uri">https://rstudio.cloud/</a></li>
+<li>RRdio
+<ul>
+<li>Rsnippet <a href="https://rdrr.io/snippets/" class="uri">https://rdrr.io/snippets/</a></li>
+<li>R notebook <a href="https://rnotebook.io/" class="uri">https://rnotebook.io/</a></li>
+</ul></li>
+</ul>
 </div>
 
 
