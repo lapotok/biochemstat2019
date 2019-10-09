@@ -19,7 +19,7 @@ build_list = function(from_scratch = F){
 }
 print_pkg_list = function(){
   if (length(uninstalled_cran))  cat( paste0("install.packages( c(\"", paste0(uninstalled_cran, collapse='\", \"'), "\"), dependencies = TRUE )\n\n"))
-  if (length(git.packages[uninstalled_git])) cat( paste0("install.packages( c(\"", paste0(git.packages[uninstalled_git], collapse='\", \"'), "\"), dependencies = TRUE )\n\n"))
+  if (length(git.packages[uninstalled_git])) cat( paste0("devtools::install_github( c(\"", paste0(git.packages[uninstalled_git], collapse='\", \"'), "\"), upgrade = \"never\", dependencies = TRUE )\n\n"))
 }
 
 print_conda_list = function(){

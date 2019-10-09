@@ -8,5 +8,5 @@ html_document:
     css: ../imports/style.css
     highlight: textmate
     theme: lumen
-#    includes:
-#      before_body: ../before_body.html
+    self_contained: false
+    lib_dir: libs
