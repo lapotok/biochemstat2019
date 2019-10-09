@@ -7,8 +7,8 @@ options(repos = c(CRAN = "http://cran.rstudio.com"))
 build_list = function(from_scratch = F){
   # список пакетов базового репозитория
   base.packages <<- c("Amelia","boot","broom","car","caret","corrplot","cowplot","curl","devtools","esquisse","furrr","gdtools","GGally","ggforce","ggplot2","ggpubr","ggrepel","ggridges","ggstance","ggthemes","glue","gridExtra","gtools","hexbin","httr","investr","jsonlite","kableExtra","knitr","lme4","lmtest","lubridate","magrittr","mice","missForest","modelr","mvtnorm","naniar","officer","openxlsx","plotly","prettydoc","profvis","purrr","randomForest","readr","readxl","repr","reprex","reshape","reshape2","rio","rmarkdown","rvest","rvg","sandwich","scales","selectr","shiny","sinaplot","sjPlot","tidyverse","multcomp","drc","RColorBrewer","nlme","caret","ipred","effsize","dunn.test","magrittr","remedy","ggalt","ggExtra","gsheet","jtools")
-  dependencies_ = tools::package_dependencies(base.packages) %>% unlist()
-  base.packages.minimal = base.packages[!(base.packages %in% dependencies_)]
+  dependencies_ <<- tools::package_dependencies(base.packages) %>% unlist()
+  base.packages.minimal <<- base.packages[!(base.packages %in% dependencies_)]
   
   # список пакетов из github
   git.packages <<- c("patchwork"="thomasp85/patchwork", "crayon"="r-lib/crayon", "rstatix"="kassambara/rstatix")

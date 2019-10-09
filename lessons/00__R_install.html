@@ -1593,6 +1593,12 @@ div.tocify {
 <p>Для установки необходимых пакетов нужно выполнить следующий код</p>
 <pre><code>install.packages( c(&quot;Amelia&quot;, &quot;boot&quot;, &quot;broom&quot;, &quot;car&quot;, &quot;caret&quot;, &quot;corrplot&quot;, &quot;cowplot&quot;, &quot;curl&quot;, &quot;devtools&quot;, &quot;esquisse&quot;, &quot;furrr&quot;, &quot;gdtools&quot;, &quot;GGally&quot;, &quot;ggforce&quot;, &quot;ggplot2&quot;, &quot;ggpubr&quot;, &quot;ggrepel&quot;, &quot;ggridges&quot;, &quot;ggstance&quot;, &quot;ggthemes&quot;, &quot;glue&quot;, &quot;gridExtra&quot;, &quot;gtools&quot;, &quot;hexbin&quot;, &quot;httr&quot;, &quot;investr&quot;, &quot;jsonlite&quot;, &quot;kableExtra&quot;, &quot;knitr&quot;, &quot;lme4&quot;, &quot;lmtest&quot;, &quot;lubridate&quot;, &quot;magrittr&quot;, &quot;mice&quot;, &quot;missForest&quot;, &quot;modelr&quot;, &quot;mvtnorm&quot;, &quot;naniar&quot;, &quot;officer&quot;, &quot;openxlsx&quot;, &quot;plotly&quot;, &quot;prettydoc&quot;, &quot;profvis&quot;, &quot;purrr&quot;, &quot;randomForest&quot;, &quot;readr&quot;, &quot;readxl&quot;, &quot;repr&quot;, &quot;reprex&quot;, &quot;reshape&quot;, &quot;reshape2&quot;, &quot;rio&quot;, &quot;rmarkdown&quot;, &quot;rvest&quot;, &quot;rvg&quot;, &quot;sandwich&quot;, &quot;scales&quot;, &quot;selectr&quot;, &quot;shiny&quot;, &quot;sinaplot&quot;, &quot;sjPlot&quot;, &quot;tidyverse&quot;, &quot;multcomp&quot;, &quot;drc&quot;, &quot;RColorBrewer&quot;, &quot;nlme&quot;, &quot;ipred&quot;, &quot;effsize&quot;, &quot;dunn.test&quot;, &quot;remedy&quot;, &quot;ggalt&quot;, &quot;ggExtra&quot;, &quot;gsheet&quot;, &quot;jtools&quot;), dependencies = TRUE )
 devtools::install_github( c(&quot;thomasp85/patchwork&quot;, &quot;r-lib/crayon&quot;, &quot;kassambara/rstatix&quot;), dependencies = TRUE )</code></pre>
+<p>Для упрощения процедуры, а также для возможности проверки успешности установки я написал скрипт, который все делает и печатает результат.</p>
+<pre class="r"><code>source('http://tiny.cc/lpt_rpkgs')
+build_list()
+print_pkg_list()
+install_pkgs()
+installation_report()</code></pre>
 <div id="-" class="section level2">
 <h2><span class="header-section-number">2.1</span> Возможные проблемы</h2>
 <ol style="list-style-type: decimal">
@@ -1604,6 +1610,13 @@ devtools::install_github( c(&quot;thomasp85/patchwork&quot;, &quot;r-lib/crayon&
 <pre class="bash"><code>/usr/bin/ruby -e &quot;$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)&quot;
 brew install gcc # (gcc49, если старый mac)</code></pre>
 <p>Или тут еще есть ряд советов (<a href="https://thecoatlessprofessor.com/programming/" class="uri">https://thecoatlessprofessor.com/programming/</a>)</p>
+</div>
+<div id="---mac" class="section level2">
+<h2><span class="header-section-number">2.2</span> Установка пакетов на Mac</h2>
+<p>Пакеты для Windows устанавливаются в уже скомпилированном виде, поэтому это происходит быстро, а вот пакеты для Mac устанавливаются из “исходников”. Поэтому может быть удобнее для этого использовать установщик <code>conda</code>.</p>
+<ol style="list-style-type: decimal">
+<li>Установить <code>conda</code> (см. <a href="https://docs.conda.io/projects/conda/en/latest/user-guide/install/">инструкцию</a>)</li>
+</ol>
 </div>
 </div>
 

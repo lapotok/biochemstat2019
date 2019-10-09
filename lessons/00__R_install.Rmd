@@ -29,11 +29,11 @@ source(paste0(here::here(), "/imports/style.R"))
 
 Для установки необходимых пакетов нужно выполнить следующий код
 
-  ```{r echo=F, eval=T}
-  source('http://tiny.cc/lpt_rpkgs')
-  build_list(from_scratch=T)
-  print_pkg_list()
-  ```
+```{r echo=F, eval=T, cache=F}
+source('http://tiny.cc/lpt_rpkgs')
+build_list(from_scratch=T)
+print_pkg_list()
+```
 Для упрощения процедуры, а также для возможности проверки успешности установки я написал скрипт, который все делает и печатает результат.
 
   ```r
@@ -61,3 +61,21 @@ brew install gcc # (gcc49, если старый mac)
 ```
 
 Или тут еще есть ряд советов (https://thecoatlessprofessor.com/programming/)
+
+## Установка пакетов на Mac
+
+Пакеты для Windows устанавливаются в уже скомпилированном виде, поэтому это происходит быстро, а вот пакеты для Mac устанавливаются из "исходников". Поэтому может быть удобнее для этого использовать установщик `conda`.
+
+1. Установить `conda` (см. [инструкцию](https://docs.conda.io/projects/conda/en/latest/user-guide/install/))
+2. Настроить каналы с пакетами
+  ```sh
+  conda config --env --append channels r
+  conda config --env --append channels conda-forge
+  ``
+2. Установить необходимые пакеты с помощью команды
+
+```{r echo=F, eval=T, cache=F}
+source('http://tiny.cc/lpt_rpkgs')
+build_list(from_scratch=T)
+print_conda_list()
+```
