@@ -60,7 +60,8 @@ brew install gcc # (gcc49, если старый mac)
 
 <style>.bg {background-color: #f5f5f5;}</style>
 ```{r echo=F, eval=T, cache=F, class.output='bg'}
-source('http://tiny.cc/lpt_rpkgs')
+# source('http://tiny.cc/lpt_rpkgs')
+source('../imports/pkg_list.R')
 build_list(from_scratch=T)
 print_pkg_list()
 ```
