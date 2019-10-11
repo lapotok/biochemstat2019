@@ -12,7 +12,11 @@ build_list = function(from_scratch = F){
   git.packages <<- c("patchwork"="thomasp85/patchwork", "crayon"="r-lib/crayon", "rstatix"="kassambara/rstatix")
   
   # составляем списки того, что надо поставить
-  installed <<- ifelse(from_scratch, "", as.character(installed.packages()[,"Package"]))
+  if (from_scratch) 
+    installed <<- ""
+  else
+    installed <<- as.character(installed.packages()[,"Package"])
+  
   uninstalled_cran <<- setdiff(base.packages, installed)
   uninstalled_git <<- setdiff(names(git.packages), installed)
   uninstalled <<- c(uninstalled_cran, uninstalled_git)
