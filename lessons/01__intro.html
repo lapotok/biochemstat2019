@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+
+<title>Урок 1</title>
+
+<script src="libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="libs/bootstrap-3.3.5/css/lumen.min.css" rel="stylesheet" />
+<script src="libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="libs/navigation-1.1/tabsets.js"></script>
+<link href="libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="../imports/style.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Урок 1</h1>
+<h4 class="date">2019.10.14</h4>
+
+</div>
+
+
+<p>План урока</p>
+<ul>
+<li>Почему R?
+<ul>
+<li>одна из самых используемых программ</li>
+<li>бесплатно</li>
+<li>reproducibility</li>
+<li>R vs Excel: программирование и окошки -&gt; окошек не достаточно</li>
+<li>все статистические пакеты (SPSS, SAS, Stata, Statistica, Origin, GraphPad) имеют скриптовый язык … и только у Python и R он не убогий</li>
+<li>самое сложное - подготовка данных, проверка наличия ошибок</li>
+</ul></li>
+<li>showcase</li>
+</ul>
+<pre class="r"><code>suppressMessages(suppressWarnings(library(tidyverse)))
+library(equatiomatic)
+m = iris %&gt;% glm(Petal.Length ~ Sepal.Length + Species, data = ., family=Gamma)
+extract_eq(m)</code></pre>
+<p><span class="math display">\[
+\frac { 1 }{ P( \text{Petal.Length} = \text{1} ) } = \alpha + \beta_{1}(\text{Sepal.Length}) + \beta_{2}(\text{Species}_{\text{versicolor}}) + \beta_{3}(\text{Species}_{\text{virginica}}) + \epsilon
+\]</span></p>
+<pre class="r"><code>extract_eq(m, use_coefs = TRUE, fix_signs = FALSE)</code></pre>
+<p><span class="math display">\[
+\frac { 1 }{ P( \text{Petal.Length} = \text{1} ) } = 0.83 + -0.03(\text{Sepal.Length}) + -0.42(\text{Species}_{\text{versicolor}}) + -0.46(\text{Species}_{\text{virginica}}) + \epsilon
+\]</span></p>
+<pre class="r"><code># загружаем необходимые библиотеки
+library(tidyverse)  # интерфейс пайплайна
+library(magrittr)   # интерфейс пайплайна (дополнительно)
+library(ggpubr)     # графики
+library(plotly)     # интерактивные графики
+
+1 + 4*5 + (2+3)^2
+
+sqrt(9)
+
+log(sqrt(abs(-10)))
+
+-10 %&gt;% abs() %&gt;% sqrt() %&gt;% log()
+
+my_data = readxl::read_excel(file.choose()) # protein_stability.xlsx
+str(my_data)
+
+# график
+g = ggboxplot(my_data, &quot;Sample&quot;, &quot;ConcUndiluted&quot;, color = &quot;Sample&quot;)
+g
+g %&gt;% ggplotly()
+esquisse::ggplot_to_ppt(&quot;g&quot;)
+
+# дисперсионный анализ: есть ли различие между средними?
+lm(ConcUndiluted ~ Sample, data = my_data) %&gt;% anova()</code></pre>
+<ul>
+<li><p>основные комманды</p></li>
+<li>функции или пайпы</li>
+<li>данные, тайди</li>
+<li>типы переменных, описание</li>
+<li><p>нормальное распределение, симуляция распределения</p></li>
+</ul>
+<pre class="r"><code># rnorm - генерация рандомных ([r]andom) значений
+rnorm(5)
+rnorm(6, mean=3, sd=1)
+my_var = 7
+rnorm(10, mean=-3, sd=sqrt(my_var))
+1e6 == 1000000
+rnorm(1e6) %&gt;% hist(main = &#39;Default settings (frequency = counts)&#39;)
+rnorm(1e6) %&gt;% hist(5, main=&#39;Histogram: counts, 5 bins&#39;)
+rnorm(1e6) %&gt;% hist(5, freq = F, main=&#39;Histogram: density, 5 bins&#39;)
+
+# density? плотность вероятности, правдоподобие данного значения X +/- delta
+bins = hist(rnorm(1e6), 5, freq = F, main=&#39;Histogram: density, 5 bins&#39;, ylim=c(0, .3), col=scales::alpha(&#39;red&#39;, .3))
+text(bins$mids, bins$density+.01, bins$density * 2, col = &#39;red&#39;)
+mtext(paste(paste(bins$density, collapse = &quot;*2 + &quot;), &quot;*2 = &quot;, sum(bins$density * 2)), col = &#39;red&#39;)
+
+rnorm(1e6) %&gt;% hist(50, freq = F, main=&#39;Histogram: density, 50 bins&#39;)
+rnorm(1e6) %&gt;% hist(1000, freq = F, border=NA, col=&quot;gray&quot;, main=&quot;(Probability) density&quot;)
+
+# dnorm - плотность вероятности ([d]ensity)/правдоподобие/likelihood
+curve(dnorm(x), from=-4, to=4, add=T, lwd=2)
+
+# берем значения признака Х и смотрим правдоподобия
+x_vals = c(-3, -2, -1, 0, 1, 2, 3)
+x_vals %&gt;% abline(v = ., col = &quot;red&quot;, lty=&#39;dashed&#39;)
+x_vals %&gt;% dnorm() %&gt;% round(3)
+points(x = x_vals, 
+       y = x_vals %&gt;% dnorm(), 
+       col=&#39;red&#39;, pch=19)
+
+# pnorm - вероятность ([p]robability) того, что выборочное значение будет меньше данного значения Х
+x_vals = c(-2, 0, 2)
+pnorm(x_vals)
+
+# pnorm? вероятность, что ...
+curve(dnorm(x), from=-4, to=4, lwd=2, main = &#39;pnorm(c(-2, 0, 2))&#39;)
+x_vals %&gt;% abline(v = ., col = &quot;red&quot;, lty=&#39;dashed&#39;)
+polygon(c(seq(-4, -2, l=100), -2, -4),
+  c(dnorm(seq(-4, -2, l=100)), 0, 0), col = scales::alpha(&#39;red&#39;, .2), border=NA)
+text(-2.5, 0.07, &#39;p( x &lt; -2 )&#39;, col = &#39;red&#39;)
+
+polygon(c(seq(-4, 0, l=100), 0, -4),
+  c(dnorm(seq(-4, 0, l=100)), 0, 0), col = scales::alpha(&#39;red&#39;, .2), border=NA)
+text(-1, 0.38, &#39;p( x &lt; -0 )&#39;, col = &#39;red&#39;)
+
+polygon(c(seq(-4, 2, l=100), 2, -4),
+  c(dnorm(seq(-4, 2, l=100)), 0, 0), col = scales::alpha(&#39;red&#39;, .2), border=NA)
+text(1.5, 0.25, &#39;p( x &lt; 2 )&#39;, col = &#39;red&#39;)
+
+pnorm(0) - pnorm(-2)
+
+# qnorm - квантиль ([q]uantile), т.е. такое значение Х, что выборочные значения окажутся меньше его с вероятностью P
+# Q: p( x &lt; Q ) = P
+P = c(0.25, 0.5, 0.75) # (1:n)/(n+1) - набор из n вероятностей, делящих [0, 1] на равные промежутки
+n = 3; (1:n)/(n+1)
+n = 9; (1:n)/(n+1)
+qnorm(P)
+
+# quantiles? квантиль - значение признака, такое что...
+curve(dnorm(x), from=-4, to=4, lwd=2, main = &#39;qnorm( 0.25 )&#39;, xaxt=&#39;none&#39;)
+axis(1, at = c(-4 , -0.67, 4) , labels = c(expression(-infinity) , -0.67, expression(infinity) ))
+qnorm( 0.25 ) %&gt;% abline(v = ., col = &quot;red&quot;, lty=&#39;dashed&#39;)
+polygon(c(seq(-4, -0.67, l=100), -0.67, -4),
+  c(dnorm(seq(-4, -0.67, l=100)), 0, 0), col = scales::alpha(&#39;red&#39;, .2), border=NA)</code></pre>
+<ul>
+<li>тесты на нормальность и интерпретация гистограмм и QQplots</li>
+</ul>
+<pre class="r"><code>library(tidyverse)
+n = 20
+qe = log(rnorm(n, exp(5), exp(2))) %&gt;% scale() %&gt;% as.numeric()
+qt = qnorm((1:n)/(n+1))
+plot(qt, sort(qe), ylim=c(-3,3), type=&#39;n&#39;)
+N = 1000
+tl = matrix(nrow=N, ncol=n)
+for (i in 1:N) {
+  tl[i,] = sort(rnorm(n))
+  if (i %% 20 == 0) points(qt, tl[i,], pch=19, col=scales::alpha(&#39;black&#39;, .1))
+}
+ci = apply(tl, 2, function(x) quantile(x, prob = c(0.05, 0.975)))
+arrows(qt, ci[1,], qt, ci[2,], length=0.05, angle=90, code=3)
+points(qt, sort(rnorm(20)), pch=19)
+points(qt, sort(qe), col=&#39;red&#39;, pch=19)
+text(qt+0.07, sort(qe)+0.2, 1:20, col=&#39;red&#39;, cex=.8)
+#ggpubr::ggqqplot(qe)</code></pre>
+<p>что надо, чтобы проверить ошибки теста Shapiro на разного размера выборках</p>
+<pre class="r"><code>x = rnorm(20, mean = 5, sd = .22) # генерим случайную выборку из 20 элементов
+
+# а как сгенерить выборку из 30 элементов? И с дисперсией 9? (какое тогда стандартное отклонение)
+
+x # смотрим, что получилось
+x %&gt;% hist() # гистограмма
+shapiro.test(x) # результаты теста (распечатка)
+shapiro.test(x) %&gt;% str() # структура самого объекта с результатами - список!
+
+# как достать из данного списка объект p.value?
+#p.value = shapiro.test(x)?????????????
+
+p.value &lt; 0.05 # результат сравнения с критическим значением
+
+my_result = p.value &lt; 0.05 # можно записать этот результат в объект
+
+my_result_vector = numeric(3) # или в список результатов
+my_result_vector[1] = p.value &lt; 0.05 
+my_result_vector
+
+
+y = rnorm(20, mean = exp(5), sd = exp(3.5)) %&gt;% abs() %&gt;% log() # пример очень не нормальной выборки</code></pre>
+<pre class="r"><code>library(tidyverse)
+
+# проверяем нормальность отдельно взятой симуляции
+set.seed(1)
+my_normal_sample = rnorm(20, 5, .22) 
+my_normal_sample %&gt;% hist()
+shapiro.test(my_normal_sample)
+set.seed(1)
+my_not_normal_sample = log(abs(rnorm(20, exp(5), exp(3.5))))
+my_not_normal_sample %&gt;% hist()
+shapiro.test(my_not_normal_sample)
+
+# сравниваем мощность и специфичность при разных размерах выборки
+N = exp(seq(log(3), log(300), .05)) %&gt;% round() %&gt;% unique() # размер выборки
+normal_results = numeric(length(N))
+not_normal_results = numeric(length(N))
+n_replicas = 200 # повторов для каждого размера, чтобы определить мощность
+for (i in 1:length(N)){
+  for (j in 1:n_replicas){
+    normal_results[i] = normal_results[i] + (shapiro.test(rnorm(N[i], 5, .22))$p.value &lt; 0.05)
+    not_normal_results[i] = not_normal_results[i] + (shapiro.test(log(abs(rnorm(N[i], exp(5), exp(3.5)))))$p.value &gt; 0.05)
+  }
+}
+plot(N, normal_results/n_replicas, col=&#39;blue&#39;, ylim=c(0,1), ylab=&#39;Error rate&#39;)
+points(N, not_normal_results/n_replicas, col=&#39;magenta&#39;)
+abline(h=0.05, col=&#39;red&#39;, lty=&#39;dashed&#39;)
+legend(&quot;topright&quot;, c(&#39;FP: not normal, but called normal&#39;, &#39;FN: normal, but called not normal&#39;), col = c(&#39;magenta&#39;, &#39;blue&#39;), pch=c(1,1))</code></pre>
+<ul>
+<li>гистограммы и плотность вероятности, вероятность и правдоподобие</li>
+</ul>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

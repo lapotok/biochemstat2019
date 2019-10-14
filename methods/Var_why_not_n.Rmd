@@ -1,0 +1,157 @@
+---
+title: "Почему при расчете выборочной дисперсии надо делить на $n-1$"
+date: "`r format(Sys.Date(), '%Y.%m.%d')`"
+---
+
+```{r setup, include=FALSE}
+source("../style.R")
+```
+
+# Почему оценка дисперсии меньше, чем истинная дисперсия?
+
+Формулы дисперсии для генеральной совокупности ($\sigma^2$) и выборочной дисперсии ($s^2$)
+
+$$
+\begin{align}
+\sigma^2 &= \frac{\sum_{i=1}^n(x_i-\mu)^2}{n} \\
+s^2 &= \frac{\sum_{i=1}^n(x_i-\overline{x})^2}{n-1}
+\end{align}
+$$
+
+## Обычное объяснение
+
+* Мы не знаем истинного среднего  $\mu$, а только выборочную оценку $\overline{x}$; 
+* Выборочная оценка расчитывается как $\overline{x} = \frac{x_1+x_2+\dots+x_n}{n}$
+* Если мы знаем $\overline{x}$, то нам не нужны для расчета все $n$ элементов выборки, а достаточно лишь $n-1$ элементов 
+    (т.е. варьировать могут только $n-1$ элементов из $n$, они друг от друга не зависимы и их число называется числом степеней свободы $df$). 
+* Поэтому при расчете выборочной дисперсии мы делим сумму квадратов на число степеней свободы вместо числа наблюдений. 
+
+Как-то от этого яснее не становится. Почему для стандартной ошибки среднего в формуле $SEM = \frac{s}{\sqrt{n}}$ не надо $n$ заменять на $n-1$? Как определить когда на что делить? Если есть $n$ каких-то элементов, то почему делить не на $n$ для усреднения?
+
+## Альтернативное объяснение
+
+Для начала полезное наблюдение: дисперсии можно суммировать (например, если будем расчитывать дисперсию суммы весов случайных пар девочка+мальчик, то дисперсия таких масс пар будет равна сумме дисперсий).
+$$
+\mathrm{Var}(♂+♀) = \mathrm{Var}(♂) + \mathrm{Var}(♀)
+$$
+
+Еще один пример. Допустим нам надо набрать 1000 мкл, но у нас нет пипетки на 1 мл. Мы берем пипетку на 100 мкл и 10 раз набираем ею объем 100 мкл. При этом дисперсия для такого процесса будет равна $\mathrm{Var}(X_1+X_2+\dots+X_{10})=10\cdot\mathrm{Var}(X)$. На примере моей пипетки на 100 мкл, при наборе объема 100 мкл дисперсия составляет $0.245\ мкл^2$ ($sd = 0.496\ мкл$), тогда как при десятикратном отборе объема она составит $2.45\ мкл^2$ ($sd = 0.775\ мкл$).
+
+_А теперь само объяснение._
+
+---
+
+### Причины смещенности оценки дисперсии
+
+Мы **не знаем истинного среднего**, оно может быть равно выборочному среднему, но скороее всего нет (м.б. $\mu = \overline{x}$ или $\mu \ne \overline{x}$). Соответственно, и отклонения $x_i$ от $\mu$ и от $\overline{x}$ будут отличаться. Но в какую сторону и почему?
+
+
+Выборочное среднее минимизирует сумму квадратов отклонений (т.е. суммы квадратов отклонений от выборочного среднего будут меньше, чем от любого другого числа $\hat{\mu}$)
+$$
+\overline{x}: \sum_{i=1}^n(x_i-\overline{x})^2 = \min_{\hat{\mu}}(\sum_{i=1}^n(x_i-\hat{\mu})^2)
+$$
+
+Посмотрим на иллюстрацию, на которой выборочное среднее довольно сильно отличается от истинного среднего $\mu$. Можно заметить, что расстояния от отдельных точек до выборочного среднего $\overline{x}$ (синие линии) гораздо меньше, чем до истинного среднего $\mu$ (красные линии).
+
+```{r echo=F, eval=T, fig.width=7, fig.height=3}
+library(tidyverse)
+library(ggplot2)
+
+set.seed(56364)
+n = 20
+d = rnorm(n, 3, 1)
+d_mean = mean(d)
+d_df = data.frame(x=d, y=1:n)
+d_distr = data.frame(y = dnorm(seq(0,6, l=100), 3, 1), x = seq(0,6, l=100))
+
+# plot data
+g0 = d_df %>% 
+  ggplot(aes(x=x, y=y)) +
+  geom_ribbon(data=d_distr, aes(x=x, ymin=0, ymax=y*10), fill = "red", alpha=.05) +
+  geom_point(alpha=.5, size=3) +
+  geom_vline(xintercept = d_mean, col = "dodgerblue", linetype="dashed", size=1) +
+  geom_vline(xintercept = 3, col = "red", size=1.2) +
+  coord_cartesian(xlim=c(0,5)) +
+  labs(x="Значение признака", y="# наблюдения") + 
+  theme_classic() 
+#g0 
+
+# xi-mu
+xi_mu = 
+  d_df %>%
+  mutate(yend=y,
+         xend=3)
+  
+# xi-xbar
+xi_bar = 
+  d_df %>%
+  mutate(yend=y,
+         xend=d_mean)
+
+
+gb = g0 +
+  geom_segment(data = xi_bar, aes(x=x,y=y, xend=xend, yend=yend), size=2, alpha=.2, col="dodgerblue") +
+  annotate("label", label = latex2exp::TeX("$\\bar{x}$"), x = d_mean, y = 12, color = "dodgerblue") +
+  annotate("label", label = latex2exp::TeX("$\\mu$"), x = 3, y = 12, color = "red") +
+  labs(subtitle = latex2exp::TeX("$\\sum_{i=1}^n(x_i-\\bar{x})^2 = 20.09$")) +
+  theme(plot.subtitle = element_text(colour = "dodgerblue"))
+gm = g0 +
+  geom_segment(data = xi_mu, aes(x=x,y=y, xend=xend, yend=yend), size=2, alpha=.2, col="red") +
+  annotate("label", label = latex2exp::TeX("$\\bar{x}$"), x = d_mean, y = 12, color = "dodgerblue") +
+  annotate("label", label = latex2exp::TeX("$\\mu$"), x = 3, y = 12, color = "red") +
+  labs(subtitle = latex2exp::TeX("$\\sum_{i=1}^n(x_i-\\mu)^2 = 38.85$")) +
+  theme(plot.subtitle = element_text(colour = "red"))
+
+
+library(patchwork)
+gb + gm
+```
+
+Соответственно, сумма квадратов отклонений от истинного среднего $\mu$ будет больше, чем от выборочного среднего $\overline{x}$ (или равно, если $\mu = \overline{x}$).
+$$
+\sum_{i=1}^n(x_i-\mu)^2 \ge \sum_{i=1}^n(x_i-\overline{x})^2
+$$
+
+Таким образом, из-за того что **мы не знаем истинное среднее (неточно оцениваем), мы считаем неправильные отклонения и тем самым занижаем значение дисперсии**.
+
+### Вывод формулы
+
+Если попытаться оценить разницу между истинной дисперсией $\sigma^2$ и ее выборочной смещенной оценкой $s_\text{unbiased}^2 = \frac{1}{n}\sum_{i=1}^n(x_i-\overline{x})^2$, то [можно показать](https://en.wikipedia.org/wiki/Bessel%27s_correction#Proof_of_correctness_%E2%80%93_Alternate_3), что она равна $s_{\overline{x}}^2 = \frac{\sigma^2}{n}$.
+
+$$
+\begin{align} 
+\underset{\sigma^{2}}{\underbrace{\operatorname{E}\left[\left(x_{i}-\mu\right)^{2}\right]}}-\underset{s_\text{biased}^2}{\underbrace{\operatorname{E}\left[\left(x_{i}-\overline{x}\right)^{2}\right]}} &= \\
+&= \operatorname{E}\left[  (\overline{x}   - \mu)^2 \right] \\
+&= \operatorname{Var} (\overline{x}) \\
+&= \frac{\sigma^2}{n}
+\end{align}
+$$
+
+Отсюда можно выразить поправку - как нужно скорректировать формулу смещенной выборочной дисперсии, чтобы она соответствовала истинной дисперсии.
+
+$$
+\begin{align}
+\underset{s_\text{biased}^2}{\underbrace{\mathbf{E}\left[\left(x_{i}-\overline{x}\right)^{2}\right]}}
+&=\underset{\sigma^{2}}{\underbrace{\mathbf{E}\left[\left(x_{i}-\mu\right)^{2}\right]}}-\underset{\frac{\sigma^{2}}{n}}{\underbrace{\mathbf{E}\left[\left(\overline{x}-\mu\right)^{2}\right]}}\\
+&=\sigma^2-\frac{\sigma^2}{n}\\
+&=\frac{n-1}{n}\cdot\sigma^2
+\end{align}
+$$
+
+Значит несмещенную оценку истинной дисперсии можно почитать по формуле
+
+$$
+\begin{align}
+s_\text{unbiased}^2 &= \frac{n}{n-1} \cdot s_\text{biased}^2 \\
+&= \frac{n}{n-1} \cdot\frac{\sum_{i=1}^n(x_i-\overline{x})^2}{n} \\
+&= \frac{\sum_{i=1}^n(x_i-\overline{x})^2}{n-1}
+\end{align}
+$$
+
+# To be continued
+
+* Конценция степени свободы и ее связь с дисперсией и с расчетами...
+* Сравнение среднего с гипотетическим - неизвестность при оценке выборочного среднего
+* Сравнение двух выборочных средних - неизвестность при оценке каждого выборочного среднего
+* Дисперсионный анализ - неизвестность для grand mean и group means (всех, кроме одного?)
+* Дисперсионный анализ и t-тест для коэффициентов при множественной регрессии (неизвестность от оценки каждого коэффициента/параметра)
