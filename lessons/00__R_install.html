@@ -295,7 +295,7 @@ brew install gcc # (gcc49, если старый mac)</code></pre>
 <li><p><code>Github</code> - это хранилище дополнительных пакетов от различных разработчиков (там же хранятся последние версии, еще не вошедшие в CRAN). Чтобы установить пакеты оттуда нужно выполнить комманду</p>
 <pre class="r"><code>devtools::install_github(&#39;author/package_name&#39;)</code></pre></li>
 </ul>
-<p>Для упрощения процедуры, а также для возможности проверки успешности установки я написал скрипт, который все делает и печатает результат.</p>
+<p>Для упрощения процедуры установки пакетов, а также для возможности проверки успешности установки я написал скрипт, который все делает и печатает результат. Этот код надо скопировать и вставить в консоль <code>R/RStudio</code>.</p>
 <pre class="r"><code>source(&#39;http://tiny.cc/lpt_rpkgs&#39;)
 build_list()
 print_pkg_list()
@@ -303,7 +303,7 @@ install_pkgs()
 installation_report()</code></pre>
 <style>.bg {background-color: #f5f5f5;}</style>
 <blockquote>
-<p>Для установки необходимых пакетов нужно выполнить следующий код</p>
+<p>Если Вы хотите самостоятельно выполнить установку пакета, то Вам необходимо выполнить данные комманды</p>
 <pre class="bg"><code>install.packages( c(&quot;Amelia&quot;, &quot;boot&quot;, &quot;broom&quot;, &quot;car&quot;, &quot;caret&quot;, &quot;corrplot&quot;, &quot;cowplot&quot;, &quot;curl&quot;, &quot;devtools&quot;, &quot;esquisse&quot;, &quot;furrr&quot;, &quot;gdtools&quot;, &quot;GGally&quot;, &quot;ggforce&quot;, &quot;ggplot2&quot;, &quot;ggpubr&quot;, &quot;ggrepel&quot;, &quot;ggridges&quot;, &quot;ggstance&quot;, &quot;ggthemes&quot;, &quot;glue&quot;, &quot;gridExtra&quot;, &quot;gtools&quot;, &quot;hexbin&quot;, &quot;httr&quot;, &quot;investr&quot;, &quot;jsonlite&quot;, &quot;kableExtra&quot;, &quot;knitr&quot;, &quot;lme4&quot;, &quot;lmtest&quot;, &quot;lubridate&quot;, &quot;magrittr&quot;, &quot;mice&quot;, &quot;missForest&quot;, &quot;modelr&quot;, &quot;mvtnorm&quot;, &quot;naniar&quot;, &quot;officer&quot;, &quot;openxlsx&quot;, &quot;plotly&quot;, &quot;prettydoc&quot;, &quot;profvis&quot;, &quot;purrr&quot;, &quot;randomForest&quot;, &quot;readr&quot;, &quot;readxl&quot;, &quot;repr&quot;, &quot;reprex&quot;, &quot;reshape&quot;, &quot;reshape2&quot;, &quot;rio&quot;, &quot;rmarkdown&quot;, &quot;rvest&quot;, &quot;rvg&quot;, &quot;sandwich&quot;, &quot;scales&quot;, &quot;selectr&quot;, &quot;shiny&quot;, &quot;sinaplot&quot;, &quot;sjPlot&quot;, &quot;tidyverse&quot;, &quot;multcomp&quot;, &quot;drc&quot;, &quot;RColorBrewer&quot;, &quot;nlme&quot;, &quot;ipred&quot;, &quot;effsize&quot;, &quot;dunn.test&quot;, &quot;remedy&quot;, &quot;ggalt&quot;, &quot;ggExtra&quot;, &quot;gsheet&quot;, &quot;jtools&quot;), dependencies = TRUE, type = &quot;binary&quot; )
 
 devtools::install_github( c(&quot;thomasp85/patchwork&quot;, &quot;r-lib/crayon&quot;, &quot;kassambara/rstatix&quot;), upgrade = &quot;never&quot;, dependencies = TRUE )</code></pre>
