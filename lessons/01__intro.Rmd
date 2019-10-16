@@ -1,59 +1,17 @@
 ---
-title: "Урок 1"
+title: "Урок 1 - Нормальное распределение"
 date: "`r format(Sys.Date(), '%Y.%m.%d')`"
 editor_options: 
   chunk_output_type: console
 ---
 
-План урока
-
-* Почему R?
-  * одна из самых используемых программ
-  * бесплатно
-  * reproducibility
-  * R vs Excel: программирование и окошки -> окошек не достаточно
-  * все статистические пакеты (SPSS, SAS, Stata, Statistica, Origin, GraphPad) имеют скриптовый язык ... и только у Python и R он не убогий
-  * самое сложное - подготовка данных, проверка наличия ошибок
-
-* showcase
-
-```{r showcase, eval = F}
-# загружаем необходимые библиотеки
-library(tidyverse)  # интерфейс пайплайна
-library(magrittr)   # интерфейс пайплайна (дополнительно)
-library(ggpubr)     # графики
-library(plotly)     # интерактивные графики
-
-1 + 4*5 + (2+3)^2
-
-sqrt(9)
-
-log(sqrt(abs(-10)))
-
--10 %>% abs() %>% sqrt() %>% log()
-
-my_data = readxl::read_excel(file.choose()) # protein_stability.xlsx
-str(my_data)
-
-# график
-g = ggboxplot(my_data, "Sample", "ConcUndiluted", color = "Sample")
-g
-g %>% ggplotly()
-esquisse::ggplot_to_ppt("g")
-
-# дисперсионный анализ: есть ли различие между средними?
-lm(ConcUndiluted ~ Sample, data = my_data) %>% anova()
+```{r message=F, warning=F}
+library(tidyverse) # много всего полезного (пайплайны и т.п.)
+library(magrittr) # еще пайплайны
+library(ggpubr) # графики
 ```
 
-* основные комманды
-
-
-* функции или пайпы
-* данные, тайди
-* типы переменных, описание
-* нормальное распределение, симуляция распределения
-
-```{r norm, eval = F}
+```{r rnorm, fig.width=5, fig.height=4}
 # rnorm - генерация рандомных ([r]andom) значений
 rnorm(5)
 rnorm(6, mean=3, sd=1)
@@ -63,12 +21,16 @@ rnorm(10, mean=-3, sd=sqrt(my_var))
 rnorm(1e6) %>% hist(main = 'Default settings (frequency = counts)')
 rnorm(1e6) %>% hist(5, main='Histogram: counts, 5 bins')
 rnorm(1e6) %>% hist(5, freq = F, main='Histogram: density, 5 bins')
+```
 
+```{r dnorm, echo=F}
 # density? плотность вероятности, правдоподобие данного значения X +/- delta
 bins = hist(rnorm(1e6), 5, freq = F, main='Histogram: density, 5 bins', ylim=c(0, .3), col=scales::alpha('red', .3))
 text(bins$mids, bins$density+.01, bins$density * 2, col = 'red')
 mtext(paste(paste(bins$density, collapse = "*2 + "), "*2 = ", sum(bins$density * 2)), col = 'red')
+```
 
+```{r dnorm2}
 rnorm(1e6) %>% hist(50, freq = F, main='Histogram: density, 50 bins')
 rnorm(1e6) %>% hist(1000, freq = F, border=NA, col="gray", main="(Probability) density")
 
@@ -86,7 +48,9 @@ points(x = x_vals,
 # pnorm - вероятность ([p]robability) того, что выборочное значение будет меньше данного значения Х
 x_vals = c(-2, 0, 2)
 pnorm(x_vals)
-
+pnorm(0) - pnorm(-2)
+```
+```{r pnorm, echo=F}
 # pnorm? вероятность, что ...
 curve(dnorm(x), from=-4, to=4, lwd=2, main = 'pnorm(c(-2, 0, 2))')
 x_vals %>% abline(v = ., col = "red", lty='dashed')
@@ -101,16 +65,16 @@ text(-1, 0.38, 'p( x < -0 )', col = 'red')
 polygon(c(seq(-4, 2, l=100), 2, -4),
   c(dnorm(seq(-4, 2, l=100)), 0, 0), col = scales::alpha('red', .2), border=NA)
 text(1.5, 0.25, 'p( x < 2 )', col = 'red')
-
-pnorm(0) - pnorm(-2)
-
+```
+```{r qnorm}
 # qnorm - квантиль ([q]uantile), т.е. такое значение Х, что выборочные значения окажутся меньше его с вероятностью P
 # Q: p( x < Q ) = P
 P = c(0.25, 0.5, 0.75) # (1:n)/(n+1) - набор из n вероятностей, делящих [0, 1] на равные промежутки
 n = 3; (1:n)/(n+1)
 n = 9; (1:n)/(n+1)
 qnorm(P)
-
+```
+```{r qnorm2, eval = F}
 # quantiles? квантиль - значение признака, такое что...
 curve(dnorm(x), from=-4, to=4, lwd=2, main = 'qnorm( 0.25 )', xaxt='none')
 axis(1, at = c(-4 , -0.67, 4) , labels = c(expression(-infinity) , -0.67, expression(infinity) ))

@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+
+<title>Введение в R</title>
+
+<script src="libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="libs/bootstrap-3.3.5/css/lumen.min.css" rel="stylesheet" />
+<script src="libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="libs/navigation-1.1/tabsets.js"></script>
+<link href="libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="../imports/style.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Введение в R</h1>
+
+</div>
+
+
+<div id="-" class="section level1">
+<h1><span class="header-section-number">1</span> Первые шаги</h1>
+<div class="section level2">
+<h2><span class="header-section-number">1.1</span> Библиотеки</h2>
+<p>Библиотеки, которые всегда стоит загружать</p>
+<pre class="r"><code>library(tidyverse) # много всего полезного (пайплайны и т.п.)
+library(magrittr) # еще пайплайны
+library(ggpubr) # графики
+library(patchwork) # компоновка графиков</code></pre>
+</div>
+<div id="----" class="section level2">
+<h2><span class="header-section-number">1.2</span> Расчеты, операции с данными (арифметика)</h2>
+<pre class="r"><code>1 + 1
+2 * 3
+(4 + 5) * 6
+2 ^ 3
+2 ^ 0.5
+sqrt(2)
+log10(100)
+log2(16)
+log(9, base = 3)
+abs(-4)</code></pre>
+</div>
+</div>
+<div id="-r-" class="section level1">
+<h1><span class="header-section-number">2</span> Синтаксис <code>R</code> (теория)</h1>
+<div class="section level2">
+<h2><span class="header-section-number">2.1</span> Переменные</h2>
+<ul>
+<li>Переменные: имена, присвоения, использование</li>
+<li>присвоение значений переменным</li>
+</ul>
+<pre class="r"><code>my_variable = 1
+MyVariable = 1
+my.variable = 1</code></pre>
+<pre class="r"><code>a = 1
+a=1
+a &lt;- 1
+a = &quot;kjfhs&quot;
+a = &#39;kjfhs&#39;</code></pre>
+</div>
+<div id="-" class="section level2">
+<h2><span class="header-section-number">2.2</span> Типы данных</h2>
+<p>Простые типы данных (числовые и строковые константы, векторы, факторы)</p>
+<pre class="r"><code># number
+my_number = 1
+
+# character
+my_char = &quot;bla\tbla\nbla&quot;
+cat(my_char)
+
+# boolean
+my_bool1 = TRUE
+my_bool2 = FALSE
+
+if(my_bool1) {
+  print(&quot;TRUE&quot;)
+} else {
+  print(&quot;FALSE&quot;)
+}
+
+ifelse(my_bool1, &quot;TRUE&quot;, &quot;FALSE&quot;)
+
+2&lt;1
+ifelse(2&lt;1, &quot;TRUE&quot;, &quot;FALSE&quot;)
+my_bool3 = 2&lt;1 
+ifelse(my_bool3, &quot;TRUE&quot;, &quot;FALSE&quot;)
+
+# vector набор данных одного типа (одни единицы измерения)
+my_vector1 = 1:20
+my_vector1.1 = rep(9, 30) # последовательность из 9 длиной 30
+length(my_vector1.1)
+# подмножество из вектора
+my_vector1[2:4]
+my_vector2 = c(169, 180, 157, 165, 190, NA, 185, 164, 171) # NA = Not Available = пропущенные данные
+# выполняем операцию сравнения
+my_vector2 &gt; 170
+# выбираем значения, отвечающие критерию my_vector2 &gt; 40
+my_vector2[my_vector2 &gt; 170]
+186 %in% my_vector2
+190 %in% my_vector2
+my_vector2 == 190
+
+# factor vs vector
+# создаем вектор
+age = c(&quot;young&quot;, &quot;middle-aged&quot;, &quot;old&quot;, &quot;Old&quot;, &quot;young&quot;, &quot;middle-aged&quot;, &quot;middle-aged&quot;)
+age # просто перечень текстовых значений
+# преобразуем в фактор (текстовые значения в коды, текст отображается лишь для простоты восприятия)
+factor(age) # видим лишний уровень &quot;Old&quot;, дублирующий &quot;old&quot;
+age = c(&quot;young&quot;, &quot;middle-aged&quot;, &quot;old&quot;, &quot;old&quot;, &quot;young&quot;, &quot;middle-aged&quot;, &quot;middle-aged&quot;)
+factor(age) # несортированный фактор
+factor(age, levels=c(&quot;young&quot;, &quot;middle-aged&quot;, &quot;old&quot;), ordered = TRUE) # levels задает возрастающий порядок уровней</code></pre>
+<p>Сложные типы данных (матрицы, списки, таблицы данных)</p>
+<pre class="r"><code># matrix - двухмерный набор значений одного типа (например, каких-то измерений)
+# создаем одномерный вектор
+rnorm(8*12, mean=5000, sd=2000) # команда для создания 8*12 случайных чисел с заданным средним и стандартным отклонением
+# помещаем его значения в матрицу
+my_matrix1 = matrix(rnorm(8*12, 5000, 2000), nrow=8, ncol=12) # пример матрицы 8х12 со случайными значениями
+my_matrix1
+colnames(my_matrix1) = as.character(1:12) # задаем название столбцов (становятся текстом!)
+str_split(&quot;ABCDEFGH&quot;, &quot;&quot;, simplify = T) # генерим вектор из букв
+rownames(my_matrix1) = str_split(&quot;ABCDEFGH&quot;, &quot;&quot;, simplify = T) # задаем название строк
+my_matrix1 # выглядит знакомо ;)
+str(my_matrix1)
+my_matrix1[1,] # первая строка (номер строки)
+my_matrix1[1,] = 1:12 # так можно модифицировать данные, замена должна соответствовать размеру ...
+my_matrix1[2,] = NA # ... или можно заменять все позиции матрицы на одно значение
+my_matrix1[&quot;A&quot;,] # первая строка (название строки)
+my_matrix1[c(1,3),] # первая и третья строка (номера строк)
+my_matrix1[c(&quot;A&quot;,&quot;C&quot;),] # первая и третья строка (названия строк)
+my_matrix1[, 1] # первая колонка (номер)
+my_matrix1[, &quot;1&quot;] # первая колонка (название, поэтому в кавычках, это текст)
+my_matrix1[3, 11]
+my_matrix1[8, 12] = 100500
+my_matrix1*1000
+my_matrix1
+ncol(my_matrix1)
+nrow(my_matrix1)
+t(my_matrix1) # транспонировать матрицу, т.е. превратить колонки в строки
+
+# Если надо сложить одну переменную много разных типов данных - это список
+my_list1 = list(a=c(1,2,4), b=c(&quot;one&quot;, &quot;two&quot;, &quot;three&quot;), c=3, d=age) # сразу задаем значения
+my_list1 
+str(my_list1)
+my_list1$a # обращаемся к элементу
+my_list1[[&quot;a&quot;]] # обращаемся к элементу - второй способ
+b_element = my_list1[[&quot;a&quot;]]
+b_element
+b_element[2]
+my_list1[[&quot;a&quot;]][2] # выбираем второй элемент вектора b из списка my_list1 
+my_list1$e = &quot;создаем новый элемент&quot;
+my_list1[[&quot;last_one&quot;]] = c(&quot;и&quot;, &quot;последний&quot;, &quot;элемент&quot;)
+str(my_list1)
+
+# пример использования списка
+my_list2 = list()
+my_list2$description = &quot;Плашка FIA&quot;
+my_list2$date = Sys.time() # эта команда выводит текущее время
+my_list2$plate = my_matrix1
+my_list2$session = sessionInfo() # эта команда выводит данные о версии R и загруженных библиотеках (пригодится для воспроизводимости!)
+
+# а еще многие функции выводят списки
+t.test_result = t.test(rnorm(8*12, mean=5000, sd=2000), mu = 4500)
+str(t.test_result)
+t.test_result$p.value # из объекта типа лист можно доставать нужное значение
+t.test(rnorm(8*12, mean=5000, sd=2000), mu = 4500)$p.value # или даже так
+
+# самый используемый тип данных - таблица данных (data.frame и ее расширения типа tibble, data.table)
+# такая таблица технически это список из разных типов колонок-векторов (численные, текстовые, факторные) одной длины
+my_df1 = data.frame(a=c(1,2,4), b=c(&quot;a&quot;, &quot;b&quot;, &quot;d&quot;))
+my_df1
+str(my_df1)
+# с таблицей данных можно обращаться как со списком, а можно как с матрицей
+# почти все данные, которые придется обрабатывать, будут в формате таблиц данных</code></pre>
+<p>Арифметические операции с векторами, матрицами, таблицами</p>
+<pre class="r"><code>my_vector1 = 1:20
+my_vector3 = 101:120
+my_vector1 + 5
+my_vector1 * 5
+my_vector1 + my_vector2
+my_vector4 = 1:21
+my_vector1 + my_vector3 # ошибка
+my_vector1 ^ 2
+log10(my_vector1)
+max(my_vector1)
+min(my_vector1)
+my_vector2 = c(169, 180, 157, 165, 190, NA, 185, 164, 171)
+max(my_vector2) # что-то пошло не так...
+na.omit(my_vector2)
+max(na.omit(my_vector2))</code></pre>
+</div>
+<div id="-" class="section level2">
+<h2><span class="header-section-number">2.3</span> Использование функций</h2>
+<pre class="r"><code># использование одной функции (генерируем нормальное распределение)
+?rnorm
+rnorm(96) # аргументы по умолчанию: mean=0, sd=1
+rnorm(8*12)
+rnorm(8*12, mean=5000, sd=2000) # явно указанные аргументы
+rnorm(8*12, sd=2000, mean=5000) # явно указанные аргументы в другом порядке - не важно!
+rnorm(8*12, 5000, 2000) # аргументы указания названий в стандартном порядке (см. справку)
+rnorm(8*12, s=2000, m=5000) # сокращенные названия аргументов - первые буквы должны однозначно указывать
+
+# тестовые данные
+my_data = data.frame(my_values = c(1, 2, 3, 1, 4, 3),
+                     my_grouping = as.factor(c(1, 1, 1, 2, 2, 2)))
+# можно задавать аргументы, помещая название таблицы + столбца
+car::leveneTest(my_data$my_values, my_data$my_grouping)
+# чтобы не писать my_data$ перед каждой переменной
+with(my_data, car::leveneTest(my_values, my_grouping)) 
+# или так (используем оператор экстракции %$% из библиотеки magrittr)
+my_data %$% car::leveneTest(my_values, my_grouping)
+# некоторые функции принимают аргументы в виде формул вида value ~ grouping1 + grouping2 ...
+car::leveneTest(my_values ~ my_grouping, data = my_data) # пример формулы
+
+# использование нескольких функций: среднее полученного распределения
+my_distr1 = rnorm(8*12, sd=2000, mean=5000) # вывод функции можно сохранять в переменную
+mean(my_distr1)
+
+# можно вкладывать функции друг в друга, направляя вывод одной функции на вход (аргумент) другой
+mean(rnorm(8*12, sd=2000, mean=5000))
+
+# можно создавать pipelines (об этом далее будет более подробно)
+8*12 %&gt;% # это значение будет первым аргументом следующей (rnorm)
+  rnorm(sd=2000, mean=5000) %&gt;% # вывод этой функции будет первым аргументом следующей (mean)
+  mean() %&gt;% # это значение будет первым аргументом следующей (round)
+  round(0)</code></pre>
+</div>
+<div id="-" class="section level2">
+<h2><span class="header-section-number">2.4</span> Собственная функция</h2>
+<p>Если какое-то составное действие приходится часто выполнять, имеет смысл сделать соответствующую функцию.</p>
+<pre class="r"><code># схема функции (полная)
+my_func_name = function(arg1, arg2, arg3){
+  # какое-то действие
+  arg_sum = arg1 + arg2 + arg3
+  return(arg_sum) # возвращаемый результат
+}
+
+# пишем функцию для коэффициента вариации
+CV = function(x) {
+  result = sd(x)/mean(x)*100 
+  return(result)
+}
+my_vector6 = rnorm(30, 50, 5)
+CV(my_vector6)
+
+# если функция в одну строку, {} можно не писать
+# а еще, функция вернет последний упомянутый объект, если не писать return(...)
+CV2 = function(x) sd(x)/mean(x)*100 
+
+# пишем функцию для вычисления дисперсии, которая нам выдаст несколько значений
+Var = function(x) {
+  result = list()
+  result$data = x
+  result$sum_sq = sum((x-mean(x))^2)
+  result$n = length(x)
+  result$value = result$sum_sq/(result$n - 1)
+  return(result) # задаем объект, который будет выводить функция (здесь это список)
+}</code></pre>
+</div>
+</div>
+<div id="-------" class="section level1">
+<h1><span class="header-section-number">3</span> Теперь применим это к чему-то на практике!</h1>
+<pre class="r"><code># генерим данные
+x = rnorm(30, mean = 50, sd = 10)
+
+# описательные статистики
+mean(x)
+median(x)
+sd(x)
+
+# тест на нормальность
+shapiro.test(x)
+
+# график
+g = gghistogram(x, fill=&quot;dodgerblue&quot;, rug = T)
+g 
+plotly::ggplotly(g)
+esquisse::ggplot_to_ppt(&quot;g&quot;)</code></pre>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
