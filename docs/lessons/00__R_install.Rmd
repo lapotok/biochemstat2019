@@ -1,0 +1,115 @@
+---
+title: "Установка R"
+date: "`r format(Sys.Date(), '%Y.%m.%d')`"
+---
+
+```{r setup, include=FALSE}
+source(paste0(here::here(), "/imports/style.R"))
+```
+
+# Установка базового пакета и RStudio
+
+1. Установить `R-base` последней версии ([Windows](https://cran.r-project.org/bin/windows/base/), [MacOS](https://cran.r-project.org/bin/macosx/))
+
+> *Во избежание последующих проблем, советую ставить в папку <tt>"C:\\R"</tt> (чтобы гарантированно в пути к файлам не было ни пробелов, ни русских букв). Остальные пункты установки - по умолчанию.*
+  
+2. Установить `R-tools` последней версии ([Windows](https://cran.r-project.org/bin/windows/Rtools/), [MacOS (clang, gfortran)](https://cran.r-project.org/bin/macosx/tools))
+
+> *Во избежание последующих проблем, советую ставить в папку <tt>"C:\\Rtools"</tt> (чтобы гарантированно в пути к файлам не было ни пробелов, ни русских букв). Остальные пункты установки - по умолчанию.*
+> *Для Mac еще нужно поставить Xcode command line tools (от Apple)*
+
+3. [Очень желательно!] Установить `RStudio` последней версии для своей операционной системы ([Windows/MacOS](https://www.rstudio.com/products/rstudio/download/#download))
+> *Во избежание последующих проблем, советую ставить в папку <tt>"C:\\RStudio"</tt> (чтобы гарантированно в пути к файлам не было ни пробелов, ни русских букв). Остальные пункты установки - по умолчанию.*
+
+В результате указанных действий у Вас должна оказаться установленной на компьютере статистическая среда `R` и удобный интерфейс к ней `RStudio`. Вообще говоря, установка `RStudio` не является обязательным условием (если компьютер очень тормозит - она может вносить свой вклад), но работа в ней значительно удобнее.
+
+Для того, чтобы установить необходимые пакеты (см. ниже), Вам потребуется запустить `RStudio` (или `R`) и далее вводить ниже указанные комманды в консоли.
+
+__PS.__ Здесь есть инструкции по [установке](https://rafalab.github.io/dsbook/installing-r-rstudio.html) `R/RStudio` и по [первым шагам](https://rafalab.github.io/dsbook/getting-started.html) со скриншотами. Более подробные инструкции можно найти [здесь](https://ismayc.github.io/rbasics-book). На YouTube также есть множество роликов на эту тему.
+
+## Возможные проблемы
+
+1. Windows: Русские имена в пути установки, решение - см. рекоммендации выше.
+2. Mac/Linux: Проблемы с отображением русских букв
+
+```bash
+echo "export LANG=en_US.UTF-8" >> ~/.bashrc && echo "export LC_ALL=en_US.UTF-8" >> ~/.bashrc && source ~/.bashrc
+```
+
+Еще, если жалуется на отсутствие gfortran, решение для MacOS (если R-tools не поможет)
+
+```bash
+/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+brew install gcc # (gcc49, если старый mac)
+```
+
+Или тут еще есть ряд советов (https://thecoatlessprofessor.com/programming/)
+
+# Установка необходимых пакетов
+
+Есть два основных источника пакетов в `R`:
+
+* `CRAN` - это основная коллекция пакетов, для установки которых нужно выполнить комманду
+  ```r
+  install.package('package_name')
+  ```
+  
+* `Github` - это хранилище дополнительных пакетов от различных разработчиков (там же хранятся последние версии, еще не вошедшие в CRAN). Чтобы установить пакеты оттуда нужно выполнить комманду
+  ```r
+  devtools::install_github('author/package_name')
+  ```
+
+Для упрощения процедуры установки пакетов, а также для возможности проверки успешности установки я написал скрипт, который все делает и печатает результат. Этот код надо скопировать и вставить в консоль `R/RStudio`.
+
+  ```r
+  source('http://tiny.cc/lpt_rpkgs')
+  build_list()
+  print_pkg_list()
+  install_pkgs()
+  installation_report()
+  ```
+<style>.bg {background-color: #f5f5f5;}</style>
+> Если Вы хотите самостоятельно выполнить установку пакета, то Вам необходимо выполнить данные комманды
+>  ```{r echo=F, eval=T, cache=F, class.output='bg'}
+  # source('http://tiny.cc/lpt_rpkgs')
+  source('../imports/pkg_list.R')
+  build_list(from_scratch=T)
+  print_pkg_list()
+  ```
+
+## Установка пакетов на Mac
+
+Пакеты для Windows устанавливаются в уже скомпилированном виде, поэтому это происходит быстро, а вот пакеты для Mac устанавливаются из "исходников". Поэтому может быть удобнее для этого использовать установщик `conda`.
+
+1. Установить `conda` (см. [инструкцию](https://docs.conda.io/projects/conda/en/latest/user-guide/install/))
+2. Настроить каналы с пакетами
+  ```sh
+  conda config --env --append channels r
+  conda config --env --append channels conda-forge
+  ```
+2. Установить необходимые пакеты с помощью команды
+
+```{r echo=F, eval=T, cache=F}
+# source('http://tiny.cc/lpt_rpkgs')
+source("../imports/pkg_list.R")
+build_list(from_scratch=T)
+print_conda_list()
+```
+
+# Online инструменты
+
+Замечательной особенностью `R` является то, что, в общем-то, его не надо и устанавливать. Есть несколько способов его использовать online (однако на наших занятиях на это рассчитывать не стоит, ибо в комнате не ловит WiFi). 
+
+* [Rstudio.cloud](https://rstudio.cloud/): полноценный RStudio в Вашем браузере
+* RRdio: [консоль](https://rdrr.io/snippets/) или [дневник](https://rnotebook.io/), куда можно вводить комманды
+
+# Проверка того, что все заработало
+
+```{r eval=T, echo=T}
+1 + 1
+2^4
+sqrt(log(abs(-2)))
+library(tidyverse)
+-2 %>% abs() %>% log() %>% sqrt()
+plot(1:25, pch=1:25, col=1:25)
+```

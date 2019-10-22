@@ -1,7 +1,7 @@
 h1, h2, h3, p, li {font-family: Fira Sans, Myriad,Arial;}
 h1 {font-size: 30px;}
 h2 {font-size: 24px;}
-code {font-size: 14px;}
+code {font-size: 100%;}
 pre code { padding-top: 0; padding-bottom: 0; margin-top: 0; margin-bottom: 0; line-height: 0.5em; font-size: 12px;}
 code, pre {font-family: Consolas,monaco,monospace; }
 blockquote {font-size: 14px;}

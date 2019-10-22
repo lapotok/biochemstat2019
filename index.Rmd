@@ -1,14 +1,42 @@
 ---
-title: "Статистика в `R` для биохимиков"
+title: "Статистика в `R` для биохимиков - 2019"
 ---
-
-Версия курса 2019 г.
 
 *Альтшулер Е.П.*
 
-# Полезные ресурсы
+# Программа курса
 
-* Урок №1
-    * [Инструкция по установке R](lessons/00__R_install.html)
-* Урок №2
-* Урок №3
+| Урок | Название | Материалы | Домашнее задание |
+|------|----------|-----------|------------------|
+| 0 | Установка `R` | [Инструкция](lessons/00__R_install.html) |  ---  |
+| 1 | Введение в `R` | [Введение](lessons/01_Syntax_intro.html), [Нормальность](lessons/01_norm.html) | [Задание](lessons/01_hw.htmls) |
+| 2 |  --- |  --- |  --- |
+| 3 |  --- |  --- | --- |
+| 4 |  --- |  --- |  --- |
+| 5 |  --- |  --- |  --- |
+| 6 |  --- |  --- |  --- |
+| 7 |  --- |  --- |  --- |
+
+# Ресурсы
+
++ Курсы
+  + [Основы программирования на R (Stepik)](https://stepik.org/course/497/promo)
+  + [Анализ данных в R (Stepik)](https://stepik.org/course/129/promo)
+  + http://bdemeshev.github.io/r_cycle/
+  + [Statistics with R (Coursera)](https://www.coursera.org/specializations/statistics)
++ Книги
+  + Учебник по работе в `R` для экологов: [R-ecology](https://datacarpentry.org/R-ecology-lesson/index.html)
+  + [Pirate's Guide to R](https://bookdown.org/ndphillips/YaRrr/)
+  + [Cookbook for R](http://www.cookbook-r.com/)
+  + https://stat545.com/
+  + https://rafalab.github.io/dsbook/
++ Инструкции
+  + [R - веселый калькулятор](http://bdemeshev.github.io/r_cycle/cycle_files/08_fancy_calc.html) (очень полезное введение!)
+  + Визуализация: [DataViz](https://serialmentor.com/dataviz/)
+  + [STDHA portal](http://www.sthda.com/english/)
++ Современные тренды
+  + Справочник по использованию `R` на современном уровне: [R for Data Science (R4DS)](https://r4ds.had.co.nz/)
+  + Визуализация, моделирование, манипуляции с данными в `R` на современном уровне (если хочется делать все, как следует): [SocViz](http://socviz.co)
++ To be continued...
+    
+А здесь лежит [хорошая подборка ресурсов](https://github.com/bdemeshev/r_links) про R на русском (и не только) языке.

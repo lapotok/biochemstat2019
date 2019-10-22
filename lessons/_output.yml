@@ -4,7 +4,7 @@ html_document:
     toc_depth: 3
     toc_float: 
       toc_collapsed: false
-    number_sections: true
+    number_sections: false
     css: ../imports/style.css
     highlight: textmate
     theme: lumen

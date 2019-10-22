@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Установка R</title>
+
+<script src="libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="libs/bootstrap-3.3.5/css/lumen.min.css" rel="stylesheet" />
+<script src="libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="libs/navigation-1.1/tabsets.js"></script>
+<link href="libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="../imports/style.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Установка R</h1>
+<h4 class="date">2019.10.14</h4>
+
+</div>
+
+
+<div id="----rstudio" class="section level1">
+<h1><span class="header-section-number">1</span> Установка базового пакета и RStudio</h1>
+<ol style="list-style-type: decimal">
+<li>Установить <code>R-base</code> последней версии (<a href="https://cran.r-project.org/bin/windows/base/">Windows</a>, <a href="https://cran.r-project.org/bin/macosx/">MacOS</a>)</li>
+</ol>
+<blockquote>
+<p><em>Во избежание последующих проблем, советую ставить в папку <tt>“C:\R”</tt> (чтобы гарантированно в пути к файлам не было ни пробелов, ни русских букв). Остальные пункты установки - по умолчанию.</em></p>
+</blockquote>
+<ol start="2" style="list-style-type: decimal">
+<li>Установить <code>R-tools</code> последней версии (<a href="https://cran.r-project.org/bin/windows/Rtools/">Windows</a>, <a href="https://cran.r-project.org/bin/macosx/tools">MacOS (clang, gfortran)</a>)</li>
+</ol>
+<blockquote>
+<p><em>Во избежание последующих проблем, советую ставить в папку <tt>“C:\Rtools”</tt> (чтобы гарантированно в пути к файлам не было ни пробелов, ни русских букв). Остальные пункты установки - по умолчанию.</em> <em>Для Mac еще нужно поставить Xcode command line tools (от Apple)</em></p>
+</blockquote>
+<ol start="3" style="list-style-type: decimal">
+<li>[Очень желательно!] Установить <code>RStudio</code> последней версии для своей операционной системы (<a href="https://www.rstudio.com/products/rstudio/download/#download">Windows/MacOS</a>) &gt; <em>Во избежание последующих проблем, советую ставить в папку <tt>“C:\RStudio”</tt> (чтобы гарантированно в пути к файлам не было ни пробелов, ни русских букв). Остальные пункты установки - по умолчанию.</em></li>
+</ol>
+<p>В результате указанных действий у Вас должна оказаться установленной на компьютере статистическая среда <code>R</code> и удобный интерфейс к ней <code>RStudio</code>. Вообще говоря, установка <code>RStudio</code> не является обязательным условием (если компьютер очень тормозит - она может вносить свой вклад), но работа в ней значительно удобнее.</p>
+<p>Для того, чтобы установить необходимые пакеты (см. ниже), Вам потребуется запустить <code>RStudio</code> (или <code>R</code>) и далее вводить ниже указанные комманды в консоли.</p>
+<p><strong>PS.</strong> Здесь есть инструкции по <a href="https://rafalab.github.io/dsbook/installing-r-rstudio.html">установке</a> <code>R/RStudio</code> и по <a href="https://rafalab.github.io/dsbook/getting-started.html">первым шагам</a> со скриншотами. Более подробные инструкции можно найти <a href="https://ismayc.github.io/rbasics-book">здесь</a>. На YouTube также есть множество роликов на эту тему.</p>
+<div id="-" class="section level2">
+<h2><span class="header-section-number">1.1</span> Возможные проблемы</h2>
+<ol style="list-style-type: decimal">
+<li>Windows: Русские имена в пути установки, решение - см. рекоммендации выше.</li>
+<li>Mac/Linux: Проблемы с отображением русских букв</li>
+</ol>
+<pre class="bash"><code>echo &quot;export LANG=en_US.UTF-8&quot; &gt;&gt; ~/.bashrc &amp;&amp; echo &quot;export LC_ALL=en_US.UTF-8&quot; &gt;&gt; ~/.bashrc &amp;&amp; source ~/.bashrc</code></pre>
+<p>Еще, если жалуется на отсутствие gfortran, решение для MacOS (если R-tools не поможет)</p>
+<pre class="bash"><code>/usr/bin/ruby -e &quot;$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)&quot;
+brew install gcc # (gcc49, если старый mac)</code></pre>
+<p>Или тут еще есть ряд советов (<a href="https://thecoatlessprofessor.com/programming/" class="uri">https://thecoatlessprofessor.com/programming/</a>)</p>
+</div>
+</div>
+<div id="--" class="section level1">
+<h1><span class="header-section-number">2</span> Установка необходимых пакетов</h1>
+<p>Есть два основных источника пакетов в <code>R</code>:</p>
+<ul>
+<li><p><code>CRAN</code> - это основная коллекция пакетов, для установки которых нужно выполнить комманду</p>
+<pre class="r"><code>install.package(&#39;package_name&#39;)</code></pre></li>
+<li><p><code>Github</code> - это хранилище дополнительных пакетов от различных разработчиков (там же хранятся последние версии, еще не вошедшие в CRAN). Чтобы установить пакеты оттуда нужно выполнить комманду</p>
+<pre class="r"><code>devtools::install_github(&#39;author/package_name&#39;)</code></pre></li>
+</ul>
+<p>Для упрощения процедуры установки пакетов, а также для возможности проверки успешности установки я написал скрипт, который все делает и печатает результат. Этот код надо скопировать и вставить в консоль <code>R/RStudio</code>.</p>
+<pre class="r"><code>source(&#39;http://tiny.cc/lpt_rpkgs&#39;)
+build_list()
+print_pkg_list()
+install_pkgs()
+installation_report()</code></pre>
+<style>.bg {background-color: #f5f5f5;}</style>
+<blockquote>
+<p>Если Вы хотите самостоятельно выполнить установку пакета, то Вам необходимо выполнить данные комманды</p>
+<pre class="bg"><code>install.packages( c(&quot;Amelia&quot;, &quot;boot&quot;, &quot;broom&quot;, &quot;car&quot;, &quot;caret&quot;, &quot;corrplot&quot;, &quot;cowplot&quot;, &quot;curl&quot;, &quot;devtools&quot;, &quot;esquisse&quot;, &quot;furrr&quot;, &quot;gdtools&quot;, &quot;GGally&quot;, &quot;ggforce&quot;, &quot;ggplot2&quot;, &quot;ggpubr&quot;, &quot;ggrepel&quot;, &quot;ggridges&quot;, &quot;ggstance&quot;, &quot;ggthemes&quot;, &quot;glue&quot;, &quot;gridExtra&quot;, &quot;gtools&quot;, &quot;hexbin&quot;, &quot;httr&quot;, &quot;investr&quot;, &quot;jsonlite&quot;, &quot;kableExtra&quot;, &quot;knitr&quot;, &quot;lme4&quot;, &quot;lmtest&quot;, &quot;lubridate&quot;, &quot;magrittr&quot;, &quot;mice&quot;, &quot;missForest&quot;, &quot;modelr&quot;, &quot;mvtnorm&quot;, &quot;naniar&quot;, &quot;officer&quot;, &quot;openxlsx&quot;, &quot;plotly&quot;, &quot;prettydoc&quot;, &quot;profvis&quot;, &quot;purrr&quot;, &quot;randomForest&quot;, &quot;readr&quot;, &quot;readxl&quot;, &quot;repr&quot;, &quot;reprex&quot;, &quot;reshape&quot;, &quot;reshape2&quot;, &quot;rio&quot;, &quot;rmarkdown&quot;, &quot;rvest&quot;, &quot;rvg&quot;, &quot;sandwich&quot;, &quot;scales&quot;, &quot;selectr&quot;, &quot;shiny&quot;, &quot;sinaplot&quot;, &quot;sjPlot&quot;, &quot;tidyverse&quot;, &quot;multcomp&quot;, &quot;drc&quot;, &quot;RColorBrewer&quot;, &quot;nlme&quot;, &quot;ipred&quot;, &quot;effsize&quot;, &quot;dunn.test&quot;, &quot;remedy&quot;, &quot;ggalt&quot;, &quot;ggExtra&quot;, &quot;gsheet&quot;, &quot;jtools&quot;), dependencies = TRUE, type = &quot;binary&quot; )
+
+devtools::install_github( c(&quot;thomasp85/patchwork&quot;, &quot;r-lib/crayon&quot;, &quot;kassambara/rstatix&quot;), upgrade = &quot;never&quot;, dependencies = TRUE )</code></pre>
+</blockquote>
+<div id="---mac" class="section level2">
+<h2><span class="header-section-number">2.1</span> Установка пакетов на Mac</h2>
+<p>Пакеты для Windows устанавливаются в уже скомпилированном виде, поэтому это происходит быстро, а вот пакеты для Mac устанавливаются из “исходников”. Поэтому может быть удобнее для этого использовать установщик <code>conda</code>.</p>
+<ol style="list-style-type: decimal">
+<li>Установить <code>conda</code> (см. <a href="https://docs.conda.io/projects/conda/en/latest/user-guide/install/">инструкцию</a>)</li>
+<li>Настроить каналы с пакетами</li>
+</ol>
+<pre class="sh"><code>conda config --env --append channels r
+conda config --env --append channels conda-forge</code></pre>
+<ol start="2" style="list-style-type: decimal">
+<li>Установить необходимые пакеты с помощью команды</li>
+</ol>
+<pre><code>conda install r-amelia r-caret r-corrplot r-devtools r-esquisse r-furrr r-ggally r-ggforce r-ggpubr r-ggridges r-ggstance r-investr r-kableextra r-lmtest r-mice r-missforest r-naniar r-prettydoc r-profvis r-repr r-rvg r-sinaplot r-sjplot r-tidyverse r-drc r-caret r-ipred r-effsize r-dunn.test r-remedy r-ggalt r-ggextra r-gsheet r-jtools</code></pre>
+</div>
+</div>
+<div id="online-" class="section level1">
+<h1><span class="header-section-number">3</span> Online инструменты</h1>
+<p>Замечательной особенностью <code>R</code> является то, что, в общем-то, его не надо и устанавливать. Есть несколько способов его использовать online (однако на наших занятиях на это рассчитывать не стоит, ибо в комнате не ловит WiFi).</p>
+<ul>
+<li><a href="https://rstudio.cloud/">Rstudio.cloud</a>: полноценный RStudio в Вашем браузере</li>
+<li>RRdio: <a href="https://rdrr.io/snippets/">консоль</a> или <a href="https://rnotebook.io/">дневник</a>, куда можно вводить комманды</li>
+</ul>
+</div>
+<div id="----" class="section level1">
+<h1><span class="header-section-number">4</span> Проверка того, что все заработало</h1>
+<pre class="r"><code>1 + 1</code></pre>
+<pre><code>[1] 2</code></pre>
+<pre class="r"><code>2^4</code></pre>
+<pre><code>[1] 16</code></pre>
+<pre class="r"><code>sqrt(log(abs(-2)))</code></pre>
+<pre><code>[1] 0.8325546</code></pre>
+<pre class="r"><code>library(tidyverse)
+-2 %&gt;% abs() %&gt;% log() %&gt;% sqrt()</code></pre>
+<pre><code>[1] 0.8325546</code></pre>
+<pre class="r"><code>plot(1:25, pch=1:25, col=1:25)</code></pre>
+<p><img src="00__R_install_files/figure-html/unnamed-chunk-3-1.svg" width="384" style="display: block; margin: auto;" /></p>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

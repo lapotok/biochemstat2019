@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Домашнее задание №1</title>
+
+<script src="libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="libs/bootstrap-3.3.5/css/lumen.min.css" rel="stylesheet" />
+<script src="libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="libs/navigation-1.1/tabsets.js"></script>
+<link href="libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="../imports/style.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Домашнее задание №1</h1>
+
+</div>
+
+
+<p>Для начала надо загрузить необходимые библиотеки.</p>
+<pre class="r"><code>suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(magrittr))
+library(ggpubr)</code></pre>
+<p>Для всех заданий нужно предоставить код решений + какие-то комментарии (если в задании был задан какой-то вопрос - то ответ на него). Свой ответ вы можете составить в любом удобном Вам виде (например, в виде документа MS Word). Однако, рекоммендую Вам ознакомиться с R markdown и отправить мне решение в формате Rmd.</p>
+<div id="простые-задания" class="section level1">
+<h1>Простые задания</h1>
+<ol style="list-style-type: decimal">
+<li><p>Создать выборку случайных чисел (функция <code>rnorm</code>) длиной <span class="math inline">\(10^5\)</span>, распределенных нормально с <span class="math inline">\(\mu=10\)</span> (среднее) и <span class="math inline">\(\sigma=3\)</span> (стандартное отклонение). Сохраните полученный вектор в переменную <code>x</code>.</p></li>
+<li><p>Построить гистограмму с помощью функции <code>hist</code> (или <code>gghistogram</code>), посмотреть на форму распределения. Похоже на нормальное? Попробуйте изменить число столбцов.</p></li>
+<li><p>Попробуйте наложить график функции плотности вероятности. Погуглите, как это сделать. Потребуется наложить два графика друг на друга и сделать так, чтобы высота столбцов гистограммы была в единицах плотности вероятности, а не как по умолчанию (кстати, что там по умолчанию?).</p></li>
+<li><p>Посторойте QQ-plot данной выборки и выполните проверку на нормальность с помощью <code>shapiro.test</code>. Нормально ли распределение?</p></li>
+<li><p>Сохраните в переменную <code>x_start20</code> первые 20 элементов из вектора <code>x</code>, а последние 20 элементов в переменную <code>x_end20</code>.</p></li>
+<li><p>Посчитайте среднее значение для `x_start20.</p></li>
+<li><p>Посчитайте дисперсию для элементов с номерами (индексами) <span class="math inline">\([2, 5, 10, 30, 50 , 100, 200, 300, 500]\)</span>.</p></li>
+</ol>
+</div>
+<div id="более-сложные-задания" class="section level1">
+<h1>Более сложные задания</h1>
+<ol style="list-style-type: decimal">
+<li><p>Посчитайте, сколько элементов в Вашем векторе случайных чисел <span class="math inline">\(&lt; 8\)</span> (для этого вам нужно сравнить все элементы с 8, а затем суммировать значения в полученном векторе результатов сравнения; т.к. <code>TRUE = 1</code>, а <code>FALSE = 0</code>, то <code>sum(my_logical_vector)</code> будет равен сумме элементов со значением <code>TRUE</code>).</p></li>
+<li><p>Посчитайте долю значений, для которых <span class="math inline">\(&lt; 8\)</span> (отношение числа из п. 4 к общему числу). А какое теоретическая доля наблюдений (площадь под кривой функции плотности вероятности) должна быть меньше 8 для данного распределения? (используйте функцию <code>pnorm</code>)</p></li>
+<li><p>Найдите такое число <span class="math inline">\(x_{0.8}\)</span> (квантиль уровня 0.8), что <span class="math inline">\(\geq80\%\)</span> значений выборки <code>x_start20</code> меньше этого числа (то же в виде формулы - <span class="math inline">\(x_{0.8}: P(X \leq x_{0.8}) \geq 0.8\)</span>). Для этого вы можете расчитать для каждого значения <span class="math inline">\(x_i\)</span> долю значений, которые меньше <span class="math inline">\(x_i\)</span> и выбрать то, для которого доля <span class="math inline">\(\geq0.8\)</span> (это будет эмпирическая кумулятивная плотность, см. синюю линию графика; синими полосками снизу показаны наблюдения из выборки).</p>
+<p><img src="01_hw_files/figure-html/unnamed-chunk-2-1.svg" width="480" /></p>
+<p>А как это сделать? К счастью, есть функция <code>quantile</code>. Она как раз это и делает. А для промежуточных значений (которые нам не встретились) она считает приближенное значение путем интерполяции (см. серую линию).</p>
+<p>Посчитайте теперь теоретический квантиль уровня для данного распределения 0.8 (можно использовать функцию <code>qnorm</code>).</p></li>
+<li><p>Иногда при статистической обработке может потребоваться трансформировать Вашу переменную, чтобы ее распределение было ближе к нормальному. Методов трансформации может быть много, например логарифмирование, извлечение квадратного корня и т.п. (они все относятся к более общей группе Box-Cox transformations).</p>
+<p>Предположим, что вы считаете ворон, увиденных Вами окне за каждый час. И вот какие у вас получаются результаты через год.</p>
+<pre class="r"><code>set.seed(1)
+counts = rpois(1 * 24 * 30 * 365, 10)</code></pre>
+<p>С помощью функции <code>table</code> Вы можете посмотреть на количество наблюдений, когда Вы видели 0, 1, 2, … ворон.</p>
+<p>А теперь</p>
+<ul>
+<li><p>извлеките квадратный корень из значений, посмотрите на гистограмму;</p></li>
+<li><p>посчитайте логарифм значений, табулируйте полученные значения, что значит <code>-Inf</code>?</p></li>
+</ul></li>
+<li><p>Нам надо будет избавиться от нулей в данных, чтобы провести логаримфирование. Например, можно перед логарифмированием добавить 1 ко всем значением. Сделайте это.</p></li>
+<li><p>Кроме того, можно все нули заменить на некое маленькое число. Например, на самое маленькое ненулевое значение <span class="math inline">\(min(\text{count})_{&gt;0}\)</span>, разделенное на 2. Вычислите это число.</p></li>
+<li><p>Теперь те выборочные значения, которые равны нулю заменим на полученное число. Для этого надо будет взять переменную, “указать” на нулевые элементы с помощью конструкции сравнения и присвоить полученной конструкции вычисленное “маленькое число”.</p></li>
+<li><p>Мы уже усвоили генерацию случайных чисел с нормальным распределением с помощью функции <code>rnorm</code>. Однако этим дело не ограничивается.</p>
+<ul>
+<li><p>Создайте вектор чисел <code>numbers_1_20</code> от 1 до 20 с шагом 0.5 (можно использовать функцию <code>seq</code>).</p></li>
+<li><p>Теперь можно использовать функцию <code>sample</code>, чтобы расположить эти числа в случайном порядке.</p></li>
+<li><p>Давайте теперь смоделируем рандомизацию 30 пациентов по 3 типам лечения. Для этого создадим список из значений 1, 2, 3, каждое из которых повторяется 10 раз (используйте функцию <code>rep</code>). Теперь вы можете перемешать эти значения (см. выше). Номер элемента вектора - это номер пациента, а значение - это тип лечения. Чтобы было нагляднее, вы можете присвоить элементам вектора имена (функция <code>names</code>), которые будут совпадать с номером пациента (вы можете сгенерировать этот список имен как 1:30, или с помощью функции <code>seq</code>).</p></li>
+<li><p>С помощью той же функции создайте вектор чисел от 1 до 6 длиной 20 (соответственно, они будут повторяться - это виртуальный аналог кидания кубика 20 раз).</p></li>
+</ul></li>
+<li><p>Мы уже многократно пользовались многочисленными функциями в <code>R</code>, а теперь создадим свою.</p>
+<p>Например, вот формула для выборочной дисперсии</p>
+<p><span class="math display">\[
+Var(X) = \frac{\sum_i(x_i-\overline{x})^2}{n-1}
+\]</span></p>
+<p>Функция для расчета дисперсии будет выглядеть так:</p>
+<pre class="r"><code># долго и подробно
+my_var1 = function(x) {
+    mean_x = mean(x)
+    residuals = x - mean(x)
+    squared_residuals = residuals^2
+    sum_squared_residuals = sum( squared_residuals )
+    n = length(x)
+    df = n-1
+    result = sum_squared_residuals/df
+    return(result)
+}
+# коротко и быстро
+my_var2 = function(x) sum( (x-mean(x))^2 ) / (length(x)-1) 
+
+# сравним нашу функцию с встроенной в R
+set.seed(1)
+x = rnorm(1e5, 10, 3)
+my_var1(x)</code></pre>
+<pre><code>## [1] 9.06353</code></pre>
+<pre class="r"><code>var(x)</code></pre>
+<pre><code>## [1] 9.06353</code></pre>
+<p>Теперь по образцу напишите функцию для расчета CV (коэффициента вариации), вот его формула</p>
+<p><span class="math display">\[
+CV(X) = \frac{\text{Var}(x)}{\overline{x}} \cdot 100\%
+\]</span></p></li>
+</ol>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
