@@ -20,9 +20,6 @@
 <script src="libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="libs/bootstrap-3.3.5/shim/respond.min.js"></script>
-<script src="libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
-<link href="libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
-<script src="libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="libs/navigation-1.1/tabsets.js"></script>
 <link href="libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
 <script src="libs/highlightjs-9.12.0/highlight.js"></script>
@@ -165,63 +162,6 @@ summary {
 
 
 
-<style type="text/css">
-
-#TOC {
-  margin: 25px 0px 20px 0px;
-}
-@media (max-width: 768px) {
-#TOC {
-  position: relative;
-  width: 100%;
-}
-}
-
-
-.toc-content {
-  padding-left: 30px;
-  padding-right: 40px;
-}
-
-div.main-container {
-  max-width: 1200px;
-}
-
-div.tocify {
-  width: 20%;
-  max-width: 260px;
-  max-height: 85%;
-}
-
-@media (min-width: 768px) and (max-width: 991px) {
-  div.tocify {
-    width: 25%;
-  }
-}
-
-@media (max-width: 767px) {
-  div.tocify {
-    width: 100%;
-    max-width: none;
-  }
-}
-
-.tocify ul, .tocify li {
-  line-height: 20px;
-}
-
-.tocify-subheader .tocify-item {
-  font-size: 0.90em;
-}
-
-.tocify .list-group-item {
-  border-radius: 0px;
-}
-
-
-</style>
-
-
 
 </head>
 
@@ -231,16 +171,6 @@ div.tocify {
 <div class="container-fluid main-container">
 
 
-<!-- setup 3col/9col grid for toc_float and main content  -->
-<div class="row-fluid">
-<div class="col-xs-12 col-sm-4 col-md-3">
-<div id="TOC" class="tocify">
-</div>
-</div>
-
-<div class="toc-content col-xs-12 col-sm-8 col-md-9">
-
-
 
 
 <div class="fluid-row" id="header">
@@ -248,66 +178,140 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Урок 1 - Нормальное распределение</h1>
-<h4 class="date">2019.10.20</h4>
+<h4 class="date">2019.10.22</h4>
 
 </div>
 
 
-<pre class="r"><code>library(tidyverse) # много всего полезного (пайплайны и т.п.)
-library(magrittr) # еще пайплайны
+<pre class="r"><code>suppressPackageStartupMessages(library(tidyverse)) # много всего полезного (пайплайны и т.п.)
+suppressPackageStartupMessages(library(magrittr)) # еще пайплайны
 library(ggpubr) # графики</code></pre>
+<p>Расмотрим примеры использования функции <code>rnorm</code> для генерации нормально распределенных случайных чисел.</p>
 <pre class="r"><code># rnorm - генерация рандомных ([r]andom) значений
 rnorm(5)</code></pre>
-<pre><code>## [1]  0.2512300 -0.3108289  0.6793987  0.5498306 -1.4672843</code></pre>
+<pre><code>## [1] -0.9724969  0.1319870  0.3728185 -0.1970624  0.8471452</code></pre>
 <pre class="r"><code>rnorm(60, mean=30, sd=10)</code></pre>
-<pre><code>##  [1] 10.300016 27.841174 42.777354 32.761242 54.683662 24.065130  3.494654
-##  [8] 30.971801 31.328439 35.540052 17.592068 26.525592 39.505780 38.387440
-## [15] 35.672737 30.592195 20.318124 27.249256 16.574389 15.905292 42.962442
-## [22] 43.087865 27.670910 33.426698 36.828565 37.869834 21.164575 24.816267
-## [29] 42.789099 47.946804 22.787215 48.323028 47.284781 29.956678 26.190894
-## [36] 20.198985 32.290915 27.834545 42.406400 20.174384 21.484162 49.730286
-## [43] 21.833691 18.331821 10.024324 20.801033 35.828058 32.749831 31.121326
-## [50] 19.525165 21.100051 16.270958 29.278848 33.435337 16.362661 20.723689
-## [57] 40.554159 43.072512 23.708871 32.912833</code></pre>
+<pre><code>##  [1] 31.373625 44.581558 45.366807 24.124308 37.214021 19.687192 23.060486
+##  [8] 39.006377 54.961924 22.768935 18.701417 30.262776 31.591166 28.199860
+## [15] 36.283682 32.195830 43.110714 49.103880 46.752816 32.373764 30.454838
+## [22]  9.386792 35.446839 34.888300 30.719274 34.116260 33.400703 24.458843
+## [29] 41.250185 25.839549 18.030714 28.826934 14.659390 27.159172 27.507007
+## [36] 50.301175 16.342536 49.706815 32.830659 24.340606 11.152961 36.844372
+## [43] 16.483309 22.765762 26.444655 37.915516 48.233150 36.110891 23.370724
+## [50] 23.464873 24.641342 52.326074 33.196887 32.809535 22.203069 24.345806
+## [57] 26.863757 24.154037 41.090770 37.892993</code></pre>
 <pre class="r"><code>my_var = 7
 rnorm(10, mean=-3, sd=sqrt(my_var))</code></pre>
-<pre><code>##  [1] -4.6216797 -5.9197296 -0.2840198 -2.2294867 -4.8357522 -0.4429413
-##  [7] -4.0919700 -4.1166102 -1.4764916 -5.8939647</code></pre>
+<pre><code>##  [1] -2.9032378 -3.2751739 -2.3155137 -5.9822984  0.5687852  0.4972377
+##  [7] -5.3359202 -2.4918149 -0.4205350 -3.4068553</code></pre>
 <pre class="r"><code>1e6 == 1000000</code></pre>
 <pre><code>## [1] TRUE</code></pre>
-<pre class="r"><code>rnorm(1e6) %&gt;% hist(main = &#39;Default settings (frequency = counts)&#39;)</code></pre>
+<pre class="r"><code>rnorm(1e6) %&gt;% hist()</code></pre>
 <p><img src="01__norm_files/figure-html/rnorm-1.svg" width="480" /></p>
-<pre class="r"><code>rnorm(1e6) %&gt;% hist(freq = T, main = &#39;Default settings (frequency = counts)&#39;)</code></pre>
+<pre class="r"><code>rnorm(1e6) %&gt;% hist(50, main = &#39;Увеличим число столбиков&#39;)</code></pre>
 <p><img src="01__norm_files/figure-html/rnorm-2.svg" width="480" /></p>
-<pre class="r"><code>rnorm(1e6) %&gt;% hist(5, main=&#39;Histogram: counts, 5 bins&#39;)</code></pre>
-<p><img src="01__norm_files/figure-html/rnorm-3.svg" width="480" /></p>
-<pre class="r"><code>rnorm(1e6) %&gt;% hist(5, freq = F, main=&#39;Histogram: density, 5 bins&#39;)</code></pre>
-<p><img src="01__norm_files/figure-html/rnorm-4.svg" width="480" /></p>
-<p><img src="01__norm_files/figure-html/dnorm-1.svg" width="672" /></p>
-<pre class="r"><code>rnorm(1e6, mean=10, sd=2) %&gt;% hist(15, freq = F, main=&#39;Histogram: density, 50 bins&#39;)</code></pre>
-<p><img src="01__norm_files/figure-html/dnorm2-1.svg" width="672" /></p>
-<pre class="r"><code>rnorm(1e6) %&gt;% hist(1000, freq = F, border=NA, col=&quot;gray&quot;, main=&quot;(Probability) density&quot;)
+<p>Высота столбиков гистограммы в данном случае означает количество наблюдений (точек), попавших в заданных диапазон (числа по оси х - границы этих диапазонов). Аналогично мы сами могли бы разбить весь диапазон значений на промежутки и посчитать количество значений в каждом.</p>
+<pre class="r"><code>set.seed(2)
+x = rnorm(60, mean=30, sd=10)
+x</code></pre>
+<pre><code>##  [1] 21.030855 31.848492 45.878453 18.696243 29.197482 31.324203 37.079547
+##  [8] 27.603020 49.844739 28.612130 34.176508 39.817528 26.073046 19.603310
+## [15] 47.822290  6.889309 38.786046 30.358067 40.128287 34.322652 50.908192
+## [22] 18.000742 45.896382 49.546516 30.049378  5.482936 34.772373 24.034418
+## [29] 37.922033 32.896367 37.389386 33.189604 40.761644 27.158423 22.233247
+## [36] 24.043395 12.740202 20.974155 24.409381 27.534874 26.164138 10.408968
+## [43] 21.582949 49.035475 36.224939 49.909204 26.945163 29.091558 28.158385
+## [50] 18.012322 21.617129 50.663014 24.377529 42.757155 19.524274 10.341218
+## [57] 26.770289 39.358625 41.392298 46.716188</code></pre>
+<pre class="r"><code># функция cut превращает численные значения в категории, 
+# соответствующие диапазону, в который попало значение;
+# мы можем задать границы, либо количество диапазонов
+x_caterogies = cut(x, breaks = (0:6)*10)
+x_caterogies</code></pre>
+<pre><code>##  [1] (20,30] (30,40] (40,50] (10,20] (20,30] (30,40] (30,40] (20,30]
+##  [9] (40,50] (20,30] (30,40] (30,40] (20,30] (10,20] (40,50] (0,10] 
+## [17] (30,40] (30,40] (40,50] (30,40] (50,60] (10,20] (40,50] (40,50]
+## [25] (30,40] (0,10]  (30,40] (20,30] (30,40] (30,40] (30,40] (30,40]
+## [33] (40,50] (20,30] (20,30] (20,30] (10,20] (20,30] (20,30] (20,30]
+## [41] (20,30] (10,20] (20,30] (40,50] (30,40] (40,50] (20,30] (20,30]
+## [49] (20,30] (10,20] (20,30] (50,60] (20,30] (40,50] (10,20] (10,20]
+## [57] (20,30] (30,40] (40,50] (40,50]
+## Levels: (0,10] (10,20] (20,30] (30,40] (40,50] (50,60]</code></pre>
+<pre class="r"><code># теперь считаем количество в каждом диапазоне
+x_caterogies %&gt;% table()</code></pre>
+<pre><code>## .
+##  (0,10] (10,20] (20,30] (30,40] (40,50] (50,60] 
+##       2       8      20      16      12       2</code></pre>
+<pre class="r"><code># настраиваем график по своему желанию
+x %&gt;% 
+  hist(breaks = (0:6)*10, 
+       main   = &quot;Задаем границы сами&quot;,
+       xlab   = &quot;Шкала значений признака&quot;,
+       ylab   = &quot;Число наблюдений в каждом диапазоне&quot;, 
+       col    = &quot;lightgray&quot;,
+       border = &quot;gray&quot;,
+       labels = T,
+       ylim   = c(0,21)
+  )</code></pre>
+<p><img src="01__norm_files/figure-html/cut-1.svg" width="480" /></p>
+<p>Кроме того, мы можем по оси Y отложить не абсолютные (конкретные числа), а относительные представленности разных значений. Площадь каждого столбца равна доле значений из данного диапазона (эмпирическая вероятность встреть такое значение в выборке). Сумма площадей (как и вероятностей) равна 1.</p>
+<pre class="r"><code># числа наблюдений в каждой категории (см. выше)
+counts = x_caterogies %&gt;% table()
+counts</code></pre>
+<pre><code>## .
+##  (0,10] (10,20] (20,30] (30,40] (40,50] (50,60] 
+##       2       8      20      16      12       2</code></pre>
+<pre class="r"><code># числа, пересчитанные в доли (площади столбцов); в сумме == 1
+counts / sum(counts) </code></pre>
+<pre><code>## .
+##     (0,10]    (10,20]    (20,30]    (30,40]    (40,50]    (50,60] 
+## 0.03333333 0.13333333 0.33333333 0.26666667 0.20000000 0.03333333</code></pre>
+<pre class="r"><code># доли, деленные на ширину диапазона (= высота столбцов - плотность вероятности)
+counts / sum(counts) / 10</code></pre>
+<pre><code>## .
+##      (0,10]     (10,20]     (20,30]     (30,40]     (40,50]     (50,60] 
+## 0.003333333 0.013333333 0.033333333 0.026666667 0.020000000 0.003333333</code></pre>
+<pre class="r"><code>x %&gt;% 
+  hist(breaks = (0:6)*10,
+       col    = &quot;lightgray&quot;,
+       border = &quot;gray&quot;,
+       freq   = F, 
+       main   = &quot;&quot;, 
+       ylab   = &quot;Плотность вероятности&quot;, 
+       xlab   = &quot;Шкала значений признака&quot;)</code></pre>
+<p><img src="01__norm_files/figure-html/dens-1.svg" width="480" /></p>
+<p>Теперь по мере увеличения количества столбиков мы будем приближаться к теоретической кривой распределения.</p>
+<pre class="r"><code>x = rnorm(1e6, mean=10, sd=3)
+par(mfrow=c(1,3))
+x %&gt;% hist(15, freq = F, main=&#39;15 столбиков&#39;)
+x %&gt;% hist(50, freq = F, main=&#39;50 столбиков&#39;)
+x %&gt;% hist(100, freq = F, border=NA, col=&quot;gray&quot;, main=&quot;100 столбиков + кривая&quot;)
 
 # dnorm - плотность вероятности ([d]ensity)/правдоподобие/likelihood
-curve(dnorm(x), from=-4, to=4, add=T, lwd=2)
-
-# берем значения признака Х и смотрим правдоподобия
-x_vals = c(-3, -2, -1, 0, 1, 2, 3)
-x_vals %&gt;% abline(v = ., col = &quot;red&quot;, lty=&#39;dashed&#39;)
-x_vals %&gt;% dnorm() %&gt;% round(3)</code></pre>
-<pre><code>## [1] 0.004 0.054 0.242 0.399 0.242 0.054 0.004</code></pre>
-<pre class="r"><code>points(x = x_vals, 
-       y = x_vals %&gt;% dnorm(), 
-       col=&#39;red&#39;, pch=19)</code></pre>
-<p><img src="01__norm_files/figure-html/dnorm2-2.svg" width="672" /></p>
+curve(dnorm(x, 10, 3), from=-6, to=25, add=T, lwd=2)</code></pre>
+<p><img src="01__norm_files/figure-html/dnorm2-1.svg" width="1056" /></p>
+<p>Таким образом, функция плотности вероятности - это относительная мера встречаемости разных значений диапазона. Чтобы получить приблизительное значение вероятности, надо умножить плотность вероятности на ширину диапазона (точное значение - площадь под кривой плотности вероятности в данном диапазоне). Следовательно, вероятность конкретного значения - 0, т.к. ширина диапазона 0.</p>
+<p>Функция <code>dnorm</code> позволяет находить плотность вероятности для каждого значения <code>x</code>.</p>
+<pre class="r"><code># dnorm - плотность вероятности ([d]ensity)/правдоподобие/likelihood
+curve(dnorm(x), from=-4, to=4)
+abline(v = -1, col = &quot;red&quot;, lty = &quot;dashed&quot;)
+abline(v = -2, col = &quot;red&quot;, lty = &quot;dotted&quot;)
+abline(v = 0, col = &quot;red&quot;, lty = &quot;dotted&quot;)</code></pre>
+<p><img src="01__norm_files/figure-html/dnorm3-1.svg" width="480" /></p>
+<pre class="r"><code># относительная &quot;встречаемость&quot; значений в районе -1 (правдоподобие значения -1)
+dnorm(-1)</code></pre>
+<pre><code>## [1] 0.2419707</code></pre>
+<pre class="r"><code># приблизительная вероятность
+dnorm(-1) * (0 - (-2))</code></pre>
+<pre><code>## [1] 0.4839414</code></pre>
 <pre class="r"><code># pnorm - вероятность ([p]robability) того, что выборочное значение будет меньше данного значения Х
-x_vals = c(-2, 0, 2)
-pnorm(x_vals)</code></pre>
-<pre><code>## [1] 0.02275013 0.50000000 0.97724987</code></pre>
-<pre class="r"><code>pnorm(0) - pnorm(-2)</code></pre>
+# вероятность, что значения в выборке будут в диапазоне [-2, 0]
+pnorm(0) - pnorm(-2)</code></pre>
 <pre><code>## [1] 0.4772499</code></pre>
-<p><img src="01__norm_files/figure-html/pnorm-1.svg" width="672" /></p>
-<pre class="r"><code># qnorm - квантиль ([q]uantile), т.е. такое значение Х, что выборочные значения окажутся меньше его с вероятностью P
+<p>Т.е. вероятность, что значения в корридоре [-2, 0] есть разность между вероятностью, что значения меньше 0, и вероятностью, что значения меньше -2.</p>
+<p><img src="01__norm_files/figure-html/pnorm-1.svg" width="480" /></p>
+<p>Еще одна функция <code>qnorm</code> позволяет определить значения (квантили), которое разбивает ось значений на определенные отрезки. Квантиль - такое значение Х, что выборочные значения окажутся меньше его с вероятностью P.</p>
+<pre class="r"><code># qnorm - квантиль ([q]uantile)
 # Q: p( x &lt; Q ) = P
 P = c(0.25, 0.5, 0.75) # (1:n)/(n+1) - набор из n вероятностей, делящих [0, 1] на равные промежутки
 n = 3; (1:n)/(n+1)</code></pre>
@@ -317,66 +321,56 @@ n = 3; (1:n)/(n+1)</code></pre>
 <pre class="r"><code>qnorm((1:n)/(n+1))</code></pre>
 <pre><code>## [1] -1.2815516 -0.8416212 -0.5244005 -0.2533471  0.0000000  0.2533471
 ## [7]  0.5244005  0.8416212  1.2815516</code></pre>
-<pre class="r"><code># quantiles? квантиль - значение признака, такое что...
-curve(dnorm(x), from=-4, to=4, lwd=2, main = &#39;qnorm( 0.25 )&#39;, xaxt=&#39;none&#39;)
-axis(1, at = c(-4 , -0.67, 4) , labels = c(expression(-infinity) , -0.67, expression(infinity) ))
-qnorm( 0.25 ) %&gt;% abline(v = ., col = &quot;red&quot;, lty=&#39;dashed&#39;)
-polygon(c(seq(-4, -0.67, l=100), -0.67, -4),
-  c(dnorm(seq(-4, -0.67, l=100)), 0, 0), col = scales::alpha(&#39;red&#39;, .2), border=NA)</code></pre>
+<p>Для проверки на нормальность можно</p>
 <ul>
-<li>тесты на нормальность и интерпретация гистограмм и QQplots</li>
-</ul>
-<pre class="r"><code>library(tidyverse)
+<li><p>смотреть на гистограмму</p>
+<pre class="r"><code>set.seed(1)
 n = 20
-qe = log(rnorm(n, exp(5), exp(2))) %&gt;% scale() %&gt;% as.numeric()
-qt = qnorm((1:n)/(n+1))
-plot(qt, sort(qe), ylim=c(-3,3), type=&#39;n&#39;)
+qe = log(rnorm(n, exp(5), exp(2))) %&gt;% scale() %&gt;% as.numeric() # некое распределение, которое будем анализировать
+qe %&gt;% hist()</code></pre>
+<img src="01__norm_files/figure-html/unnamed-chunk-2-1.svg" width="480" /></li>
+<li><p>смотреть QQ-plot</p>
+<pre class="r"><code>qqnorm(qe)
+qqline(qe)</code></pre>
+<p><img src="01__norm_files/figure-html/unnamed-chunk-3-1.svg" width="480" /> Однако, что значит не существенны? Надо посмотреть, как себя ведут реальные нормальные распределения и построить разбросы. Если точки неизвестного распределения существенно не отклоняются от точек реальных нормальных распределений, то отклонения от нормальности не существенны.</p>
+<pre class="r"><code>qt = qnorm((1:n) / (n + 1))
+plot(qt, sort(qe), ylim = c(-3, 3), type = &#39;n&#39;)
 N = 1000
-tl = matrix(nrow=N, ncol=n)
+tl = matrix(nrow = N, ncol = n)
 for (i in 1:N) {
-  tl[i,] = sort(rnorm(n))
-  if (i %% 20 == 0) points(qt, tl[i,], pch=19, col=scales::alpha(&#39;black&#39;, .1))
+tl[i, ] = sort(rnorm(n))
+if (i %% 20 == 0)
+  points(qt, tl[i, ], pch = 19, col = scales::alpha(&#39;black&#39;, .1))
 }
-ci = apply(tl, 2, function(x) quantile(x, prob = c(0.05, 0.975)))
-arrows(qt, ci[1,], qt, ci[2,], length=0.05, angle=90, code=3)
-points(qt, sort(rnorm(20)), pch=19)
-points(qt, sort(qe), col=&#39;red&#39;, pch=19)
-text(qt+0.07, sort(qe)+0.2, 1:20, col=&#39;red&#39;, cex=.8)
-#ggpubr::ggqqplot(qe)</code></pre>
-<p>что надо, чтобы проверить ошибки теста Shapiro на разного размера выборках</p>
-<pre class="r"><code>x = rnorm(20, mean = 5, sd = .22) # генерим случайную выборку из 20 элементов
-
-# а как сгенерить выборку из 30 элементов? И с дисперсией 9? (какое тогда стандартное отклонение)
-
-x # смотрим, что получилось
-x %&gt;% hist() # гистограмма
-shapiro.test(x) # результаты теста (распечатка)
+ci = apply(tl, 2, function(x)
+quantile(x, prob = c(0.05, 0.975)))
+arrows(qt,
+     ci[1, ],
+     qt,
+     ci[2, ],
+     length = 0.05,
+     angle = 90,
+     code = 3)
+points(qt, sort(rnorm(20)), pch = 19)
+points(qt, sort(qe), col = &#39;red&#39;, pch = 19)
+text(qt + 0.07, sort(qe) + 0.2, 1:20, col = &#39;red&#39;, cex = .8)</code></pre>
+<p><img src="01__norm_files/figure-html/qq-1.svg" width="480" /></p>
+<p>Для этого есть и готовая функция. Чем меньше точек в выборке, тем шире разброс и тем больше любое распределение будет казаться нормальным.</p>
+<pre class="r"><code>ggpubr::ggqqplot(qe)</code></pre>
+<img src="01__norm_files/figure-html/qq2-1.svg" width="480" />
+<ul>
+<li>провести тест на нормальность (например, <code>shapiro.test</code>)</li>
+</ul>
+<pre class="r"><code>shapiro.test(x) # результаты теста (распечатка)
 shapiro.test(x) %&gt;% str() # структура самого объекта с результатами - список!
-
-# как достать из данного списка объект p.value?
-#p.value = shapiro.test(x)?????????????
-
-p.value &lt; 0.05 # результат сравнения с критическим значением
-
-my_result = p.value &lt; 0.05 # можно записать этот результат в объект
-
-my_result_vector = numeric(3) # или в список результатов
-my_result_vector[1] = p.value &lt; 0.05 
-my_result_vector
-
-
-y = rnorm(20, mean = exp(5), sd = exp(3.5)) %&gt;% abs() %&gt;% log() # пример очень не нормальной выборки</code></pre>
-<pre class="r"><code>library(tidyverse)
-
-# проверяем нормальность отдельно взятой симуляции
+shapiro.test(x)$p.value
+results = shapiro.test(x)
+results$p.value</code></pre>
+<p>Проведем симуляцию. При разных размерах выборки какую долю нормальных распределений тест будет считать ненормальными, а какую долю ненормальных он ошибочно будет принимать за нормальные?</p>
+<pre class="r"><code># проверяем нормальность отдельно взятой симуляции
 set.seed(1)
 my_normal_sample = rnorm(20, 5, .22) 
-my_normal_sample %&gt;% hist()
-shapiro.test(my_normal_sample)
-set.seed(1)
 my_not_normal_sample = log(abs(rnorm(20, exp(5), exp(3.5))))
-my_not_normal_sample %&gt;% hist()
-shapiro.test(my_not_normal_sample)
 
 # сравниваем мощность и специфичность при разных размерах выборки
 N = exp(seq(log(3), log(300), .05)) %&gt;% round() %&gt;% unique() # размер выборки
@@ -386,24 +380,19 @@ n_replicas = 200 # повторов для каждого размера, что
 for (i in 1:length(N)){
   for (j in 1:n_replicas){
     normal_results[i] = normal_results[i] + (shapiro.test(rnorm(N[i], 5, .22))$p.value &lt; 0.05)
-    not_normal_results[i] = not_normal_results[i] + (shapiro.test(log(abs(rnorm(N[i], exp(5), exp(3.5)))))$p.value &gt; 0.05)
+  not_normal_results[i] = not_normal_results[i] + (shapiro.test(log(abs(rnorm(N[i], exp(5), exp(3.5)))))$p.value &gt; 0.05)
   }
 }
 plot(N, normal_results/n_replicas, col=&#39;blue&#39;, ylim=c(0,1), ylab=&#39;Error rate&#39;)
 points(N, not_normal_results/n_replicas, col=&#39;magenta&#39;)
 abline(h=0.05, col=&#39;red&#39;, lty=&#39;dashed&#39;)
-legend(&quot;topright&quot;, c(&#39;FP: not normal, but called normal&#39;, &#39;FN: normal, but called not normal&#39;), col = c(&#39;magenta&#39;, &#39;blue&#39;), pch=c(1,1))</code></pre>
-<ul>
-<li>гистограммы и плотность вероятности, вероятность и правдоподобие</li>
+legend(&quot;topright&quot;, c(&#39;Доля ненормальных, ошибочно названных нормальными&#39;, &#39;Доля нормальных, ошибочно названных ненормальными&#39;), col = c(&#39;magenta&#39;, &#39;blue&#39;), pch=c(1,1), cex=.8)</code></pre>
+<p><img src="01__norm_files/figure-html/shapiro_power-1.svg" width="576" /></p>
+<p>Вывод: чем меньше выборка, тем меньше мощность у теста (тем хуже тест определяет ненормальность). При этом доля ошибочно нераспознанных нормальных распределений постоянна и составляет 0.05 (как мы и задали, это и есть уровень значимости).</p></li>
 </ul>
-<p><span class="math display">\[
-Var = \frac{\sum(y_i-\bar{y})^2}{n-1}
-\]</span></p>
 
 
 
-</div>
-</div>
 
 </div>
 
@@ -436,32 +425,6 @@ $(document).ready(function () {
 
 <!-- code folding -->
 
-<script>
-$(document).ready(function ()  {
-
-    // move toc-ignore selectors from section div to header
-    $('div.section.toc-ignore')
-        .removeClass('toc-ignore')
-        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
-
-    // establish options
-    var options = {
-      selectors: "h1,h2,h3",
-      theme: "bootstrap3",
-      context: '.toc-content',
-      hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
-      },
-      ignoreSelector: ".toc-ignore",
-      scrollTo: 0
-    };
-    options.showAndHide = true;
-    options.smoothScroll = true;
-
-    // tocify
-    var toc = $("#TOC").tocify(options).data("toc-tocify");
-});
-</script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>

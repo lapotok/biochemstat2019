@@ -1,15 +1,20 @@
 ---
 title: "Урок 1 - Нормальное распределение"
 date: "`r format(Sys.Date(), '%Y.%m.%d')`"
+output:
+  html_document:
+    toc: false
 editor_options: 
   chunk_output_type: console
 ---
 
-```{r message=F, warning=F}
-library(tidyverse) # много всего полезного (пайплайны и т.п.)
-library(magrittr) # еще пайплайны
+```{r}
+suppressPackageStartupMessages(library(tidyverse)) # много всего полезного (пайплайны и т.п.)
+suppressPackageStartupMessages(library(magrittr)) # еще пайплайны
 library(ggpubr) # графики
 ```
+
+Расмотрим примеры использования функции `rnorm` для генерации нормально распределенных случайных чисел.
 
 ```{r rnorm, fig.width=5, fig.height=4}
 # rnorm - генерация рандомных ([r]andom) значений
@@ -18,42 +23,102 @@ rnorm(60, mean=30, sd=10)
 my_var = 7
 rnorm(10, mean=-3, sd=sqrt(my_var))
 1e6 == 1000000
-rnorm(1e6) %>% hist(main = 'Default settings (frequency = counts)')
-rnorm(1e6) %>% hist(freq = T, main = 'Default settings (frequency = counts)')
-rnorm(1e6) %>% hist(5, main='Histogram: counts, 5 bins')
-rnorm(1e6) %>% hist(5, freq = F, main='Histogram: density, 5 bins')
+rnorm(1e6) %>% hist()
+rnorm(1e6) %>% hist(50, main = 'Увеличим число столбиков')
 ```
 
-```{r dnorm, echo=F}
-# density? плотность вероятности, правдоподобие данного значения X +/- delta
-bins = hist(rnorm(1e6), 5, freq = F, main='Histogram: density, 5 bins', ylim=c(0, .3), col=scales::alpha('red', .3))
-text(bins$mids, bins$density+.01, bins$density * 2, col = 'red')
-mtext(paste(paste(bins$density, collapse = "*2 + "), "*2 = ", sum(bins$density * 2)), col = 'red')
+Высота столбиков гистограммы в данном случае означает количество наблюдений (точек), попавших в заданных диапазон (числа по оси х - границы этих диапазонов). Аналогично мы сами могли бы разбить весь диапазон значений на промежутки и посчитать количество значений в каждом.
+
+```{r cut, fig.height=4, fig.width=5}
+set.seed(2)
+x = rnorm(60, mean=30, sd=10)
+x
+
+# функция cut превращает численные значения в категории, 
+# соответствующие диапазону, в который попало значение;
+# мы можем задать границы, либо количество диапазонов
+x_caterogies = cut(x, breaks = (0:6)*10)
+x_caterogies
+# теперь считаем количество в каждом диапазоне
+x_caterogies %>% table()
+
+# настраиваем график по своему желанию
+x %>% 
+  hist(breaks = (0:6)*10, 
+       main   = "Задаем границы сами",
+       xlab   = "Шкала значений признака",
+       ylab   = "Число наблюдений в каждом диапазоне", 
+       col    = "lightgray",
+       border = "gray",
+       labels = T,
+       ylim   = c(0,21)
+  )
 ```
 
-```{r dnorm2}
-rnorm(1e6, mean=10, sd=2) %>% hist(15, freq = F, main='Histogram: density, 50 bins')
-rnorm(1e6) %>% hist(1000, freq = F, border=NA, col="gray", main="(Probability) density")
+Кроме того, мы можем по оси Y отложить не абсолютные (конкретные числа), а относительные представленности разных значений. Площадь каждого столбца равна доле значений из данного диапазона (эмпирическая вероятность встреть такое значение в выборке). Сумма площадей (как и вероятностей) равна 1.
+
+```{r dens, fig.height=4, fig.width=5}
+# числа наблюдений в каждой категории (см. выше)
+counts = x_caterogies %>% table()
+counts
+
+# числа, пересчитанные в доли (площади столбцов); в сумме == 1
+counts / sum(counts) 
+
+# доли, деленные на ширину диапазона (= высота столбцов - плотность вероятности)
+counts / sum(counts) / 10
+
+x %>% 
+  hist(breaks = (0:6)*10,
+       col    = "lightgray",
+       border = "gray",
+       freq   = F, 
+       main   = "", 
+       ylab   = "Плотность вероятности", 
+       xlab   = "Шкала значений признака")
+```
+
+Теперь по мере увеличения количества столбиков мы будем приближаться к теоретической кривой распределения.
+
+```{r dnorm2, fig.height=4, fig.width=11}
+x = rnorm(1e6, mean=10, sd=3)
+par(mfrow=c(1,3))
+x %>% hist(15, freq = F, main='15 столбиков')
+x %>% hist(50, freq = F, main='50 столбиков')
+x %>% hist(100, freq = F, border=NA, col="gray", main="100 столбиков + кривая")
 
 # dnorm - плотность вероятности ([d]ensity)/правдоподобие/likelihood
-curve(dnorm(x), from=-4, to=4, add=T, lwd=2)
+curve(dnorm(x, 10, 3), from=-6, to=25, add=T, lwd=2)
+```
 
-# берем значения признака Х и смотрим правдоподобия
-x_vals = c(-3, -2, -1, 0, 1, 2, 3)
-x_vals %>% abline(v = ., col = "red", lty='dashed')
-x_vals %>% dnorm() %>% round(3)
-points(x = x_vals, 
-       y = x_vals %>% dnorm(), 
-       col='red', pch=19)
+Таким образом, функция плотности вероятности - это относительная мера встречаемости разных значений диапазона. Чтобы получить приблизительное значение вероятности, надо умножить плотность вероятности на ширину диапазона (точное значение - площадь под кривой плотности вероятности в данном диапазоне). Следовательно, вероятность конкретного значения - 0, т.к. ширина диапазона 0. 
+
+Функция `dnorm` позволяет находить плотность вероятности для каждого значения `x`. 
+
+```{r dnorm3, fig.height=4, fig.width=5}
+# dnorm - плотность вероятности ([d]ensity)/правдоподобие/likelihood
+curve(dnorm(x), from=-4, to=4)
+abline(v = -1, col = "red", lty = "dashed")
+abline(v = -2, col = "red", lty = "dotted")
+abline(v = 0, col = "red", lty = "dotted")
+
+# относительная "встречаемость" значений в районе -1 (правдоподобие значения -1)
+dnorm(-1)
+
+# приблизительная вероятность
+dnorm(-1) * (0 - (-2))
 
 # pnorm - вероятность ([p]robability) того, что выборочное значение будет меньше данного значения Х
-x_vals = c(-2, 0, 2)
-pnorm(x_vals)
+# вероятность, что значения в выборке будут в диапазоне [-2, 0]
 pnorm(0) - pnorm(-2)
 ```
-```{r pnorm, echo=F}
+
+Т.е. вероятность, что значения в корридоре [-2, 0] есть разность между вероятностью, что значения меньше 0, и вероятностью, что значения меньше -2.
+
+```{r pnorm, echo=F, fig.height=4, fig.width=5}
 # pnorm? вероятность, что ...
-curve(dnorm(x), from=-4, to=4, lwd=2, main = 'pnorm(c(-2, 0, 2))')
+curve(dnorm(x), from=-4, to=4, lwd=2, main = 'pnorm(c(-2, 0))')
+x_vals = c(-2, 0)
 x_vals %>% abline(v = ., col = "red", lty='dashed')
 polygon(c(seq(-4, -2, l=100), -2, -4),
   c(dnorm(seq(-4, -2, l=100)), 0, 0), col = scales::alpha('red', .2), border=NA)
@@ -62,109 +127,99 @@ text(-2.5, 0.07, 'p( x < -2 )', col = 'red')
 polygon(c(seq(-4, 0, l=100), 0, -4),
   c(dnorm(seq(-4, 0, l=100)), 0, 0), col = scales::alpha('red', .2), border=NA)
 text(-1, 0.38, 'p( x < -0 )', col = 'red')
-
-polygon(c(seq(-4, 2, l=100), 2, -4),
-  c(dnorm(seq(-4, 2, l=100)), 0, 0), col = scales::alpha('red', .2), border=NA)
-text(1.5, 0.25, 'p( x < 2 )', col = 'red')
 ```
+
+Еще одна функция `qnorm` позволяет определить значения (квантили), которое разбивает ось значений на определенные отрезки.  Квантиль - такое значение Х, что выборочные значения окажутся меньше его с вероятностью P.
+
 ```{r qnorm}
-# qnorm - квантиль ([q]uantile), т.е. такое значение Х, что выборочные значения окажутся меньше его с вероятностью P
+# qnorm - квантиль ([q]uantile)
 # Q: p( x < Q ) = P
 P = c(0.25, 0.5, 0.75) # (1:n)/(n+1) - набор из n вероятностей, делящих [0, 1] на равные промежутки
 n = 3; (1:n)/(n+1)
 n = 9; (1:n)/(n+1)
 qnorm((1:n)/(n+1))
 ```
-```{r qnorm2, eval = F}
-# quantiles? квантиль - значение признака, такое что...
-curve(dnorm(x), from=-4, to=4, lwd=2, main = 'qnorm( 0.25 )', xaxt='none')
-axis(1, at = c(-4 , -0.67, 4) , labels = c(expression(-infinity) , -0.67, expression(infinity) ))
-qnorm( 0.25 ) %>% abline(v = ., col = "red", lty='dashed')
-polygon(c(seq(-4, -0.67, l=100), -0.67, -4),
-  c(dnorm(seq(-4, -0.67, l=100)), 0, 0), col = scales::alpha('red', .2), border=NA)
-```
 
-* тесты на нормальность и интерпретация гистограмм и QQplots
+Для проверки на нормальность можно 
 
-```{r qq, eval = F}
-library(tidyverse)
-n = 20
-qe = log(rnorm(n, exp(5), exp(2))) %>% scale() %>% as.numeric()
-qt = qnorm((1:n)/(n+1))
-plot(qt, sort(qe), ylim=c(-3,3), type='n')
+* смотреть на гистограмму
+
+  ```{r, fig.height=4, fig.width=5}
+  set.seed(1)
+  n = 20
+  qe = log(rnorm(n, exp(5), exp(2))) %>% scale() %>% as.numeric() # некое распределение, которое будем анализировать
+  qe %>% hist()
+  ```
+* смотреть QQ-plot
+
+  ```{r, fig.height=4, fig.width=5}
+  qqnorm(qe)
+  qqline(qe)
+  ```
+  Однако, что значит не существенны? Надо посмотреть, как себя ведут реальные нормальные распределения и построить разбросы. Если точки неизвестного распределения существенно не отклоняются от точек реальных нормальных распределений, то отклонения от нормальности не существенны.
+
+  ```{r qq, echo=T, fig.height=4, fig.width=5}
+qt = qnorm((1:n) / (n + 1))
+plot(qt, sort(qe), ylim = c(-3, 3), type = 'n')
 N = 1000
-tl = matrix(nrow=N, ncol=n)
+tl = matrix(nrow = N, ncol = n)
 for (i in 1:N) {
-  tl[i,] = sort(rnorm(n))
-  if (i %% 20 == 0) points(qt, tl[i,], pch=19, col=scales::alpha('black', .1))
+  tl[i, ] = sort(rnorm(n))
+  if (i %% 20 == 0)
+    points(qt, tl[i, ], pch = 19, col = scales::alpha('black', .1))
 }
-ci = apply(tl, 2, function(x) quantile(x, prob = c(0.05, 0.975)))
-arrows(qt, ci[1,], qt, ci[2,], length=0.05, angle=90, code=3)
-points(qt, sort(rnorm(20)), pch=19)
-points(qt, sort(qe), col='red', pch=19)
-text(qt+0.07, sort(qe)+0.2, 1:20, col='red', cex=.8)
-#ggpubr::ggqqplot(qe)
+ci = apply(tl, 2, function(x)
+  quantile(x, prob = c(0.05, 0.975)))
+arrows(qt,
+       ci[1, ],
+       qt,
+       ci[2, ],
+       length = 0.05,
+       angle = 90,
+       code = 3)
+points(qt, sort(rnorm(20)), pch = 19)
+points(qt, sort(qe), col = 'red', pch = 19)
+text(qt + 0.07, sort(qe) + 0.2, 1:20, col = 'red', cex = .8)
 ```
 
-что надо, чтобы проверить ошибки теста Shapiro на разного размера выборках
-
-```{r shapiro_intro, eval = F}
-x = rnorm(20, mean = 5, sd = .22) # генерим случайную выборку из 20 элементов
-
-# а как сгенерить выборку из 30 элементов? И с дисперсией 9? (какое тогда стандартное отклонение)
-
-x # смотрим, что получилось
-x %>% hist() # гистограмма
-shapiro.test(x) # результаты теста (распечатка)
-shapiro.test(x) %>% str() # структура самого объекта с результатами - список!
-
-# как достать из данного списка объект p.value?
-#p.value = shapiro.test(x)?????????????
-
-p.value < 0.05 # результат сравнения с критическим значением
-
-my_result = p.value < 0.05 # можно записать этот результат в объект
-
-my_result_vector = numeric(3) # или в список результатов
-my_result_vector[1] = p.value < 0.05 
-my_result_vector
+  Для этого есть и готовая функция. Чем меньше точек в выборке, тем шире разброс и тем больше любое распределение будет казаться нормальным.
+  
+  ```{r qq2, echo=T, fig.height=4, fig.width=5}
+  ggpubr::ggqqplot(qe)
+  ```
+  * провести тест на нормальность (например, `shapiro.test`) 
 
 
-y = rnorm(20, mean = exp(5), sd = exp(3.5)) %>% abs() %>% log() # пример очень не нормальной выборки
+  ```{r shapiro_intro, eval=F, echo=T}
+  shapiro.test(x) # результаты теста (распечатка)
+  shapiro.test(x) %>% str() # структура самого объекта с результатами - список!
+  shapiro.test(x)$p.value
+  results = shapiro.test(x)
+  results$p.value
+  ```
+  Проведем симуляцию. При разных размерах выборки какую долю нормальных распределений тест будет считать ненормальными, а какую долю ненормальных он ошибочно будет принимать за нормальные?
 
-```
-
-
-```{r shapiro_power, eval = F}
-library(tidyverse)
-
-# проверяем нормальность отдельно взятой симуляции
-set.seed(1)
-my_normal_sample = rnorm(20, 5, .22) 
-my_normal_sample %>% hist()
-shapiro.test(my_normal_sample)
-set.seed(1)
-my_not_normal_sample = log(abs(rnorm(20, exp(5), exp(3.5))))
-my_not_normal_sample %>% hist()
-shapiro.test(my_not_normal_sample)
-
-# сравниваем мощность и специфичность при разных размерах выборки
-N = exp(seq(log(3), log(300), .05)) %>% round() %>% unique() # размер выборки
-normal_results = numeric(length(N))
-not_normal_results = numeric(length(N))
-n_replicas = 200 # повторов для каждого размера, чтобы определить мощность
-for (i in 1:length(N)){
-  for (j in 1:n_replicas){
-    normal_results[i] = normal_results[i] + (shapiro.test(rnorm(N[i], 5, .22))$p.value < 0.05)
+  ```{r shapiro_power, fig.height=5, fig.width=6}
+  # проверяем нормальность отдельно взятой симуляции
+  set.seed(1)
+  my_normal_sample = rnorm(20, 5, .22) 
+  my_not_normal_sample = log(abs(rnorm(20, exp(5), exp(3.5))))
+  
+  # сравниваем мощность и специфичность при разных размерах выборки
+  N = exp(seq(log(3), log(300), .05)) %>% round() %>% unique() # размер выборки
+  normal_results = numeric(length(N))
+  not_normal_results = numeric(length(N))
+  n_replicas = 200 # повторов для каждого размера, чтобы определить мощность
+  for (i in 1:length(N)){
+    for (j in 1:n_replicas){
+      normal_results[i] = normal_results[i] + (shapiro.test(rnorm(N[i], 5, .22))$p.value < 0.05)
     not_normal_results[i] = not_normal_results[i] + (shapiro.test(log(abs(rnorm(N[i], exp(5), exp(3.5)))))$p.value > 0.05)
+    }
   }
-}
-plot(N, normal_results/n_replicas, col='blue', ylim=c(0,1), ylab='Error rate')
-points(N, not_normal_results/n_replicas, col='magenta')
-abline(h=0.05, col='red', lty='dashed')
-legend("topright", c('FP: not normal, but called normal', 'FN: normal, but called not normal'), col = c('magenta', 'blue'), pch=c(1,1))
-```
+  plot(N, normal_results/n_replicas, col='blue', ylim=c(0,1), ylab='Error rate')
+  points(N, not_normal_results/n_replicas, col='magenta')
+  abline(h=0.05, col='red', lty='dashed')
+  legend("topright", c('Доля ненормальных, ошибочно названных нормальными', 'Доля нормальных, ошибочно названных ненормальными'), col = c('magenta', 'blue'), pch=c(1,1), cex=.8)
+  ```
 
-Дополонительные источники про проведение симуляций
-
-+ 
+  Вывод: чем меньше выборка, тем меньше мощность у теста (тем хуже тест определяет ненормальность). При этом доля ошибочно нераспознанных нормальных распределений постоянна и составляет 0.05 (как мы и задали, это и есть уровень значимости).
