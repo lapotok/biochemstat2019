@@ -1,0 +1,129 @@
+---
+title: "Untitled"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+На первом занятии: основы синтаксиса, щупание типов данных
+
+занятие 2:
+
++ импорт разных форматов, чистка данных, манипуляции и tidy data
++ параметрические методы: АНОВА, t-тест, регрессия
+
+# Импорт
+
+открываем разные форматы
+
+```{r}
+library(tidyverse)
+library(magrittr)
+library(rio)
+
+# импортируем "хороший файл"
+iris = import("data/iris.xlsx") # rio::import
+# * смотрим что получилось, типы данных, сколько чего где, какие типы данных
+
+# импортируем "плохой" файл
+bad = import("data/bad_data_example.xlsx") 
+# что не так?
+# * ошибки, пропуски
+
+# исправляем ошибки - интерактивно
+bad %>% 
+  mutate(
+    Weight = str_replace(Weight, ",", ".") %>% as.numeric(),
+    Species = str_replace(Species, "Genus1 sp$", "Genus1 sp."), # $ symbol magic
+    Species = str_replace(Species, "Genus1 spp.$", "Genus1 sp."),
+    Species = na_if(Species, "NA"),
+    Species = na_if(Species, "Na"),
+    Species = na_if(Species, "na"),
+    Species = ifelse(str_detect(Species, ".*hz.*"), NA, Species),
+    Species = ifelse(str_detect(Species, ".*\\?.*"), NA, Species),
+    `Пол` = toupper(`Пол`)
+  )
+
+# еще круче ;)
+bad %>% # выражение равносильно bad = bad %>%
+  rename(Gender=`Пол`, Num_ticks=`Num ticks`) %>% # переименовываем переменные, чтобы дальше было удобнее
+  mutate(Weight = str_replace(Weight, ",", ".")) %>% # исправляем ошибку: заменяем , на .
+  mutate(Weight = as.numeric(Weight)) %>% # теперь изменяем тип переменной на числовой
+  replace_with_na_all(~ str_detect(.x, regex("(^na$)|(.*hz.*)|(.*\\?.*)", ignore_case = T))) %>% # заменяем на NA (см. дальше)
+  mutate(Gender = str_to_upper(Gender)) %>% # для унификации заменяем все буквы на большие
+  mutate_at(c("Species", "Gender"), as.factor) # делаем факторами категориальные переменные```
+
+# Параметрические методы
+
+Параметричность: принадлежность данных к определенному распределению (которое характеризуется своими параметрами). Можно подобрать параметры для такого распределения (пример - нормальное, считаем среднее и дисперсию). Т.к. мы говорим, что ожидаем определенное распределение (это уже значительная информация), то тогда мы можем делать более громкие выводы. *Пример - животные.*
+
+Задача: сравнить средние значения в группах и понять, есть ли различия. 
+Фактически, проверяем, могли ли наблюдаемые различия получиться случайно. Простейший случай - две группы.
+
+```{r}
+set.seed(1)
+a = rnorm(20, mean = 55, sd = 10)
+b = rnorm(20, mean = 65, sd = 10)
+b2 = rnorm(20, mean = 65, sd = 10)
+```
+
+Первым делом - визуализация!
+
+```{r}
+# data frame - базовый формат! tibble - последний писк моды
+d = tibble(
+  a = a,
+  b = b, 
+  b2 = b2
+)
+
+d %>% 
+  mutate(n=1:n()) %>% 
+  pivot_longer(-n, names_to = "variables", values_to = "values")
+```
+
+```{r}
+# переделываем формат
+groups = 
+  data.frame(
+    group = rep(c("a", "b", "b2"), each=20), # a a a ... b b b ... b2 b2 b2 ...
+    values = c(a, b, b2)
+  )
+
+# простые графики
+plot(groups)
+points(groups)
+
+# продвинутые графики
+g = ggplot(groups, aes(x=group, y=values)) + 
+  geom_boxplot() +
+  geom_point() +
+  theme_bw()
+
+# что еще можно делать - всякие настройки
+g1 = # сохраняем 
+  ggplot(groups, aes(x=group, y=values)) + 
+  geom_boxplot(outlier.shape = NA) +
+  geom_point(position = position_jitter(.1), alpha=.3, size=2) + 
+  theme_classic()
+g1 # печатаем
+
+# считаем параметры для каждой группы [дз - то же посчитать в цикле]
+groups_stats = 
+  groups %>% 
+  group_by(group) %>% 
+  summarise(n = n(),
+            mean = mean(values), 
+            se = sd(values)/sqrt(n),
+            se_l = mean-2*se,
+            se_u = mean+2*se)
+
+g1 + 
+  geom_errorbar(data = groups_stats,
+                mapping = aes(x = group, ymin = se_l, ymax = se_u, y = NULL),
+                width=.2, color="red")
+```
+
+Альтернативная трактовка - модель. Моделируем предсказание и смотрим, помогает ли группирующая переменная предсказать значение.
+
+Множественные сравнения. Симуляции.

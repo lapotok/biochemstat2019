@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Импорт данных и их предобработка</title>
+
+<script src="libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="libs/bootstrap-3.3.5/css/lumen.min.css" rel="stylesheet" />
+<script src="libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="libs/navigation-1.1/tabsets.js"></script>
+<link href="libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="../imports/style.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Импорт данных и их предобработка</h1>
+<h4 class="date">2019.11.23</h4>
+
+</div>
+
+
+<div id="импорт-файлов-и-исправление-ошибок" class="section level1">
+<h1>Импорт файлов и исправление ошибок</h1>
+<ul>
+<li>разные форматы</li>
+<li>множественный импорт</li>
+<li>типы ошибок</li>
+<li>исправление в Excel vs R</li>
+<li>типы проверок и корректировки - возможность универсальной функции</li>
+<li>экспорт исправленного файла, комманд, среды</li>
+</ul>
+<p>Скачаем тестовый файл.</p>
+<p>Для этого надо перейти по <a href="https://github.com/lapotok/biochemstat2019/blob/master/data/iris.xlsx?raw=true">ссылке</a> и сохранить его вручную в нужную папку.</p>
+<p>Однако это можно сделать и с помощью <code>R</code>. Для этого сначала сгенерируем имя временного файла и сохраним его в переменную tmp (или же вы можете прописать путь к папке и имя файла, если далее хотите с ним иметь дело), затем сохраним в него скачанный файл. После завершения работы скрипта временный файл будет удален, а если Вы сами указали путь и имя файла, тогда он останется.</p>
+<pre class="r"><code>tmp = tempfile() # создадим временный файл
+tmp # имя этого файла</code></pre>
+<pre><code>## [1] &quot;/var/folders/0k/1pnv43kn25vbnnlmpztddp5c0000gn/T//Rtmpo5FdTh/file3f9cfe2d698&quot;</code></pre>
+<pre class="r"><code># скачиваем файл по ссылке
+download.file(&quot;https://github.com/lapotok/biochemstat2019/blob/master/data/iris.xlsx?raw=true&quot;, tmp)</code></pre>
+<p>Т.е. с помощью данных команд мы скачали файл во временный файл с названием <tt>/var/folders/0k/1pnv43kn25vbnnlmpztddp5c0000gn/T//Rtmpo5FdTh/file3f9cfe2d698</tt>.</p>
+<p>Если нам требуется открыть какой-то файл на компьютере, то нам нужно указать путь до него (<a href="https://www.dummies.com/programming/r/how-to-work-with-files-and-folders-in-r/">тут</a> инструкция). Вкратце, в <code>R</code> есть домашняя папка по умолчанию, путь к которой вы можете узнать с помощью функции <code>getwd()</code>. Чтобы открыть нужный файл Вам потребуется либо положить файл в эту папку и указать только название файла, либо прописать полный путь к файлу, например <tt>C:/User/username/folder/subfolder/filename.xlsx</tt>. Самый продвинутый способ работы с путями к файлам - это создать проект в RStudio и класть необходимые файлы (как файлы данных, так и далее генерируемые скрипты) в папку или подпапки проекта (более подробно об этом можно почитать <a href="https://bookdown.org/ndphillips/YaRrr/projects-in-rstudio.html">здесь</a>, <a href="https://r4ds.had.co.nz/workflow-projects.html">здесь</a> или <a href="https://www.tidyverse.org/blog/2017/12/workflow-vs-script/">здесь</a>).</p>
+<p>Теперь этот файл можем открыть. Форматов бывает много, однако одна из наиболее продвинутых библиотек <code>rio</code> позволяет открывать практически любые распространенные форматы.</p>
+<pre class="r"><code>library(rio)
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(magrittr))
+my_iris = import(tmp, format = &quot;xlsx&quot;)
+my_iris %&gt;% str()</code></pre>
+<pre><code>## &#39;data.frame&#39;:    150 obs. of  5 variables:
+##  $ Sepal.Length: num  5.1 4.9 4.7 4.6 5 5.4 4.6 5 4.4 4.9 ...
+##  $ Sepal.Width : num  3.5 3 3.2 3.1 3.6 3.9 3.4 3.4 2.9 3.1 ...
+##  $ Petal.Length: num  1.4 1.4 1.3 1.5 1.4 1.7 1.4 1.5 1.4 1.5 ...
+##  $ Petal.Width : num  0.2 0.2 0.2 0.2 0.2 0.4 0.3 0.2 0.2 0.1 ...
+##  $ Species     : chr  &quot;setosa&quot; &quot;setosa&quot; &quot;setosa&quot; &quot;setosa&quot; ...</code></pre>
+<pre class="r"><code>my_iris$Species %&gt;% unique()</code></pre>
+<pre><code>## [1] &quot;setosa&quot;     &quot;versicolor&quot; &quot;virginica&quot;</code></pre>
+<p>Видим, что файл открылся правильно, т.к.</p>
+<ul>
+<li>правильное число строк и столбцов</li>
+<li>числовые переменные действительно имеют тип <code>num</code> (а не текстовый тип <code>chr</code> и не фактор <code>factor</code>)</li>
+<li>в списке видов нет ничего лишнего, никаких ошибочно написанных</li>
+</ul>
+<p>Теперь для разнообразия откроем файл с ошибками.</p>
+<pre class="r"><code># так можно скачивать файлы из интернета во временный файл, чтобы потом открывать
+tmp = tempfile() # генерируем название временного файла
+download.file(&quot;https://github.com/lapotok/biochemstat2019/blob/master/data/bad_data_example.xlsx?raw=true&quot;, tmp) 
+bad = import(tmp, format = &quot;xlsx&quot;)
+bad %&gt;% str() # смотрим на типы данных разных переменных</code></pre>
+<pre><code>## &#39;data.frame&#39;:    38 obs. of  5 variables:
+##  $ ID       : chr  &quot;PL01.It1&quot; &quot;PL01.It2&quot; &quot;PL01.It3&quot; &quot;PL01.It4&quot; ...
+##  $ Weight   : chr  &quot;44&quot; &quot;99.2&quot; &quot;22&quot; &quot;67&quot; ...
+##  $ Species  : chr  &quot;Genus1 species1&quot; &quot;Genus1 species1&quot; &quot;Genus1 species1&quot; &quot;Genus1 species2&quot; ...
+##  $ Num ticks: num  203 0 70 0 197 0 125 229 138 218 ...
+##  $ Пол      : chr  &quot;F&quot; &quot;M&quot; &quot;f&quot; &quot;m&quot; ...</code></pre>
+<pre class="r"><code>bad$Species %&gt;% unique() # все ли названия правильные? нет ничего лишнего?</code></pre>
+<pre><code>##  [1] &quot;Genus1 species1&quot;   &quot;Genus1 species2&quot;   &quot;Genus1 sp&quot;        
+##  [4] &quot;Genus1 sp.&quot;        &quot;Genus1 spp.&quot;       &quot;NA&quot;               
+##  [7] NA                  &quot;Genus2 hz&quot;         &quot;?&quot;                
+## [10] &quot;Genus2 ?&quot;          &quot;Na&quot;                &quot;hz&quot;               
+## [13] &quot;Genus2 species1 ?&quot; &quot;na&quot;                &quot;Genus2 species1&quot;</code></pre>
+<pre class="r"><code>bad$&quot;Пол&quot; %&gt;% unique() # должно быть 2 пола или пропуск в данных, так ли это?</code></pre>
+<pre><code>## [1] &quot;F&quot; &quot;M&quot; &quot;f&quot; &quot;m&quot; NA</code></pre>
+<p>Какие могут быть ошибки в данных? В файле, который мы рассматриваем в качестве антипримера есть следующие ошибки</p>
+<ul>
+<li>неправильный десятичный разделитель в <code>Weight</code> и как следствие вся переменная определяется как строковая, а не численная</li>
+<li>пропущенные данные, абы как названные (надо составить указания для <code>R</code> в формате регулярных выражений, что заменять на <code>NA</code> без кавычек - специальное обозначение для пропущенных данных)</li>
+<li>русскоязычные названия переменных и названия с пробелами, что может вызывать неудобство в работе, например необходимость их закавычивать при обращении к ним (<code>bad$`Num ticks`</code>)</li>
+<li>в колонке “Пол” буквы разного регистра обозначают одно и то же</li>
+</ul>
+<p>Какие-то из ошибок можно исправить уже на этапе подготовки данных (см. <a href="http://www.sthda.com/english/wiki/best-practices-in-preparing-data-files-for-importing-into-r">рекомендации</a>). Идеальная форма представления данных воплощается в концепте <a href="https://vita.had.co.nz/papers/tidy-data.pdf">“tidy data”</a>.</p>
+<p>Учимся исправлять ошибки, которые мы уже научились находить.</p>
+<pre class="r"><code>library(naniar)
+good = 
+  bad %&gt;%
+  mutate(Weight = str_replace(Weight, &quot;,&quot;, &quot;.&quot;)) %&gt;% # исправляем ошибку: заменяем , на .
+  mutate(Weight = as.numeric(Weight)) %&gt;% # теперь изменяем тип переменной на числовой
+  rename(Gender=`Пол`, Num_ticks=`Num ticks`) %&gt;% # переименовываем переменные, чтобы дальше было удобнее
+  replace_with_na_all(~ str_detect(.x, regex(&quot;(^na$)|(.*hz.*)|(.*\\?.*)&quot;, ignore_case = T))) %&gt;% # заменяем на NA (см. дальше)
+  mutate(Gender = toupper(Gender)) # для унификации заменяем все буквы на большие
+
+# а теперь как?
+good %&gt;% str()</code></pre>
+<pre><code>## Classes &#39;tbl_df&#39;, &#39;tbl&#39; and &#39;data.frame&#39;:    38 obs. of  5 variables:
+##  $ ID       : chr  &quot;PL01.It1&quot; &quot;PL01.It2&quot; &quot;PL01.It3&quot; &quot;PL01.It4&quot; ...
+##  $ Weight   : num  44 99.2 22 67 91.8 95 13 51.1 57 97 ...
+##  $ Species  : chr  &quot;Genus1 species1&quot; &quot;Genus1 species1&quot; &quot;Genus1 species1&quot; &quot;Genus1 species2&quot; ...
+##  $ Num_ticks: num  203 0 70 0 197 0 125 229 138 218 ...
+##  $ Gender   : chr  &quot;F&quot; &quot;M&quot; &quot;F&quot; &quot;M&quot; ...</code></pre>
+<pre class="r"><code>good$Species %&gt;% unique()</code></pre>
+<pre><code>## [1] &quot;Genus1 species1&quot; &quot;Genus1 species2&quot; &quot;Genus1 sp&quot;       &quot;Genus1 sp.&quot;     
+## [5] &quot;Genus1 spp.&quot;     NA                &quot;Genus2 species1&quot;</code></pre>
+<pre class="r"><code>good$Gender %&gt;% unique()</code></pre>
+<pre><code>## [1] &quot;F&quot; &quot;M&quot; NA</code></pre>
+<p>Здесь стоит отдельно остановиться на выражении <code>regex(&quot;(^na$)|(.*hz.*)|(.*\\?.*)&quot;, ignore_case = T)</code>. Речь идет об использовании регулярных выражений. Это способ указывать критерий для поиска или замен в строках. Простейший житейский пример регулярного выражения (правда, синтаксис там не очень правильный, зато понятный) - это когда мы выбираем файлы Excel выражением <code>*.xls(x)</code>.</p>
+<p>Здесь я приведу один пример работы с ними: проверяем адреса электронной почты на правильность (это простенький пример, не претендующий на абсолютную правильность).</p>
+<pre class="r"><code># поиск по паттерну
+mails = c(&quot;good@mail1.ru&quot;,
+          &quot;good@mail2.ru&quot;,
+          &quot;bad@mail@ru&quot;,
+          &quot;another*bad@mail.ru&quot;) # список адресов
+
+mail_regex = &quot;^[A-Za-z0-9.+_-]+@[A-Za-z0-9.+_-]+\\.[A-Za-z0-9.+_-]{2,}$&quot; # регулярное выражение
+
+str_detect(mails, mail_regex) # проверяем адреса на соответствие выражению</code></pre>
+<pre><code>## [1]  TRUE  TRUE FALSE FALSE</code></pre>
+<p>Разберем по частям</p>
+<ul>
+<li><code>^</code> в начале обозначает, что мы ищем с начала строки включительно, а <code>$</code> - что искомый элемент заканчивается концом строки; т.е. в итоге мы хотим чтобы строка полностью соответствовала шаблону, а не ее какая-то часть;</li>
+<li><code>[A-Za-z0-9.+_-]</code> - это любой из символов в скобках, причем все большие буквы задаются диапазоном <code>A-Z</code>; аналогично задаются все маленькие и все цифры;</li>
+<li><code>[A-Za-z0-9.+_-]+</code> - это вышеупомянутые символы, которые повторяются 1 и более раз (это указывается символом <code>+</code>; если может быть 0 и более раз, то используем символ <code>*</code>; чтобы в явном виде указать диапазон используем синтаксис <code>{min,max}</code>);</li>
+<li><code>.</code> вне скобок обозначает любой символ, поэтому для обозначения точки нужно использовать сочетание <code>\\.</code>.</li>
+</ul>
+<p>Здесь я не буду подробнее останавливаться на регулярных выражениях, Вы можете подробнее прочитать про это по ссылкам далее [<a href="https://stringr.tidyverse.org/articles/regular-expressions.html">1</a>, <a href="https://github.com/rstudio/cheatsheets/blob/master/regex.pdf">2</a>, <a href="https://cran.r-project.org/web/packages/naniar/vignettes/replace-with-na.html">3</a>].</p>
+</div>
+<div id="манипуляции-с-данными" class="section level1">
+<h1>Манипуляции с данными</h1>
+<p>Наиболее удобный вид для работы с большинством данных - <code>data.frame</code> (или ее современный аналог <code>tibble</code>, с которым мы далее по умолчанию будем работать). Когда мы импортируем данные из файлов Excel или CSV, это как раз тот формат, который импортированные данные будут иметь по умолчанию. Рассмотрим пример данных и возможные способы их преобразования.</p>
+<pre class="r"><code># структура таблицы
+my_iris %&gt;% str()</code></pre>
+<pre><code>## &#39;data.frame&#39;:    150 obs. of  5 variables:
+##  $ Sepal.Length: num  5.1 4.9 4.7 4.6 5 5.4 4.6 5 4.4 4.9 ...
+##  $ Sepal.Width : num  3.5 3 3.2 3.1 3.6 3.9 3.4 3.4 2.9 3.1 ...
+##  $ Petal.Length: num  1.4 1.4 1.3 1.5 1.4 1.7 1.4 1.5 1.4 1.5 ...
+##  $ Petal.Width : num  0.2 0.2 0.2 0.2 0.2 0.4 0.3 0.2 0.2 0.1 ...
+##  $ Species     : chr  &quot;setosa&quot; &quot;setosa&quot; &quot;setosa&quot; &quot;setosa&quot; ...</code></pre>
+<pre class="r"><code># фильтрация строк таблицы по какому-то критерию
+my_iris %&gt;% 
+  filter(Sepal.Width &lt; 2.4)</code></pre>
+<pre><code>##   Sepal.Length Sepal.Width Petal.Length Petal.Width    Species
+## 1          4.5         2.3          1.3         0.3     setosa
+## 2          5.5         2.3          4.0         1.3 versicolor
+## 3          5.0         2.0          3.5         1.0 versicolor
+## 4          6.0         2.2          4.0         1.0 versicolor
+## 5          6.2         2.2          4.5         1.5 versicolor
+## 6          6.3         2.3          4.4         1.3 versicolor
+## 7          5.0         2.3          3.3         1.0 versicolor
+## 8          6.0         2.2          5.0         1.5  virginica</code></pre>
+<pre class="r"><code>my_iris %&gt;% 
+  filter(Species != &quot;versicolor&quot; &amp; Sepal.Width &lt; 2.4)</code></pre>
+<pre><code>##   Sepal.Length Sepal.Width Petal.Length Petal.Width   Species
+## 1          4.5         2.3          1.3         0.3    setosa
+## 2          6.0         2.2          5.0         1.5 virginica</code></pre>
+<pre class="r"><code># группировка строк по какому-то признаку и анализ внутри каждой группы
+
+my_iris %&gt;% as_tibble()</code></pre>
+<pre><code>## # A tibble: 150 x 5
+##    Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+##           &lt;dbl&gt;       &lt;dbl&gt;        &lt;dbl&gt;       &lt;dbl&gt; &lt;chr&gt;  
+##  1          5.1         3.5          1.4         0.2 setosa 
+##  2          4.9         3            1.4         0.2 setosa 
+##  3          4.7         3.2          1.3         0.2 setosa 
+##  4          4.6         3.1          1.5         0.2 setosa 
+##  5          5           3.6          1.4         0.2 setosa 
+##  6          5.4         3.9          1.7         0.4 setosa 
+##  7          4.6         3.4          1.4         0.3 setosa 
+##  8          5           3.4          1.5         0.2 setosa 
+##  9          4.4         2.9          1.4         0.2 setosa 
+## 10          4.9         3.1          1.5         0.1 setosa 
+## # … with 140 more rows</code></pre>
+<pre class="r"><code>my_iris %&gt;% 
+  group_by(Species) # вроде ничего не поменялось, кроме служебной информации</code></pre>
+<pre><code>## # A tibble: 150 x 5
+## # Groups:   Species [3]
+##    Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+##  *        &lt;dbl&gt;       &lt;dbl&gt;        &lt;dbl&gt;       &lt;dbl&gt; &lt;chr&gt;  
+##  1          5.1         3.5          1.4         0.2 setosa 
+##  2          4.9         3            1.4         0.2 setosa 
+##  3          4.7         3.2          1.3         0.2 setosa 
+##  4          4.6         3.1          1.5         0.2 setosa 
+##  5          5           3.6          1.4         0.2 setosa 
+##  6          5.4         3.9          1.7         0.4 setosa 
+##  7          4.6         3.4          1.4         0.3 setosa 
+##  8          5           3.4          1.5         0.2 setosa 
+##  9          4.4         2.9          1.4         0.2 setosa 
+## 10          4.9         3.1          1.5         0.1 setosa 
+## # … with 140 more rows</code></pre>
+<pre class="r"><code>my_iris %&gt;% 
+  group_by(Species) %&gt;% 
+  nest() # вот как R теперь видит таблицу: набор подтаблиц для каждой группы</code></pre>
+<pre><code>## # A tibble: 3 x 2
+## # Groups:   Species [3]
+##   Species              data
+##   &lt;chr&gt;      &lt;list&lt;df[,4]&gt;&gt;
+## 1 setosa           [50 × 4]
+## 2 versicolor       [50 × 4]
+## 3 virginica        [50 × 4]</code></pre>
+<pre class="r"><code>my_iris %&gt;% 
+  group_by(Species) %&gt;% 
+  nest() %&gt;% 
+  filter(Species == &quot;setosa&quot;) %&gt;% 
+  .[[&quot;data&quot;]] %&gt;% .[[1]] # вот что лежит в одной такой подтабличке для группы setosa</code></pre>
+<pre><code>## # A tibble: 50 x 4
+##    Sepal.Length Sepal.Width Petal.Length Petal.Width
+##           &lt;dbl&gt;       &lt;dbl&gt;        &lt;dbl&gt;       &lt;dbl&gt;
+##  1          5.1         3.5          1.4         0.2
+##  2          4.9         3            1.4         0.2
+##  3          4.7         3.2          1.3         0.2
+##  4          4.6         3.1          1.5         0.2
+##  5          5           3.6          1.4         0.2
+##  6          5.4         3.9          1.7         0.4
+##  7          4.6         3.4          1.4         0.3
+##  8          5           3.4          1.5         0.2
+##  9          4.4         2.9          1.4         0.2
+## 10          4.9         3.1          1.5         0.1
+## # … with 40 more rows</code></pre>
+<pre class="r"><code>my_iris %&gt;% 
+  group_by(Species) %&gt;% 
+  summarise(n = n(), # число строк в каждой подгруппе
+            mean_petal.length = mean(Petal.Length)) # вычисляем что-то для каждой подгруппы</code></pre>
+<pre><code>## # A tibble: 3 x 3
+##   Species        n mean_petal.length
+##   &lt;chr&gt;      &lt;int&gt;             &lt;dbl&gt;
+## 1 setosa        50              1.46
+## 2 versicolor    50              4.26
+## 3 virginica     50              5.55</code></pre>
+<p>Дополнительные примеры по манипуляциям с данными Вы можете посмотреть <a href="https://rafalab.github.io/dsbook/tidyverse.html">здесь</a> и <a href="https://r4ds.had.co.nz/transform.html">здесь</a>.</p>
+</div>
+<div id="визуализация-данных-по-группам" class="section level1">
+<h1>Визуализация данных по группам</h1>
+<p>Предположим, что у нас есть три группы мышей: R, E1, E2 (контроль и две опытные, после обработки разными лекарствами). Нам нужно каким-то образом организовать имеющиеся данные, чтобы их удобно было обрабатывать. Какие есть варианты?</p>
+<pre class="r"><code># просто 3 объекта
+R = rnorm(20, 36.3, 3.4)
+E1 = rnorm(20, 36.3, 3.4)
+E2 = rnorm(20, 30.0, 3.4)
+
+# список из 3х объектов
+mice_list = list(R=R, E1=E1, E2=E2)
+mice_list</code></pre>
+<pre><code>## $R
+##  [1] 41.87651 30.74534 30.09848 39.94321 31.85980 38.63277 33.26380
+##  [8] 35.86958 36.46263 35.20975 30.86917 36.90208 31.51000 33.12432
+## [15] 34.40428 38.27473 43.75501 40.09789 31.26536 38.06757
+## 
+## $E1
+##  [1] 34.26659 33.97678 40.07962 34.38505 32.51456 36.61213 34.33880
+##  [8] 38.87437 40.64761 38.01679 36.94065 37.03046 34.14591 35.23004
+## [15] 28.49982 33.57472 38.33148 41.24790 37.88635 37.88125
+## 
+## $E2
+##  [1] 32.67755 32.10432 29.97181 25.08021 30.84632 24.83149 30.87612
+##  [8] 30.92331 30.39442 29.32182 26.36443 28.50394 29.14228 33.94375
+## [15] 25.93650 36.50195 32.10984 28.21392 26.24877 35.54759</code></pre>
+<pre class="r"><code># таблица (широкий формат)
+mice_tibble_wide = tibble(R=R, E1=E1, E2=E2)
+mice_tibble_wide</code></pre>
+<pre><code>## # A tibble: 20 x 3
+##        R    E1    E2
+##    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1  41.9  34.3  32.7
+##  2  30.7  34.0  32.1
+##  3  30.1  40.1  30.0
+##  4  39.9  34.4  25.1
+##  5  31.9  32.5  30.8
+##  6  38.6  36.6  24.8
+##  7  33.3  34.3  30.9
+##  8  35.9  38.9  30.9
+##  9  36.5  40.6  30.4
+## 10  35.2  38.0  29.3
+## 11  30.9  36.9  26.4
+## 12  36.9  37.0  28.5
+## 13  31.5  34.1  29.1
+## 14  33.1  35.2  33.9
+## 15  34.4  28.5  25.9
+## 16  38.3  33.6  36.5
+## 17  43.8  38.3  32.1
+## 18  40.1  41.2  28.2
+## 19  31.3  37.9  26.2
+## 20  38.1  37.9  35.5</code></pre>
+<pre class="r"><code># таблица (длинный формат)
+mice_tibble_long = tibble(
+  group = rep(c(&quot;R&quot;, &quot;E1&quot;, &quot;E2&quot;), each = 20),
+  values = c(R, E1, E2)
+)
+mice_tibble_long</code></pre>
+<pre><code>## # A tibble: 60 x 2
+##    group values
+##    &lt;chr&gt;  &lt;dbl&gt;
+##  1 R       41.9
+##  2 R       30.7
+##  3 R       30.1
+##  4 R       39.9
+##  5 R       31.9
+##  6 R       38.6
+##  7 R       33.3
+##  8 R       35.9
+##  9 R       36.5
+## 10 R       35.2
+## # … with 50 more rows</code></pre>
+<p>С отдельными объектами для групп не понятно что делать, как и со списком. Таблица в широком формате чуть более функциональна, однако ее структура нарушает базовое правило таблицы данных (строки-наблюдения и колонки-признаки, т.к. разные наблюдения не только в разных строках, но и в разных колонках). В <code>R</code> можно легко преобразовывать таблицы из формата wide в long и наоборот.</p>
+<pre class="r"><code>mice_tibble_wide</code></pre>
+<pre><code>## # A tibble: 20 x 3
+##        R    E1    E2
+##    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1  41.9  34.3  32.7
+##  2  30.7  34.0  32.1
+##  3  30.1  40.1  30.0
+##  4  39.9  34.4  25.1
+##  5  31.9  32.5  30.8
+##  6  38.6  36.6  24.8
+##  7  33.3  34.3  30.9
+##  8  35.9  38.9  30.9
+##  9  36.5  40.6  30.4
+## 10  35.2  38.0  29.3
+## 11  30.9  36.9  26.4
+## 12  36.9  37.0  28.5
+## 13  31.5  34.1  29.1
+## 14  33.1  35.2  33.9
+## 15  34.4  28.5  25.9
+## 16  38.3  33.6  36.5
+## 17  43.8  38.3  32.1
+## 18  40.1  41.2  28.2
+## 19  31.3  37.9  26.2
+## 20  38.1  37.9  35.5</code></pre>
+<pre class="r"><code>mice_tibble_wide %&gt;% 
+  pivot_longer(everything(), # я указал все колонки, а можно брать только часть
+               names_to = &quot;group&quot;, # имя новой колонки с названиями групп
+               values_to = &quot;values&quot;) # имя новой колонки со значениями признака</code></pre>
+<pre><code>## # A tibble: 60 x 2
+##    group values
+##    &lt;chr&gt;  &lt;dbl&gt;
+##  1 R       41.9
+##  2 E1      34.3
+##  3 E2      32.7
+##  4 R       30.7
+##  5 E1      34.0
+##  6 E2      32.1
+##  7 R       30.1
+##  8 E1      40.1
+##  9 E2      30.0
+## 10 R       39.9
+## # … with 50 more rows</code></pre>
+<pre class="r"><code>mice_tibble_long # каждая строка - наблюдение</code></pre>
+<pre><code>## # A tibble: 60 x 2
+##    group values
+##    &lt;chr&gt;  &lt;dbl&gt;
+##  1 R       41.9
+##  2 R       30.7
+##  3 R       30.1
+##  4 R       39.9
+##  5 R       31.9
+##  6 R       38.6
+##  7 R       33.3
+##  8 R       35.9
+##  9 R       36.5
+## 10 R       35.2
+## # … with 50 more rows</code></pre>
+<pre class="r"><code>mice_tibble_long %&gt;% 
+  pivot_wider(names_from = group, # колонка, в которой хранится принадлежность наблюдения к группе
+              values_from = values, # колонка со значениями признака
+              values_fn = list(values = list)) %&gt;% 
+  unnest(cols = c(R, E1, E2))</code></pre>
+<pre><code>## # A tibble: 20 x 3
+##        R    E1    E2
+##    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1  41.9  34.3  32.7
+##  2  30.7  34.0  32.1
+##  3  30.1  40.1  30.0
+##  4  39.9  34.4  25.1
+##  5  31.9  32.5  30.8
+##  6  38.6  36.6  24.8
+##  7  33.3  34.3  30.9
+##  8  35.9  38.9  30.9
+##  9  36.5  40.6  30.4
+## 10  35.2  38.0  29.3
+## 11  30.9  36.9  26.4
+## 12  36.9  37.0  28.5
+## 13  31.5  34.1  29.1
+## 14  33.1  35.2  33.9
+## 15  34.4  28.5  25.9
+## 16  38.3  33.6  36.5
+## 17  43.8  38.3  32.1
+## 18  40.1  41.2  28.2
+## 19  31.3  37.9  26.2
+## 20  38.1  37.9  35.5</code></pre>
+<div id="представление-данных---графики-ggplot" class="section level2">
+<h2>Представление данных - графики ggplot</h2>
+<p>Первый шаг к пониманию данных - визуализация данных. В <code>R</code> есть 2 принципиально разных системы построения графиков: <code>base R plots</code> и <code>ggplot</code>. Первая - более быстрая, но древняя и убогая, а вторая - более современная, настраиваемая, но немного более сложная.</p>
+<pre class="r"><code># base R plot
+boxplot(
+  values ~ group, # формула, обозначающая значения ~ группирующая_переменная
+  mice_tibble_long # данные
+)
+points(
+  values ~ as.factor(group), # для построения графика группирующая переменная должна иметь численное представление
+  mice_tibble_long
+)</code></pre>
+<p><img src="02_Import_correrr_files/figure-html/unnamed-chunk-10-1.svg" width="384" /></p>
+<pre class="r"><code># ggplot
+ggplot(
+  data = mice_tibble_long, # таблица с данными
+  mapping = aes(x = group, y = values) # что по X, что по Y
+) + # символ &quot;+&quot; используется для сборки графика из частей
+  geom_boxplot() + # слой боксплота
+  geom_point() # слой точек поверх</code></pre>
+<p><img src="02_Import_correrr_files/figure-html/unnamed-chunk-10-2.svg" width="384" /></p>
+<p>Графики <code>ggplot</code> более стильные и настраиваемые. Для примера изменим стиль графика и добавим к нему доверительные интервалы для групповых средних.</p>
+<pre class="r"><code># создаем вспомогательную таблицу с данными для доверительных интервалов
+mice_stats = 
+  mice_tibble_long %&gt;%
+  group_by(group) %&gt;%
+  summarise(
+    n = n(),
+    mean = mean(values),
+    sd = sd(values)
+  )
+mice_stats</code></pre>
+<pre><code>## # A tibble: 3 x 4
+##   group     n  mean    sd
+##   &lt;chr&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1 E1       20  36.2  3.10
+## 2 E2       20  30.0  3.31
+## 3 R        20  35.6  4.03</code></pre>
+<pre class="r"><code>g = # график можно сохранить в объект
+  ggplot(mice_tibble_long, aes(x = group, y = values)) +
+  geom_boxplot(outlier.shape = NA) + # не показываем &quot;выбросы&quot;
+  geom_point(position = position_jitter(.1), # чуток &quot;рассеиваем&quot; точки
+             fill = &quot;black&quot;,
+             alpha = .3, size = 2.5)
+
+g # вызывая объект с графиком мы рисуем график</code></pre>
+<p><img src="02_Import_correrr_files/figure-html/unnamed-chunk-11-1.svg" width="384" /></p>
+<pre class="r"><code>g2 =
+  g + # к уже готовому объекту можно добавить новые слои и настройки
+  geom_errorbar(
+    data = mice_stats, # доверительные интервалы строим из данных в отдельной табличке
+    mapping = aes(x = group, 
+                  y = NULL, # чтобы не было ошибки
+                  ymin = mean - 2 * sd / sqrt(n), # считаем границы доверительного интервала
+                  ymax = mean + 2 * sd / sqrt(n)
+              ),
+    size = 1.2, width = .2, color = &quot;red&quot;) + # настройки стиля
+  theme_classic(base_size = 17, base_family = &quot;Impact&quot;) # меняем тему и шрифт
+g2</code></pre>
+<p><img src="02_Import_correrr_files/figure-html/unnamed-chunk-11-2.svg" width="384" /></p>
+</div>
+</div>
+<div id="сохранение-данных" class="section level1">
+<h1>Сохранение данных</h1>
+<p>В <code>R</code> вы можете иметь полный контроль над тем, что за файлы открывать и в каком виде что сохранять.</p>
+<ul>
+<li>можно сохранять файлы с результатами (таблицы, графики, отчеты)</li>
+<li>можно сохранять объекты (или набор объектов, или даже текущую среду со всеми загруженными объектами)</li>
+</ul>
+<p>Итак, сохраняем таблицу</p>
+<pre class="r"><code># куда сохраняем?
+
+# в текущий путь
+getwd() 
+export(good, &quot;good.xlsx&quot;) # xlsx
+export(good, &quot;good.csv&quot;) # csv
+export(good, &quot;good&quot;, format = &quot;xlsx&quot;) # xlsx
+
+# в другое место
+export(good, &quot;D:/custom_folder/good.xlsx&quot;)</code></pre>
+<p>Еще можем сохранить графики</p>
+<pre class="r"><code># любой формат к Вашим услугам!
+ggsave(&quot;my_plot.png&quot;, g, width = 4, height = 4)
+ggsave(&quot;my_plot.pdf&quot;, g, width = 4, height = 4)
+ggsave(&quot;my_plot.tiff&quot;, g, width = 4, height = 4)
+ggsave(&quot;my_plot.svg&quot;, g, width = 4, height = 4)
+
+install.packages(&quot;export&quot;)
+library(export)
+graph2ppt(g2, file=&quot;ggplot2_plot.pptx&quot;, width=4, height=4)</code></pre>
+<p>И наконец, можно сохранять уже хранящиеся в памяти объекты</p>
+<pre class="r"><code># можем выбрать сами, какие объекты сохранять (это предпочтительно!)
+save(good, bad, g, g2, file = &quot;selected_objects.RData&quot;)
+
+# или можно автоматически все объекты сохранить
+ls(all.names = TRUE)
+
+save(list = ls(all.names = TRUE), file = &quot;all_objects.RData&quot;)</code></pre>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
