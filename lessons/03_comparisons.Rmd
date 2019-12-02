@@ -1,0 +1,212 @@
+---
+title: "Сравнение двух групп: количественные данные"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+# Что уже умеем?
+
++ базовые манипуляции
++ импорт файлов
++ регулярные выражения
++ построение графиков: `base R`, `ggplot`
+
+# Сравнение групп
+
+```{r}
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(magrittr))
+```
+
+Еще примерчик на регулярные выражения (замена по паттерну)
+
+```{r regex_replacement}
+some_text = '
+Белоусов Всеволод Вадимович
+
+- Выпускник кафедры биохимии Биологического факультета МГУ, доктор биологических наук
+- Заведующий лабораторией редокс-регуляции РНИМУ имени Н.И. Пирогова
+- Заведующий лабораторией молекулярных технологий ИБХ РАН
+- Профессор РАН
+- Член редколлегии журналов MethodX (Elsevier), Вестник РГМУ. Рецензент журналов FEBS journal, JACS, Chemical Science, Antioxidants & Redox signaling, Nature Communications, Nature Methods, Nature Chemical Biology, Scientific reports, JBC и мн. др., эксперт научных фондов РФФИ, РНФ, WellcomeTrust, European Research Council, Netherlands Organization for Scientific Research, The French National Research Agency и др.
+- Преподаватель и лектор, “Advanced light microscopy techniques” практический курс, EMBL Heidelberg, 2015, 2016, 2017, 2018 , лектор, "Redox regulation of metabolic processes" FEBS advanced course, Spetses, Greece, 2016, лектор, “3rd advanced course in Optogenetics”, Institute Curie, Paris 2016.
+- Организатор EMBO Conference on Redox Biology, Москва - Санкт-Петербург 2017, организатор визита Джеймса Уотсона в Россию с циклом научно-популярных лекций «70 нескучных лет в науке», Москва - Санкт-Петербург 2017 и других мероприятий
+- автор большого числа научных публикаций
+- лауреат многочисленных премий и наград
+'
+
+cat(str_replace_all(some_text, "\n- ([^\n]+)", "\n<li>\\1</li>"))
+```
+
+Визуальное сравнение 2 и более групп - пример с разной дисперсией
+
+```{r anova_viz_hilowvar}
+set.seed(1)
+hi_var_anova = 
+  tibble(
+    groups = rep(c("A", "B", "C"), each = 20),
+    values = c(
+      rnorm(20, mean = 35, 10),
+      rnorm(20, mean = 35, 10),
+      rnorm(20, mean = 39, 10)
+    )
+  )
+
+hi_gg = 
+  hi_var_anova %>% 
+  ggplot(aes(x = groups, y = values)) +
+  geom_boxplot() + 
+  geom_point(position = position_jitter(.1)) +
+  coord_cartesian(ylim=c(10, 60)) +
+  ggtitle("High variance")
+
+
+library(tidyverse)
+library(magrittr)
+library(rstatix)
+
+low_var_anova = 
+  tibble( # tidyverse: data.frame
+    groups = rep(c("A", "B", "C"), each = 20),
+    values = c(
+      rnorm(20, mean = 35, 2),
+      rnorm(20, mean = 35, 2),
+      rnorm(20, mean = 39, 2)
+    )
+  )
+
+low_gg = 
+  low_var_anova %>% 
+  ggplot(aes(x = groups, y = values)) +
+  geom_boxplot() + 
+  geom_point(position = position_jitter(.1)) +
+  coord_cartesian(ylim=c(10, 60)) +
+  ggtitle("Low variance")
+
+
+suppressPackageStartupMessages(library(cowplot))
+plot_grid(hi_gg, low_gg) # cowplot
+```
+
+Проверка предпосылок - нормальность и гомогенности дисперсии; размер выборок - влияет на формулу и тип ANOVA (I, II, III)
+
+```{r norm_homosk_tests}
+# проверка нормальности
+library(ggpubr)
+low_var_anova %>% 
+  ggqqplot("values", facet = "groups") # ggpubr
+
+# H0: распределение нормально, p.value > 0.05 => H0 верна
+low_var_anova %>% 
+  group_by(groups) %>% 
+  summarise(normality = shapiro.test(values)$p.value)
+
+# H0: дисперсия гомогенна, p.value > 0.05 => H0 верна
+low_var_anova %>% levene_test(values ~ groups) # rstatix
+# убираем warning: более правильные типы данных
+low_var_anova %>% levene_test(values ~ as.factor(groups))
+```
+
+Непрерывные признаки - точечные оценки
+```{r point_est}
+low_var_anova %>% 
+  group_by(groups) %>% 
+  summarise(mean = mean(values),
+            median = median(values))
+```
+
+Непрерывные признаки - интервальные оценки, доверительные интервалы
+
+```{r interval_est}
+low_var_anova %>% 
+  group_by(groups) %>% 
+  summarise(mean = mean(values),
+            sd = sd(values),
+            q1 = quantile(values, .25),
+            q3 = quantile(values, .75),
+            n = n(),
+            ci_low = mean - 2* sd / sqrt(n),
+            ci_hi = mean + 2* sd / sqrt(n))
+```
+
+Попарные сравнения + множественные сравнения
+
+```{r pairwise}
+# все тесты из библиотеки rstatix
+# effect size
+low_var_anova %>% 
+  cohens_d(values ~ groups) # (mean1 - mean2)/pooled_sd
+
+# parametric: T-test (significance + multiple testing)
+low_var_anova %>% 
+  t_test(values ~ groups) # (mean1 - mean2)/SE*; SE = SD/sqrt(n)
+
+# nonparametric: Wilcoxon test (Mann-Whitney)
+low_var_anova %>% 
+  wilcox_test(values ~ groups)
+
+# nonparametric: permutation test - меняем "подписи" и сравниваем различия
+AC = 
+  low_var_anova %>% 
+  filter(groups %in% c("A", "C"))
+
+means = 
+  AC %>% 
+  group_by(groups) %>% 
+  summarise(mean = mean(values))
+
+means
+means_diff = means$mean[1] - means$mean[2] # difference statistic
+
+N = 1000
+means_diffs_random = numeric(N)
+for(i in 1:N){
+  means = 
+    AC %>% 
+    mutate(groups = sample(groups)) %>% # relabel
+    group_by(groups) %>% 
+    summarise(mean = mean(values))
+  means_diffs_random[i] = means$mean[1] - means$mean[2] # H0 difference statistic
+}
+
+tibble(x = means_diffs_random) %>% 
+  ggplot(aes(x=x)) +
+  geom_histogram() +
+  geom_vline(xintercept = means_diff, col = "red", linetype = "dashed")
+```
+
+Разные типы T-теста
+
+```{r}
+# 3 попарных сравнения + поправка на множественные сравнения
+low_var_anova %>% 
+  t_test(values ~ groups) # (mean1 - mean2)/SE*; SE = SD/sqrt(n)
+
+# две группы => сравнение средних между двумя группами (есть различия?)
+AC %>% 
+  t_test(values ~ groups) # (mean1 - mean2)/SE*; SE = SD/sqrt(n)
+
+# одна группа => сравниваем среднее группы с каким-то значением
+A = AC %>% filter(groups == "A")
+C = AC %>% filter(groups == "C")
+# сравниваем среднее группы с конкретным значеним (равно или нет?)
+A %>% t_test(values ~ 1, mu = 34) # p.value < 0.05 => видимо не равно
+# сравниваем среднее группы с конкретным значеним (больше или нет?)
+A %>% t_test(values ~ 1, mu = 34, alternative = "less") # p.value >> 0.05 => скорее всего больше
+
+# парный тест: сравниваем параллельные (связанные, зависимые) наблюдения
+# например: вес одних и тех же мышей до и после приема препарата
+AC %>% t_test(values ~ groups, paired = T)
+
+# разбираемся с парным тестом
+AC_delta = tibble(
+  "A = before" = A$values, 
+  "C = after" = C$values, 
+  delta = C$values - A$values # before - after
+)
+AC_delta
+
+# парный тест - это сравнение значений разницы с 0
+AC_delta %>% t_test(delta ~ 1, mu = 0)
+```

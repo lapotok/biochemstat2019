@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Сравнение двух групп: количественные данные</title>
+
+<script src="libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="libs/bootstrap-3.3.5/css/lumen.min.css" rel="stylesheet" />
+<script src="libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="libs/navigation-1.1/tabsets.js"></script>
+<link href="libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="../imports/style.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Сравнение двух групп: количественные данные</h1>
+
+</div>
+
+
+<div id="что-уже-умеем" class="section level1">
+<h1>Что уже умеем?</h1>
+<ul>
+<li>базовые манипуляции</li>
+<li>импорт файлов</li>
+<li>регулярные выражения</li>
+<li>построение графиков: <code>base R</code>, <code>ggplot</code></li>
+</ul>
+</div>
+<div id="сравнение-групп" class="section level1">
+<h1>Сравнение групп</h1>
+<pre class="r"><code>suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(magrittr))</code></pre>
+<p>Еще примерчик на регулярные выражения (замена по паттерну)</p>
+<pre class="r"><code>some_text = &#39;
+Белоусов Всеволод Вадимович
+
+- Выпускник кафедры биохимии Биологического факультета МГУ, доктор биологических наук
+- Заведующий лабораторией редокс-регуляции РНИМУ имени Н.И. Пирогова
+- Заведующий лабораторией молекулярных технологий ИБХ РАН
+- Профессор РАН
+- Член редколлегии журналов MethodX (Elsevier), Вестник РГМУ. Рецензент журналов FEBS journal, JACS, Chemical Science, Antioxidants &amp; Redox signaling, Nature Communications, Nature Methods, Nature Chemical Biology, Scientific reports, JBC и мн. др., эксперт научных фондов РФФИ, РНФ, WellcomeTrust, European Research Council, Netherlands Organization for Scientific Research, The French National Research Agency и др.
+- Преподаватель и лектор, “Advanced light microscopy techniques” практический курс, EMBL Heidelberg, 2015, 2016, 2017, 2018 , лектор, &quot;Redox regulation of metabolic processes&quot; FEBS advanced course, Spetses, Greece, 2016, лектор, “3rd advanced course in Optogenetics”, Institute Curie, Paris 2016.
+- Организатор EMBO Conference on Redox Biology, Москва - Санкт-Петербург 2017, организатор визита Джеймса Уотсона в Россию с циклом научно-популярных лекций «70 нескучных лет в науке», Москва - Санкт-Петербург 2017 и других мероприятий
+- автор большого числа научных публикаций
+- лауреат многочисленных премий и наград
+&#39;
+
+cat(str_replace_all(some_text, &quot;\n- ([^\n]+)&quot;, &quot;\n&lt;li&gt;\\1&lt;/li&gt;&quot;))</code></pre>
+<pre><code>## 
+## Белоусов Всеволод Вадимович
+## 
+## &lt;li&gt;Выпускник кафедры биохимии Биологического факультета МГУ, доктор биологических наук&lt;/li&gt;
+## &lt;li&gt;Заведующий лабораторией редокс-регуляции РНИМУ имени Н.И. Пирогова&lt;/li&gt;
+## &lt;li&gt;Заведующий лабораторией молекулярных технологий ИБХ РАН&lt;/li&gt;
+## &lt;li&gt;Профессор РАН&lt;/li&gt;
+## &lt;li&gt;Член редколлегии журналов MethodX (Elsevier), Вестник РГМУ. Рецензент журналов FEBS journal, JACS, Chemical Science, Antioxidants &amp; Redox signaling, Nature Communications, Nature Methods, Nature Chemical Biology, Scientific reports, JBC и мн. др., эксперт научных фондов РФФИ, РНФ, WellcomeTrust, European Research Council, Netherlands Organization for Scientific Research, The French National Research Agency и др.&lt;/li&gt;
+## &lt;li&gt;Преподаватель и лектор, “Advanced light microscopy techniques” практический курс, EMBL Heidelberg, 2015, 2016, 2017, 2018 , лектор, &quot;Redox regulation of metabolic processes&quot; FEBS advanced course, Spetses, Greece, 2016, лектор, “3rd advanced course in Optogenetics”, Institute Curie, Paris 2016.&lt;/li&gt;
+## &lt;li&gt;Организатор EMBO Conference on Redox Biology, Москва - Санкт-Петербург 2017, организатор визита Джеймса Уотсона в Россию с циклом научно-популярных лекций «70 нескучных лет в науке», Москва - Санкт-Петербург 2017 и других мероприятий&lt;/li&gt;
+## &lt;li&gt;автор большого числа научных публикаций&lt;/li&gt;
+## &lt;li&gt;лауреат многочисленных премий и наград&lt;/li&gt;</code></pre>
+<p>Визуальное сравнение 2 и более групп - пример с разной дисперсией</p>
+<pre class="r"><code>set.seed(1)
+hi_var_anova = 
+  tibble(
+    groups = rep(c(&quot;A&quot;, &quot;B&quot;, &quot;C&quot;), each = 20),
+    values = c(
+      rnorm(20, mean = 35, 10),
+      rnorm(20, mean = 35, 10),
+      rnorm(20, mean = 39, 10)
+    )
+  )
+
+hi_gg = 
+  hi_var_anova %&gt;% 
+  ggplot(aes(x = groups, y = values)) +
+  geom_boxplot() + 
+  geom_point(position = position_jitter(.1)) +
+  coord_cartesian(ylim=c(10, 60)) +
+  ggtitle(&quot;High variance&quot;)
+
+
+library(tidyverse)
+library(magrittr)
+library(rstatix)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;rstatix&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:stats&#39;:
+## 
+##     filter</code></pre>
+<pre class="r"><code>low_var_anova = 
+  tibble( # tidyverse: data.frame
+    groups = rep(c(&quot;A&quot;, &quot;B&quot;, &quot;C&quot;), each = 20),
+    values = c(
+      rnorm(20, mean = 35, 2),
+      rnorm(20, mean = 35, 2),
+      rnorm(20, mean = 39, 2)
+    )
+  )
+
+low_gg = 
+  low_var_anova %&gt;% 
+  ggplot(aes(x = groups, y = values)) +
+  geom_boxplot() + 
+  geom_point(position = position_jitter(.1)) +
+  coord_cartesian(ylim=c(10, 60)) +
+  ggtitle(&quot;Low variance&quot;)
+
+
+suppressPackageStartupMessages(library(cowplot))
+plot_grid(hi_gg, low_gg) # cowplot</code></pre>
+<p><img src="03_comparisons_files/figure-html/anova_viz_hilowvar-1.svg" width="672" /></p>
+<p>Проверка предпосылок - нормальность и гомогенности дисперсии; размер выборок - влияет на формулу и тип ANOVA (I, II, III)</p>
+<pre class="r"><code># проверка нормальности
+library(ggpubr)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;ggpubr&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:cowplot&#39;:
+## 
+##     get_legend</code></pre>
+<pre class="r"><code>low_var_anova %&gt;% 
+  ggqqplot(&quot;values&quot;, facet = &quot;groups&quot;) # ggpubr</code></pre>
+<p><img src="03_comparisons_files/figure-html/norm_homosk_tests-1.svg" width="672" /></p>
+<pre class="r"><code># H0: распределение нормально, p.value &gt; 0.05 =&gt; H0 верна
+low_var_anova %&gt;% 
+  group_by(groups) %&gt;% 
+  summarise(normality = shapiro.test(values)$p.value)</code></pre>
+<pre><code>## # A tibble: 3 x 2
+##   groups normality
+##   &lt;chr&gt;      &lt;dbl&gt;
+## 1 A         0.729 
+## 2 B         0.470 
+## 3 C         0.0316</code></pre>
+<pre class="r"><code># H0: дисперсия гомогенна, p.value &gt; 0.05 =&gt; H0 верна
+low_var_anova %&gt;% levene_test(values ~ groups) # rstatix</code></pre>
+<pre><code>## Warning in leveneTest.default(y = y, group = group, ...): group coerced to
+## factor.</code></pre>
+<pre><code>## # A tibble: 1 x 4
+##     df1   df2 statistic     p
+##   &lt;int&gt; &lt;int&gt;     &lt;dbl&gt; &lt;dbl&gt;
+## 1     2    57     0.300 0.742</code></pre>
+<pre class="r"><code># убираем warning: более правильные типы данных
+low_var_anova %&gt;% levene_test(values ~ as.factor(groups))</code></pre>
+<pre><code>## # A tibble: 1 x 4
+##     df1   df2 statistic     p
+##   &lt;int&gt; &lt;int&gt;     &lt;dbl&gt; &lt;dbl&gt;
+## 1     2    57     0.300 0.742</code></pre>
+<p>Непрерывные признаки - точечные оценки</p>
+<pre class="r"><code>low_var_anova %&gt;% 
+  group_by(groups) %&gt;% 
+  summarise(mean = mean(values),
+            median = median(values))</code></pre>
+<pre><code>## # A tibble: 3 x 3
+##   groups  mean median
+##   &lt;chr&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+## 1 A       34.9   35.0
+## 2 B       35.2   35.6
+## 3 C       39.2   38.6</code></pre>
+<p>Непрерывные признаки - интервальные оценки, доверительные интервалы</p>
+<pre class="r"><code>low_var_anova %&gt;% 
+  group_by(groups) %&gt;% 
+  summarise(mean = mean(values),
+            sd = sd(values),
+            q1 = quantile(values, .25),
+            q3 = quantile(values, .75),
+            n = n(),
+            ci_low = mean - 2* sd / sqrt(n),
+            ci_hi = mean + 2* sd / sqrt(n))</code></pre>
+<pre><code>## # A tibble: 3 x 8
+##   groups  mean    sd    q1    q3     n ci_low ci_hi
+##   &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt;  &lt;dbl&gt; &lt;dbl&gt;
+## 1 A       34.9  1.82  33.8  35.7    20   34.1  35.7
+## 2 B       35.2  1.83  33.9  36.6    20   34.4  36.1
+## 3 C       39.2  1.62  38.1  40.1    20   38.5  40.0</code></pre>
+<p>Попарные сравнения + множественные сравнения</p>
+<pre class="r"><code># все тесты из библиотеки rstatix
+# effect size
+low_var_anova %&gt;% 
+  cohens_d(values ~ groups) # (mean1 - mean2)/pooled_sd</code></pre>
+<pre><code>## # A tibble: 3 x 7
+##   .y.    group1 group2 effsize    n1    n2 magnitude 
+## * &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt;    &lt;dbl&gt; &lt;int&gt; &lt;int&gt; &lt;ord&gt;     
+## 1 values A      B        0.180    20    20 negligible
+## 2 values A      C        2.52     20    20 large     
+## 3 values B      C        2.32     20    20 large</code></pre>
+<pre class="r"><code># parametric: T-test (significance + multiple testing)
+low_var_anova %&gt;% 
+  t_test(values ~ groups) # (mean1 - mean2)/SE*; SE = SD/sqrt(n)</code></pre>
+<pre><code>## # A tibble: 3 x 10
+##   .y.   group1 group2    n1    n2 statistic    df       p   p.adj
+## * &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;  &lt;int&gt; &lt;int&gt;     &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
+## 1 valu… A      B         20    20    -0.570  38.0 5.72e-1 5.72e-1
+## 2 valu… A      C         20    20    -7.96   37.5 1.40e-9 4.20e-9
+## 3 valu… B      C         20    20    -7.34   37.5 9.32e-9 1.86e-8
+## # … with 1 more variable: p.adj.signif &lt;chr&gt;</code></pre>
+<pre class="r"><code># nonparametric: Wilcoxon test (Mann-Whitney)
+low_var_anova %&gt;% 
+  wilcox_test(values ~ groups)</code></pre>
+<pre><code>## # A tibble: 3 x 9
+##   .y.    group1 group2    n1    n2 statistic        p    p.adj p.adj.signif
+## * &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt;  &lt;int&gt; &lt;int&gt;     &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt; &lt;chr&gt;       
+## 1 values A      B         20    20       170  4.29e-1  4.29e-1 ns          
+## 2 values A      C         20    20        17  1.76e-8  3.52e-8 ****        
+## 3 values B      C         20    20         9  1.41e-9  4.23e-9 ****</code></pre>
+<pre class="r"><code># nonparametric: permutation test - меняем &quot;подписи&quot; и сравниваем различия
+AC = 
+  low_var_anova %&gt;% 
+  filter(groups %in% c(&quot;A&quot;, &quot;C&quot;))
+
+means = 
+  AC %&gt;% 
+  group_by(groups) %&gt;% 
+  summarise(mean = mean(values))
+
+means</code></pre>
+<pre><code>## # A tibble: 2 x 2
+##   groups  mean
+##   &lt;chr&gt;  &lt;dbl&gt;
+## 1 A       34.9
+## 2 C       39.2</code></pre>
+<pre class="r"><code>means_diff = means$mean[1] - means$mean[2] # difference statistic
+
+N = 1000
+means_diffs_random = numeric(N)
+for(i in 1:N){
+  means = 
+    AC %&gt;% 
+    mutate(groups = sample(groups)) %&gt;% # relabel
+    group_by(groups) %&gt;% 
+    summarise(mean = mean(values))
+  means_diffs_random[i] = means$mean[1] - means$mean[2] # H0 difference statistic
+}
+
+tibble(x = means_diffs_random) %&gt;% 
+  ggplot(aes(x=x)) +
+  geom_histogram() +
+  geom_vline(xintercept = means_diff, col = &quot;red&quot;, linetype = &quot;dashed&quot;)</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="03_comparisons_files/figure-html/pairwise-1.svg" width="672" /></p>
+<p>Разные типы T-теста</p>
+<pre class="r"><code># 3 попарных сравнения + поправка на множественные сравнения
+low_var_anova %&gt;% 
+  t_test(values ~ groups) # (mean1 - mean2)/SE*; SE = SD/sqrt(n)</code></pre>
+<pre><code>## # A tibble: 3 x 10
+##   .y.   group1 group2    n1    n2 statistic    df       p   p.adj
+## * &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;  &lt;int&gt; &lt;int&gt;     &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
+## 1 valu… A      B         20    20    -0.570  38.0 5.72e-1 5.72e-1
+## 2 valu… A      C         20    20    -7.96   37.5 1.40e-9 4.20e-9
+## 3 valu… B      C         20    20    -7.34   37.5 9.32e-9 1.86e-8
+## # … with 1 more variable: p.adj.signif &lt;chr&gt;</code></pre>
+<pre class="r"><code># две группы =&gt; сравнение средних между двумя группами (есть различия?)
+AC %&gt;% 
+  t_test(values ~ groups) # (mean1 - mean2)/SE*; SE = SD/sqrt(n)</code></pre>
+<pre><code>## # A tibble: 1 x 8
+##   .y.    group1 group2    n1    n2 statistic    df            p
+## * &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt;  &lt;int&gt; &lt;int&gt;     &lt;dbl&gt; &lt;dbl&gt;        &lt;dbl&gt;
+## 1 values A      C         20    20     -7.96  37.5 0.0000000014</code></pre>
+<pre class="r"><code># одна группа =&gt; сравниваем среднее группы с каким-то значением
+A = AC %&gt;% filter(groups == &quot;A&quot;)
+C = AC %&gt;% filter(groups == &quot;C&quot;)
+# сравниваем среднее группы с конкретным значеним (равно или нет?)
+A %&gt;% t_test(values ~ 1, mu = 34) # p.value &lt; 0.05 =&gt; видимо не равно</code></pre>
+<pre><code>## # A tibble: 1 x 7
+##   .y.    group1 group2         n statistic    df      p
+## * &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt;      &lt;int&gt;     &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
+## 1 values 1      null model    20      2.23    19 0.0379</code></pre>
+<pre class="r"><code># сравниваем среднее группы с конкретным значеним (больше или нет?)
+A %&gt;% t_test(values ~ 1, mu = 34, alternative = &quot;less&quot;) # p.value &gt;&gt; 0.05 =&gt; скорее всего больше</code></pre>
+<pre><code>## # A tibble: 1 x 7
+##   .y.    group1 group2         n statistic    df     p
+## * &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt;      &lt;int&gt;     &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1 values 1      null model    20      2.23    19 0.981</code></pre>
+<pre class="r"><code># парный тест: сравниваем параллельные (связанные, зависимые) наблюдения
+# например: вес одних и тех же мышей до и после приема препарата
+AC %&gt;% t_test(values ~ groups, paired = T)</code></pre>
+<pre><code>## # A tibble: 1 x 8
+##   .y.    group1 group2    n1    n2 statistic    df             p
+## * &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt;  &lt;int&gt; &lt;int&gt;     &lt;dbl&gt; &lt;dbl&gt;         &lt;dbl&gt;
+## 1 values A      C         20    20     -10.7    19 0.00000000173</code></pre>
+<pre class="r"><code># разбираемся с парным тестом
+AC_delta = tibble(
+  &quot;A = before&quot; = A$values, 
+  &quot;C = after&quot; = C$values, 
+  delta = C$values - A$values # before - after
+)
+AC_delta</code></pre>
+<pre><code>## # A tibble: 20 x 3
+##    `A = before` `C = after` delta
+##           &lt;dbl&gt;       &lt;dbl&gt; &lt;dbl&gt;
+##  1         34.9        39.1 4.16 
+##  2         36.4        37.2 0.799
+##  3         35.1        39.3 4.26 
+##  4         33.5        37.7 4.18 
+##  5         35.4        42.5 7.16 
+##  6         31.4        40.4 9.04 
+##  7         37.9        40.8 2.89 
+##  8         35.3        39.8 4.46 
+##  9         39.3        42.4 3.02 
+## 10         36.0        37.7 1.78 
+## 11         33.6        38.1 4.50 
+## 12         36.2        41.9 5.64 
+## 13         33.1        37.7 4.57 
+## 14         32.5        38.6 6.09 
+## 15         35.6        38.2 2.63 
+## 16         34.1        38.4 4.25 
+## 17         35.0        38.4 3.44 
+## 18         35.1        40.0 4.84 
+## 19         33.8        38.6 4.82 
+## 20         33.9        38.0 4.13</code></pre>
+<pre class="r"><code># парный тест - это сравнение значений разницы с 0
+AC_delta %&gt;% t_test(delta ~ 1, mu = 0)</code></pre>
+<pre><code>## # A tibble: 1 x 7
+##   .y.   group1 group2         n statistic    df             p
+## * &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;      &lt;int&gt;     &lt;dbl&gt; &lt;dbl&gt;         &lt;dbl&gt;
+## 1 delta 1      null model    20      10.7    19 0.00000000173</code></pre>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

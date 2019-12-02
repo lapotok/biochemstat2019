@@ -1,0 +1,232 @@
+---
+title: "Домашняя работа №3"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+Мы потренируемся со следующими операциями
++ анализ предпосылок для сравнения групп
++ сравнение групп параметрическими и непараметрическими методами
++ анализ мощности теста
+
+```{r libraries}
+# libraries
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(magrittr))
+suppressPackageStartupMessages(library(coin))
+suppressPackageStartupMessages(library(rstatix))
+suppressPackageStartupMessages(library(ggpubr))
+```
+
+# Сравнение групп
+
+Рассмотрим такие данные.
+
+```{r tt_data}
+set.seed(1)
+tt_data = 
+  tibble(
+    groups = c("untreated", "treated") %>% rep(each = 30) %>% as.factor(),
+    values = c( rnorm(30, mean = 50, sd = 12), 
+                rnorm(30, mean = 55, sd = 12))
+  )
+
+tt_data %>% sample_n(10) # посмотрим на несколько строк данных
+```
+
+Напишите код для визуализации данных (ggplot + боксплоты + точки + доверительные интервалы). 
+
+Как Вам кажется по графику
++ нормальны ли данные? (проверьте свою интуцию тестом и QQ-plot)
++ одинакова ли дисперсия в группах? (проверьте свою интуцию тестом)
++ есть ли различия между группами (случайны ли они)?
+
+```{r echo = F, eval = F}
+tt_data %>% 
+  ggplot(aes(x = groups, y = values)) +
+  geom_boxplot() +
+  geom_point(position = position_jitter(.1))
+
+# normality - OK
+tt_data %>% 
+  pull(values) %>% 
+  shapiro_test()
+
+# homoskedastisity - OK
+tt_data %>% 
+  levene_test(values ~ groups)
+```
+
+Проверьте значимость различий между группами с помощью t-теста (`t_test`), теста Манна-Уитни (`wilcox_test`) и перестановочного теста (`oneway_test` из пакета `coin`). Сравните результаты. Чем можно объяснить различия?
+
+```{r}
+tt_data %>% t_test(values ~ groups)
+tt_data %>% wilcox_test(values ~ groups)
+coin::oneway_test(values ~ groups, tt_data) %>% coin::pvalue()
+```
+
+
+# Анализ мощности
+
+## Напишем код для вычисления мощности t-теста для наших данных
+
+Давайте проанализируем мощность t-теста. Для наших данных знаем разницу между средними и стандартное отклонение. 
+
+```{r t_power}
+tt_data %>%
+  pull(values) %>% # вытащить данные колонки
+  sd() -> total_sd # с помощью оператора "->" тоже можно записывать в переменную!
+
+total_sd
+
+tt_data %>% 
+  group_by(groups) %>% 
+  summarise(mean = mean(values)) %>% 
+  pull(mean) %>% 
+  diff() -> group_diff # считаем разность (diff)
+
+group_diff
+
+group_diff / total_sd # effect size
+
+tt_data %>% cohens_d(values ~ groups) # похожее значение effect_size (иначе считают pooled SD)
+```
+
+Далее с помощью функции `power.t.test()` можно ответить на следующие вопросы
++ сколько наблюдений нужно, чтобы детектировать такую величину эффекта с вероятностью 80% (при этом, хотим поддерживать вероятность ложно-позитивных находок около 5%);
++ какую величину эффекта мы могли бы детектировать с имеющимся количеством наблюдений;
++ какова была мощность того теста, который мы провели, т.е. какова была вероятность обнаружить данный эффект.
+
+```{r eval = F, echo = F}
+power.t.test(n = NULL,
+             delta = group_diff,
+             sd = total_sd,
+             power = 0.8,
+             sig.level = 0.05)
+
+power.t.test(n = 30,
+             sd = total_sd,
+             power = 0.8,
+             sig.level = 0.05)
+
+power.t.test(n = 30,
+             delta = group_diff,
+             sd = total_sd,
+             sig.level = 0.05)
+```
+
+Теперь мы готовы провести эксперимент (симуляцию) по определению того размера выборки, чтобы с мощностью 80% обнаружить эффект данной величины (как если бы не было готовой формулы для определению мощности). 
+
+Для начала напишем функцию для проведения анализа. 
+
+1. Сначала генерим тестовые данные. Средние и стандартные отклонения должны быть такими же, как в исходных данных. Размер выборки в каждой группе должен равняться `n` (аргумент функции). Дополните код.
+
+    ```r
+    # пишем функцию
+    make_comparison = function(n){
+      data = tibble(
+        groups = ..., # в каждой группе должно быть n наблюдений [функции c(), rep()]
+        values = ... # [функции c(), rnorm()]
+      )
+      data %>% 
+        t_test(...) %>% 
+        pull("p") %>% # достаем колонку с p.values
+        {. < 0.05} # сравниваем полученное значение с 0.05
+      # функция возвращает последнее расчитанное значение
+    }
+    
+    # пробуем применить функцию
+    make_comparison(10)
+    ```
+
+```{r eval = F, echo = F}
+tt_data_summ = tt_data %>% 
+  group_by(groups) %>% 
+  summarise(mean = mean(values), 
+            sd = sd(values))
+
+# пишем функцию
+make_comparison = function(n){
+  data = tibble(
+    groups = rep(c(1, 2), each = n),
+    values = c(rnorm(n, tt_data_summ[[1, "mean"]], tt_data_summ[[1, "sd"]]),
+               rnorm(n, tt_data_summ[[2, "mean"]], tt_data_summ[[2, "sd"]]))
+  )
+  data %>% 
+    t_test(values ~ groups) %>% 
+    pull("p") %>% # достаем колонку с p.values
+    {. < 0.05} # сравниваем полученное значение с 0.05
+  # функция возвращает последнее расчитанное значение
+}
+
+# пробуем применить функцию
+make_comparison(10)
+```
+
+А теперь необходимо понять, как меняется мощность теста при разных размерах выборки. Возьмем такие:
+
+```{r}
+sample_sizes = c(3, 10, 20, 30, 50, 80, 100, 150, 200, 300)
+```
+
+Для каждого из этих размеров проведем 1000 симуляций (для начала, можно поставить 10, чтобы считалось побыстрее на этапе отладки). Посчитаем в какой доле случаев тест детектирует различие (это и будет мощность).
+
+```{r}
+N = 1000 # 1000 симуляций считаются примерно за пару минут
+runs = 1:N
+
+simulation_design = 
+  expand_grid( # составляет таблицу сочетаний параметров
+    run = runs,
+    sample_size = sample_sizes
+)
+
+simulation_design
+```
+
+Для каждой строки данной таблицы (параметры: номер прогона и размер сравниваемых выборок) нам надо вычислить значение написанной нами функции.
+
+```{r}
+# теперь гоним все тесты
+simulation_results = 
+  simulation_design %>% 
+  group_by(run, sample_size) %>% # для каждого сочетания параметров
+  summarise(comparison = make_comparison(sample_size))
+
+simulation_results
+```
+
+```r
+calculated_power = 
+  simulation_results %>% 
+  group_by(sample_size) %>% 
+  summarise(n = ..., # общее число симуляций для данного размера выборки
+            n_positive = ..., # число найденных тестами отличий для данного размера выборки
+            positive_rate = ...) # мощность = доля обнаруженных отличий
+```
+
+```{r}
+calculated_power = 
+  simulation_results %>% 
+  group_by(sample_size) %>% 
+  summarise(n = n(),
+            n_positive = sum(comparison),
+            positive_rate = n_positive/n)
+```
+
+Построим график
+
+```r
+calculated_power %>% 
+  ggplot(...) +
+  geom_... + # рисуем линию
+  geom_... # строим точки
+```
+
+```{r}
+calculated_power %>% 
+  ggplot(aes(x = sample_size, y = positive_rate)) +
+  geom_point() +
+  geom_line()
+```
