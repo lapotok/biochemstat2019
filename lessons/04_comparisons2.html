@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Сравнение групп - продолжение</title>
+
+<script src="libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="libs/bootstrap-3.3.5/css/lumen.min.css" rel="stylesheet" />
+<script src="libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="libs/navigation-1.1/tabsets.js"></script>
+<link href="libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="../imports/style.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Сравнение групп - продолжение</h1>
+
+</div>
+
+
+<div id="план" class="section level1">
+<h1>План</h1>
+<ul>
+<li>projects, R markdown vs scripts</li>
+<li>nested functions + direct indexing vs pipelines + filter</li>
+<li>cycles vs parallel</li>
+<li>дисперсия: почему n-1?</li>
+<li>взвешенное среднее</li>
+<li>group diff -&gt; mean_diff.pptx</li>
+<li>нулевая гипотеза</li>
+<li>нулевая гипотеза и реальное значение</li>
+<li>доверительный интервал - параметрический</li>
+<li>t-test p-value vs t confidence intervals</li>
+<li>доверительный интервал непараметрический
+<ul>
+<li>pop vs sample</li>
+<li>CLT -&gt; CLT_demo.pptx</li>
+<li>bootstrap</li>
+</ul></li>
+<li>сравнение качественных признаков</li>
+</ul>
+</div>
+<div id="количественный-признак---сравнение-двух-групп" class="section level1">
+<h1>Количественный признак - сравнение двух групп</h1>
+<div id="перестановочный-тест-ничего-не-знаем-о-группах---непараметрический-тест" class="section level2">
+<h2>Перестановочный тест (ничего не знаем о группах - непараметрический тест)</h2>
+<p>Fresh start: мы ничего не значем про распределение в группах, просто пытаемся понять, есть ли различия в средних значениях или нет.</p>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## ── Attaching packages ──────────────────────────────────────────────────────── tidyverse 1.2.1 ──</code></pre>
+<pre><code>## ✔ ggplot2 3.2.1     ✔ purrr   0.3.2
+## ✔ tibble  2.1.3     ✔ dplyr   0.8.3
+## ✔ tidyr   1.0.0     ✔ stringr 1.4.0
+## ✔ readr   1.3.1     ✔ forcats 0.4.0</code></pre>
+<pre><code>## ── Conflicts ─────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter() masks stats::filter()
+## ✖ dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>library(magrittr)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;magrittr&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:purrr&#39;:
+## 
+##     set_names</code></pre>
+<pre><code>## The following object is masked from &#39;package:tidyr&#39;:
+## 
+##     extract</code></pre>
+<pre class="r"><code>library(ggpubr)
+library(cowplot)</code></pre>
+<pre><code>## 
+## ********************************************************</code></pre>
+<pre><code>## Note: As of version 1.0.0, cowplot does not change the</code></pre>
+<pre><code>##   default ggplot2 theme anymore. To recover the previous</code></pre>
+<pre><code>##   behavior, execute:
+##   theme_set(theme_cowplot())</code></pre>
+<pre><code>## ********************************************************</code></pre>
+<pre><code>## 
+## Attaching package: &#39;cowplot&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:ggpubr&#39;:
+## 
+##     get_legend</code></pre>
+<pre class="r"><code>library(rstatix)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;rstatix&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:stats&#39;:
+## 
+##     filter</code></pre>
+<pre class="r"><code>theme_set(theme_bw())
+
+# данные, с которыми будем работать
+# download.file(&quot;https://raw.githubusercontent.com/genomicsclass/dagdata/master/inst/extdata/mice_pheno.csv&quot;, &quot;data/mice_pheno.csv&quot;)
+mice_pheno = rio::import(&quot;../data/mice_pheno.csv&quot;) %&gt;% as_tibble()
+
+mice_pheno =
+  mice_pheno %&gt;% 
+  mutate(Diet = recode(Diet,&quot;hf&quot; = &quot;high_fat&quot;, &quot;chow&quot; = &quot;control&quot;)) %&gt;% 
+  mutate_if(is.character, as.factor)
+
+# создадим подвыборку размером по 30 наблюдений в каждой группе
+set.seed(1)
+mice_pheno_30 = mice_pheno %&gt;% sample_n_by(Diet, size=30) # rstatix
+
+# смотрим на данные
+mice_pheno_30 %&gt;% ggboxplot(&quot;Diet&quot;, &quot;Bodyweight&quot;, add=&quot;jitter&quot;) # ggpubr</code></pre>
+<p><img src="04_comparisons2_files/figure-html/load_data-1.svg" width="672" /></p>
+<p>У нас есть две гипотезы</p>
+<ul>
+<li>H0: разницы между группами нет;</li>
+<li>H1: разница есть</li>
+</ul>
+<p>Чтобы понять, есть ли разница, нужно придумать какой-то показатель <span class="math inline">\(D\)</span>, характеризующий эту разницу, затем провести исследование на предмет того, какие значения он может принимать, если его считать для случайно выбранных групп наблюдений. Затем мы можем сравнить эти типичные значения <span class="math inline">\(D\)</span> со значением <span class="math inline">\(D\)</span>, для искомых групп и оценить насколько вероятно такое значение среди групп из одной генеральной совокупности.</p>
+<pre class="r"><code>get_diff = function(data, shuffle = F){
+  if (shuffle) data = data %&gt;% mutate(Diet = sample(Diet))
+  data %&gt;% 
+  group_by(Diet) %&gt;% 
+  summarise(mean = mean(Bodyweight)) %&gt;% # среднее в каждой группе
+  pull(mean) %&gt;% # превращаем колонку в вектор
+  diff() # считаем среднее между двумя значениями
+}
+
+actual_diff = get_diff(mice_pheno_30, shuffle = F)
+
+# создаем случайные группы из наблюдений и считаем среднее
+N = 1000 # число симуляций
+set.seed(1)
+tibble(run = 1:N) %&gt;% 
+  group_by(run) %&gt;% 
+  summarise(diff = get_diff(mice_pheno_30, shuffle = T)) -&gt; mice_pheno_30_h0
+
+h = 
+  mice_pheno_30_h0 %&gt;% 
+  #gghistogram(&quot;diff&quot;, color = NA, fill = &quot;gray&quot;) + 
+  ggplot() +
+  geom_histogram(aes(x=diff, y = ..density..)) +
+  geom_vline(xintercept = actual_diff, col = &quot;red&quot;, linetype = &quot;dotted&quot;) +
+  stat_function(fun = dnorm, n = 101, args = list(mean = mean(mice_pheno_30_h0$diff), sd = sd(mice_pheno_30_h0$diff)), col=&quot;black&quot;, linetype=&quot;dashed&quot;)
+
+qq = mice_pheno_30_h0 %&gt;% ggqqplot(&quot;diff&quot;)
+plot_grid(h, qq)</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="04_comparisons2_files/figure-html/null_permut-1.svg" width="672" /></p>
+<p>Итак, мы можем увидеть, что если различий между группами нет и найденное нами деление на группы ничем не лучше любого другого, случайно сгенерированного, то найденная разница <code>actual_diff</code> “затеряется” среди типичных разниц <code>diff</code> случайных различий. В данном случае так и произошло.</p>
+<pre class="r"><code>mice_pheno_30_h0 %&gt;% 
+  pull(diff) %&gt;% # берем вектор значений
+  {abs(.) &gt; actual_diff} %&gt;% # число случаев, когда абсолютные значения статистики, больше чем наблюдаемое
+  {sum(.)/length(.)} # доля таких случаев</code></pre>
+<pre><code>## [1] 0.741</code></pre>
+<p>Мы видим, что среди случайно сгенеренных случайных групп 74% имеют даже большие различия, чем между группами, которые мы сравниваем!</p>
+<blockquote>
+<p><strong>P-value</strong> - вероятность получить для данной вероятностной модели распределения значений случайной величины такое же или более экстремальное значение статистики (среднего арифметического, медианы и др.), по сравнению с ранее наблюдаемым, при условии, что нулевая гипотеза верна.</p>
+</blockquote>
+<p>В данном случае, статистика - это показатель <span class="math inline">\(D\)</span>, которым мы меряем различие между группами, а 0.74 (74%) - это <code>p-value</code>, т.е. доля значений статистики <span class="math inline">\(D\)</span>, которая принимает такое же или более экстримальное значение из набора сгенерированных значений для случайных групп (т.е. для которых нулевая гипотеза о равенстве средних верна).</p>
+<p>Кстати, в R уже реализована функция для такого теста, поэтому его не надо изобретать самому.</p>
+<pre class="r"><code>mice_pheno_30 %&gt;% coin::oneway_test(Bodyweight ~ Diet, data = .)</code></pre>
+<pre><code>## 
+##  Asymptotic Two-Sample Fisher-Pitman Permutation Test
+## 
+## data:  Bodyweight by Diet (control, high_fat)
+## Z = -0.33284, p-value = 0.7393
+## alternative hypothesis: true mu is not equal to 0</code></pre>
+<pre class="r"><code># p-value можно достать так
+mice_pheno_30 %&gt;% coin::oneway_test(Bodyweight ~ Diet, data = .) %&gt;% coin::pvalue()</code></pre>
+<pre><code>## [1] 0.7392563</code></pre>
+<p>Если мы возьмем другую выборку или больше данных (например, ~ 400 наблюдений в каждой группе), то можем увидеть другую картину.</p>
+<ul>
+<li>Повторите анализ для полной выборки или для другой случайной подвыборки (другое значение <code>set.seed()</code>)</li>
+<li>Есть ли теперь разница между группами?</li>
+</ul>
+</div>
+<div id="тест-манна-уитни-непараметрический-тест" class="section level2">
+<h2>Тест Манна-Уитни (непараметрический тест)</h2>
+<p>Мы хотим узнать, есть ли разница между группами, для которых предпосылка о нормальности распределения неверна, мы также можем использовать тест Манна-Уитни.</p>
+<pre class="r"><code>mice_pheno_30 %&gt;% 
+  wilcox_test(Bodyweight ~ Diet)</code></pre>
+<pre><code>## # A tibble: 1 x 7
+##   .y.        group1  group2      n1    n2 statistic     p
+## * &lt;chr&gt;      &lt;chr&gt;   &lt;chr&gt;    &lt;int&gt; &lt;int&gt;     &lt;dbl&gt; &lt;dbl&gt;
+## 1 Bodyweight control high_fat    30    30       445 0.947</code></pre>
+</div>
+<div id="t-тест-параметрический-тест" class="section level2">
+<h2>t-тест (параметрический тест)</h2>
+<p>Наконец, если мы уверены, что распределение данных нормально, то можно использовать параметрические тесты, например t-тест. Заметим, кстати, что в данных группах дисперсия отличается. Однако t-тест умеет делать поправку на это.</p>
+<p><span class="math display">\[
+t = \frac{\bar{x}_1 - \bar{x}_2}{SE_{pooled}} = \frac{\bar{x}_1 - \bar{x}_2}{\sqrt{var_{pooled}} \cdot \sqrt{\frac{1}{n_1}+\frac{1}{n_2}}} = \frac{\bar{x}_1 - \bar{x}_2}{\sqrt{\frac{var_1 \cdot (n_1-1)+var_2 \cdot (n_2-1)}{(n_1-1)+(n_2-1)}} \cdot \sqrt{\frac{1}{n_1}+\frac{1}{n_2}}}
+\]</span> Попытаемся это посчитать</p>
+<pre class="r"><code># считаем среднее, дисперсию и размер выборки для групп
+mice_pheno_30_summary = 
+  mice_pheno_30 %&gt;% 
+  group_by(Diet) %&gt;% 
+  summarise(mean = mean(Bodyweight),
+            var = var(Bodyweight),
+            n = n()) 
+
+# разница между групповыми средними (числитель)
+group_diff = 
+  mice_pheno_30_summary %&gt;% 
+  pull(mean) %&gt;% 
+  diff()
+
+# теперь знаменатель (поэтапно)
+# 1. pooled var
+pooled_var = 
+  with(mice_pheno_30_summary, # with чтобы вытаскивать переменные из mice_pheno_30_summary
+       (var[1]*(n[1]-1) + var[2]*(n[2]-1)) / ((n[1]-1) + (n[2]-1)))
+
+# 2. pooled se
+pooled_se = 
+  with(mice_pheno_30_summary, 
+    sqrt(pooled_var) * sqrt(1/n[1] + 1/n[1]))
+
+# все целиком
+t_statistic = group_diff / pooled_se
+t_statistic</code></pre>
+<pre><code>## [1] 0.3303159</code></pre>
+<pre class="r"><code># тоже самое - готовой функцией
+mice_pheno_30 %&gt;% 
+  t_test(Bodyweight ~ Diet)</code></pre>
+<pre><code>## # A tibble: 1 x 8
+##   .y.        group1  group2      n1    n2 statistic    df     p
+## * &lt;chr&gt;      &lt;chr&gt;   &lt;chr&gt;    &lt;int&gt; &lt;int&gt;     &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1 Bodyweight control high_fat    30    30    -0.330  52.4 0.742</code></pre>
+<pre class="r"><code># проводим симуляцию как себя ведет t-значение, если различий нет
+# (как в тесте перестановок, но другая статистка)
+t_statistic_null =
+  tibble(run = 1:1000) %&gt;%
+  group_by(run) %&gt;% 
+  mutate(t = 
+           mice_pheno_30 %&gt;% 
+           mutate(Diet = sample(Diet)) %&gt;% 
+           t_test(Bodyweight ~ Diet) %&gt;% 
+           pull(statistic))  
+
+# строим график
+# если данные (а точнее остатки) распределены нормально, 
+# то t_statistic ~ t(df) и можно по из этого вычислить p-value
+t_statistic_null %&gt;% 
+  ggplot() + 
+  geom_histogram(aes(x = t, y = ..density..), alpha = .6, bins = 40) + 
+  stat_function(fun = dt, args = list(df = 30), linetype = &quot;dashed&quot;) +
+  labs(x = &quot;t_statistic (если различий между группами нет)&quot;)</code></pre>
+<p><img src="04_comparisons2_files/figure-html/t_test-1.svg" width="672" /></p>
+</div>
+<div id="доверительный-интервал" class="section level2">
+<h2>Доверительный интервал</h2>
+<p>Доверительный интервал — это интервал, построенный с помощью случайной выборки из распределения с неизвестным параметром, такой, что он содержит данный параметр с заданной вероятностью.</p>
+<ul>
+<li>есть выборка (представляющая генеральную совокупность или природу прозводящего ее процесса)</li>
+<li>по этой выборке делается точечная оценка параметра (приближающаяся к неизвестному истинному значению)</li>
+<li>мы никогда не узнаем истинное значение данного параметра (а, следовательно, и то, включает ли интервал это значение)</li>
+<li>но мы можем основываясь на свойствах выборки научиться строить такой интервал <span class="math inline">\([L, U]\)</span>, что в ходе симуляций для такого типа выборок построенный тем же способом интервал будет в среднем содержать истинное значение параметра в, например, <span class="math inline">\(95\%\)</span> случаев (значимость <span class="math inline">\(\alpha=0.95\)</span>, хотя выбор этого значения является произвольным)</li>
+<li>это значит, что в среднем в <span class="math inline">\(100-95=5\%\)</span> случаев (с вероятностью <span class="math inline">\(1-\alpha = 0.05\)</span>) истинное значение параметра будет попадать мимо</li>
+</ul>
+<div id="параметрический-доверительный-интервал" class="section level3">
+<h3>Параметрический доверительный интервал</h3>
+<p>Нормальный интервал</p>
+<p><span class="math display">\[
+\Big[mean(x) - z^* \cdot \frac{sd(x)}{\sqrt{n}},\ mean(x) + z^* \cdot \frac{sd(x)}{\sqrt{n}}\Big]
+\]</span></p>
+<pre class="r"><code># z*
+qnorm(0.975)</code></pre>
+<pre><code>## [1] 1.959964</code></pre>
+<pre class="r"><code>ggplot() + 
+  stat_function(fun = dnorm, args = list(mean = 0, sd = 1)) + xlim(-3,3) + ylim(0, 1)</code></pre>
+<p><img src="04_comparisons2_files/figure-html/unnamed-chunk-2-1.svg" width="672" /></p>
+<pre class="r"><code>ggplot(data = data.frame(x = c(-3, 3)), aes(x)) +
+  stat_function(fun = dnorm, n = 101, args = list(mean = 0, sd = 1)) + ylab(&quot;density&quot;) +
+  #scale_y_continuous(breaks = NULL) +
+  geom_vline(xintercept = qnorm(c(0.025, 0.975)), col = &quot;red&quot;, linetype = &quot;dashed&quot;)</code></pre>
+<p><img src="04_comparisons2_files/figure-html/unnamed-chunk-2-2.svg" width="672" /></p>
+<pre class="r"><code># normal CI
+
+set.seed(1)
+x = rnorm(100, mean = 50, sd = 8)
+mean(x) + qnorm(c(0.025, 0.975)) * sd(x) / sqrt(length(x))</code></pre>
+<pre><code>## [1] 49.46275 52.27945</code></pre>
+<p>t интервал =&gt; используется по умолчанию!</p>
+<p><span class="math display">\[
+\Big[mean(x) - t^* \cdot \frac{sd(x)}{\sqrt{n}},\ mean(x) + t^* \cdot \frac{sd(x)}{\sqrt{n}}\Big]
+\]</span></p>
+<pre class="r"><code>qt(0.975, df = 10)</code></pre>
+<pre><code>## [1] 2.228139</code></pre>
+<pre class="r"><code>set.seed(1)
+x = rnorm(10, mean = 50, sd = 8)
+mean(x) + qnorm(c(0.025, 0.975)) * sd(x) / sqrt(length(x)) # z*: qnorm</code></pre>
+<pre><code>## [1] 47.18720 54.92805</code></pre>
+<pre class="r"><code>mean(x) - qnorm(c(0.975)) * sd(x) / sqrt(length(x)) # z*: qnorm</code></pre>
+<pre><code>## [1] 47.1872</code></pre>
+<pre class="r"><code>mean(x) + qnorm(c(0.975)) * sd(x) / sqrt(length(x)) # z*: qnorm</code></pre>
+<pre><code>## [1] 54.92805</code></pre>
+<pre class="r"><code>mean(x) + qt(c(0.025, 0.975), df = 10) * sd(x) / sqrt(length(x)) # t*: qt</code></pre>
+<pre><code>## [1] 46.65762 55.45763</code></pre>
+<pre class="r"><code>t.test(x, mu = 0) # base R</code></pre>
+<pre><code>## 
+##  One Sample t-test
+## 
+## data:  x
+## t = 25.855, df = 9, p-value = 9.336e-10
+## alternative hypothesis: true mean is not equal to 0
+## 95 percent confidence interval:
+##  46.59044 55.52480
+## sample estimates:
+## mean of x 
+##  51.05762</code></pre>
+<pre class="r"><code>mean_ci(x) # ggpubr</code></pre>
+<pre><code>##          y     ymin    ymax
+## 1 51.05762 46.59044 55.5248</code></pre>
+</div>
+<div id="непараметрический-доверительный-интервал" class="section level3">
+<h3>Непараметрический доверительный интервал</h3>
+</div>
+</div>
+</div>
+<div id="качественные-данные" class="section level1">
+<h1>Качественные данные</h1>
+<ul>
+<li>качественные признаки (номинальные, дискретные, ординальные)</li>
+<li>mosaicplot</li>
+<li>pearson chi square test</li>
+<li>fisher test</li>
+<li>binomial test</li>
+<li>mcneimar test</li>
+</ul>
+<pre class="r"><code># Data: Titanic
+xtab &lt;- as.table(rbind(
+  c(203, 118, 178, 212),
+  c(122, 167, 528, 673)
+))
+dimnames(xtab) &lt;- list(
+  Survived = c(&quot;Yes&quot;, &quot;No&quot;),
+  Class = c(&quot;1st&quot;, &quot;2nd&quot;, &quot;3rd&quot;, &quot;Crew&quot;)
+)
+xtab = t(xtab)
+
+# visual
+mosaicplot(xtab, color = T)</code></pre>
+<p><img src="04_comparisons2_files/figure-html/discrete_data-1.svg" width="672" /></p>
+<pre class="r"><code>chisq_test(xtab)</code></pre>
+<pre><code>## # A tibble: 1 x 5
+##   statistic        p    df method          p.signif
+## *     &lt;dbl&gt;    &lt;dbl&gt; &lt;int&gt; &lt;chr&gt;           &lt;chr&gt;   
+## 1      190. 5.00e-41     3 Chi-square test ****</code></pre>
+<pre class="r"><code>chisq_test(t(xtab))</code></pre>
+<pre><code>## # A tibble: 1 x 5
+##   statistic        p    df method          p.signif
+## *     &lt;dbl&gt;    &lt;dbl&gt; &lt;int&gt; &lt;chr&gt;           &lt;chr&gt;   
+## 1      190. 5.00e-41     3 Chi-square test ****</code></pre>
+<pre class="r"><code>expected_freq(chisq_test(xtab))</code></pre>
+<pre><code>##       Survived
+## Class        Yes       No
+##   1st  104.98637 220.0136
+##   2nd   92.06497 192.9350
+##   3rd  228.06270 477.9373
+##   Crew 285.88596 599.1140</code></pre>
+<pre class="r"><code>mosaicplot(expected_freq(chisq_test(xtab)), color = T)</code></pre>
+<p><img src="04_comparisons2_files/figure-html/discrete_data-2.svg" width="672" /></p>
+<pre class="r"><code>observed_freq(chisq_test(xtab))</code></pre>
+<pre><code>##       Survived
+## Class  Yes  No
+##   1st  203 122
+##   2nd  118 167
+##   3rd  178 528
+##   Crew 212 673</code></pre>
+<pre class="r"><code>mosaicplot(observed_freq(chisq_test(xtab)), color = T)</code></pre>
+<p><img src="04_comparisons2_files/figure-html/discrete_data-3.svg" width="672" /></p>
+<pre class="r"><code>chisq_descriptives(chisq_test(xtab))</code></pre>
+<pre><code>## # A tibble: 8 x 9
+##   Class Survived observed   prop row.prop col.prop expected residuals
+##   &lt;fct&gt; &lt;fct&gt;       &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
+## 1 1st   Yes           203 0.0922    0.625   0.286     105.       9.57
+## 2 2nd   Yes           118 0.0536    0.414   0.166      92.1      2.70
+## 3 3rd   Yes           178 0.0809    0.252   0.250     228.      -3.32
+## 4 Crew  Yes           212 0.0963    0.240   0.298     286.      -4.37
+## 5 1st   No            122 0.0554    0.375   0.0819    220.      -6.61
+## 6 2nd   No            167 0.0759    0.586   0.112     193.      -1.87
+## 7 3rd   No            528 0.240     0.748   0.354     478.       2.29
+## 8 Crew  No            673 0.306     0.760   0.452     599.       3.02
+## # … with 1 more variable: stdres &lt;dbl&gt;</code></pre>
+<pre class="r"><code>prop_test(xtab)</code></pre>
+<pre><code>## # A tibble: 1 x 4
+##   statistic    df        p p.signif
+##       &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt; &lt;chr&gt;   
+## 1      190.     3 5.00e-41 ****</code></pre>
+<pre class="r"><code>pairwise_prop_test(xtab)</code></pre>
+<pre><code>## # A tibble: 6 x 5
+##   group1 group2        p    p.adj p.adj.signif
+## * &lt;chr&gt;  &lt;chr&gt;     &lt;dbl&gt;    &lt;dbl&gt; &lt;chr&gt;       
+## 1 1st    2nd    3.13e- 7 9.38e- 7 ****        
+## 2 1st    3rd    2.55e-30 1.27e-29 ****        
+## 3 1st    Crew   1.62e-35 9.73e-35 ****        
+## 4 2nd    3rd    6.90e- 7 1.38e- 6 ****        
+## 5 2nd    Crew   1.94e- 8 7.75e- 8 ****        
+## 6 3rd    Crew   6.03e- 1 6.03e- 1 ns</code></pre>
+<pre class="r"><code>fisher_test(xtab, simulate.p.value = T)</code></pre>
+<pre><code>## # A tibble: 1 x 2
+##        p p.signif
+##    &lt;dbl&gt; &lt;chr&gt;   
+## 1 0.0005 ***</code></pre>
+</div>
+<div id="прочее" class="section level1">
+<h1>Прочее</h1>
+<p>Мощность непараметрических тестов</p>
+<pre class="r"><code># hometask: wilcoxon test power calculation
+n = 30
+set.seed(1)
+data = tibble(
+  groups = rep(c(&quot;Sample1&quot;, &quot;Sample2&quot;), each = n),
+  values = c(
+    MASS::rnegbin(n, 20, 1.5),
+    MASS::rnegbin(n, 30, 1.5)
+  )
+)
+data %&gt;% 
+  ggplot(aes(x = groups, y = values)) +
+  geom_boxplot() + 
+  geom_point(position = position_jitter(.1), size=2, alpha=.6)
+
+library(coin)
+# реализация теста перестановок, разобранного на уроке
+oneway_test(values ~ as.factor(groups), data)
+data %&gt;% 
+  group_by(groups) %&gt;% 
+  summarise(mean = mean(values), var = var(values))
+
+sample_sizes = c(3, 10, 20, 30, 50, 80, 100, 150, 200, 300)
+res = 
+  matrix(NA, nrow = 1000, ncol = 10)
+dimnames(res) = 
+  list(sample_n = 1:1000,
+       sample_size = sample_sizes)
+
+for (n in 1:1000){
+  for (ss in sample_sizes){
+    res[n, as.character(ss)] =
+    tibble(
+      groups = rep(c(&quot;Sample1&quot;, &quot;Sample2&quot;), each = ss),
+      values = c(
+        MASS::rnegbin(ss, 20, 1.5),
+        MASS::rnegbin(ss, 30, 1.5)
+      )
+    ) %&gt;% oneway_test(values ~ as.factor(groups), data = .) %&gt;% pvalue()
+  }
+}
+
+
+
+mean(data$values)
+var(data$values)
+# var = mu + mu^2 / theta =&gt; theta = mu^2 / (var - mu)
+mean(data$values)^2 / (var(data$values) - mean(data$values))  # theta
+
+
+
+# simulations
+n_sim = 4
+runs = 1:n_sim
+sample_sizes = c(3, 10, 20, 30, 50, 80, 100, 150, 200, 300)
+
+expand_grid(
+  run = runs,
+  sample_size = sample_sizes
+) -&gt; simulation_design
+  
+sim_comparison = function(sample_size){
+  tibble(
+    groups = rep(c(1, 2), each = sample_size),
+    values = c(
+      MASS::rnegbin(sample_size, 20, 1.5),
+      MASS::rnegbin(sample_size, 30, 1.5)
+    )
+  ) %&gt;% 
+  oneway_test(values ~ as.factor(groups), data = .) %&gt;% 
+  pvalue() %&gt;% 
+  {. &lt; 0.05}
+}
+
+simulation_design %&gt;% 
+  group_by(run, sample_size) %&gt;% 
+  mutate(comparison = sim_comparison(sample_size)) -&gt; comparisons
+
+comparisons %&gt;% 
+  group_by(sample_size) %&gt;% 
+  summarise(n = n(),
+            n_positive = sum(comparison),
+            positive_rate = n_positive/n)</code></pre>
+<ul>
+<li>anova (есть ли вообще отличия?) vs multiple pairwise tests</li>
+</ul>
+<pre class="r"><code># если отличия есть, межгрупповые отличия больше внутригрупповых
+
+aov
+anova + lm
+car::Anova
+anova_test
+anova_summary</code></pre>
+<ul>
+<li>anova как частный случай регрессии</li>
+<li>lm -&gt; anova -&gt; DoE</li>
+</ul>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

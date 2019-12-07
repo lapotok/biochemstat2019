@@ -1,0 +1,429 @@
+---
+title: "Сравнение групп - продолжение"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+# План
+
++ projects, R markdown vs scripts
++ nested functions + direct indexing vs pipelines + filter
++ cycles vs parallel
++ дисперсия: почему n-1?
++ взвешенное среднее
++ group diff -> mean_diff.pptx
++ нулевая гипотеза
++ нулевая гипотеза и реальное значение
++ доверительный интервал - параметрический
++ t-test p-value vs t confidence intervals
++ доверительный интервал непараметрический
+  + pop vs sample
+  + CLT -> CLT_demo.pptx
+  + bootstrap
++ сравнение качественных признаков
+
+```{r libs}
+library(tidyverse)
+library(magrittr)
+library(ggpubr)
+library(cowplot)
+library(rstatix)
+theme_set(theme_bw())
+```
+
+# Количественный признак - сравнение двух групп
+
+## Перестановочный тест (ничего не знаем о группах - непараметрический тест)
+
+Fresh start: мы ничего не значем про распределение в группах, просто пытаемся понять, есть ли различия в средних значениях или нет.
+
+```{r load_data_hidden, eval = T, echo=F}
+# данные, с которыми будем работать
+# download.file("https://raw.githubusercontent.com/genomicsclass/dagdata/master/inst/extdata/mice_pheno.csv", "data/mice_pheno.csv")
+mice_pheno = rio::import("../data/mice_pheno.csv") %>% as_tibble()
+```
+```{r load_data_shown, eval = F, echo=T}
+# данные, с которыми будем работать
+# download.file("https://raw.githubusercontent.com/genomicsclass/dagdata/master/inst/extdata/mice_pheno.csv", "data/mice_pheno.csv")
+mice_pheno = rio::import("../data/mice_pheno.csv") %>% as_tibble()
+```
+```{r wrangle}
+mice_pheno =
+  mice_pheno %>% 
+  mutate(Diet = recode(Diet,"hf" = "high_fat", "chow" = "control")) %>% 
+  mutate_if(is.character, as.factor)
+
+# создадим подвыборку размером по 30 наблюдений в каждой группе
+set.seed(1)
+mice_pheno_30 = mice_pheno %>% sample_n_by(Diet, size=30) # rstatix
+
+# смотрим на данные
+mice_pheno_30 %>% ggboxplot("Diet", "Bodyweight", add="jitter") # ggpubr
+```
+
+У нас есть две гипотезы
+
++ H0: разницы между группами нет;
++ H1: разница есть
+
+Чтобы понять, есть ли разница, нужно придумать какой-то показатель $D$, характеризующий эту разницу, затем провести исследование на предмет того, какие значения он может принимать, если его считать для случайно выбранных групп наблюдений. Затем мы можем сравнить эти типичные значения $D$ со значением $D$, для искомых групп и оценить насколько вероятно такое значение среди групп из одной генеральной совокупности.
+
+```{r null_permut}
+get_diff = function(data, shuffle = F){
+  if (shuffle) data = data %>% mutate(Diet = sample(Diet))
+  data %>% 
+  group_by(Diet) %>% 
+  summarise(mean = mean(Bodyweight)) %>% # среднее в каждой группе
+  pull(mean) %>% # превращаем колонку в вектор
+  diff() # считаем среднее между двумя значениями
+}
+
+actual_diff = get_diff(mice_pheno_30, shuffle = F)
+
+# создаем случайные группы из наблюдений и считаем среднее
+N = 1000 # число симуляций
+set.seed(1)
+tibble(run = 1:N) %>% 
+  group_by(run) %>% 
+  summarise(diff = get_diff(mice_pheno_30, shuffle = T)) -> mice_pheno_30_h0
+
+h = 
+  mice_pheno_30_h0 %>% 
+  #gghistogram("diff", color = NA, fill = "gray") + 
+  ggplot() +
+  geom_histogram(aes(x=diff, y = ..density..)) +
+  geom_vline(xintercept = actual_diff, col = "red", linetype = "dotted") +
+  stat_function(fun = dnorm, n = 101, args = list(mean = mean(mice_pheno_30_h0$diff), sd = sd(mice_pheno_30_h0$diff)), col="black", linetype="dashed")
+
+qq = mice_pheno_30_h0 %>% ggqqplot("diff")
+plot_grid(h, qq)
+```
+
+Итак, мы можем увидеть, что если различий между группами нет и найденное нами деление на группы ничем не лучше любого другого, случайно сгенерированного, то найденная разница `actual_diff` "затеряется" среди типичных разниц `diff` случайных различий. В данном случае так и произошло.
+
+```{r permut_p_val}
+mice_pheno_30_h0 %>% 
+  pull(diff) %>% # берем вектор значений
+  {abs(.) > actual_diff} %>% # число случаев, когда абсолютные значения статистики, больше чем наблюдаемое
+  {sum(.)/length(.)} # доля таких случаев
+```
+
+Мы видим, что среди случайно сгенеренных случайных групп 74% имеют даже большие различия, чем между группами, которые мы сравниваем! 
+
+> **P-value** - вероятность получить для данной вероятностной модели распределения значений случайной величины такое же или более экстремальное значение статистики (среднего арифметического, медианы и др.), по сравнению с ранее наблюдаемым, при условии, что нулевая гипотеза верна.
+
+В данном случае, статистика - это показатель $D$, которым мы меряем различие между группами, а 0.74 (74%) - это `p-value`, т.е. доля значений статистики $D$, которая принимает такое же или более экстримальное значение из набора сгенерированных значений для случайных групп (т.е. для которых нулевая гипотеза о равенстве средних верна).
+
+Кстати, в R уже реализована функция для такого теста, поэтому его не надо изобретать самому. 
+
+```{r permut_p_val_coin}
+mice_pheno_30 %>% coin::oneway_test(Bodyweight ~ Diet, data = .)
+
+# p-value можно достать так
+mice_pheno_30 %>% coin::oneway_test(Bodyweight ~ Diet, data = .) %>% coin::pvalue()
+```
+
+Если мы возьмем другую выборку или больше данных (например, ~ 400 наблюдений в каждой группе), то можем увидеть другую картину.
+ 
++ Повторите анализ для полной выборки или для другой случайной подвыборки (другое значение `set.seed()`)
++ Есть ли теперь разница между группами?
+
+## Тест Манна-Уитни (непараметрический тест)
+
+Мы хотим узнать, есть ли разница между группами, для которых предпосылка о нормальности распределения неверна, мы также можем использовать тест Манна-Уитни.
+
+```{r}
+mice_pheno_30 %>% 
+  wilcox_test(Bodyweight ~ Diet)
+```
+
+## t-тест (параметрический тест)
+
+Наконец, если мы уверены, что распределение данных нормально, то можно использовать параметрические тесты, например t-тест. Заметим, кстати, что в данных группах дисперсия отличается. Однако t-тест умеет делать поправку на это. 
+
+$$
+t = \frac{\bar{x}_1 - \bar{x}_2}{SE_{pooled}} = \frac{\bar{x}_1 - \bar{x}_2}{\sqrt{var_{pooled}} \cdot \sqrt{\frac{1}{n_1}+\frac{1}{n_2}}} = \frac{\bar{x}_1 - \bar{x}_2}{\sqrt{\frac{var_1 \cdot (n_1-1)+var_2 \cdot (n_2-1)}{(n_1-1)+(n_2-1)}} \cdot \sqrt{\frac{1}{n_1}+\frac{1}{n_2}}}
+$$
+Попытаемся это посчитать
+
+```{r t_test}
+# считаем среднее, дисперсию и размер выборки для групп
+mice_pheno_30_summary = 
+  mice_pheno_30 %>% 
+  group_by(Diet) %>% 
+  summarise(mean = mean(Bodyweight),
+            var = var(Bodyweight),
+            n = n()) 
+
+# разница между групповыми средними (числитель)
+group_diff = 
+  mice_pheno_30_summary %>% 
+  pull(mean) %>% 
+  diff()
+
+# теперь знаменатель (поэтапно)
+# 1. pooled var
+pooled_var = 
+  with(mice_pheno_30_summary, # with чтобы вытаскивать переменные из mice_pheno_30_summary
+       (var[1]*(n[1]-1) + var[2]*(n[2]-1)) / ((n[1]-1) + (n[2]-1)))
+
+# 2. pooled se
+pooled_se = 
+  with(mice_pheno_30_summary, 
+    sqrt(pooled_var) * sqrt(1/n[1] + 1/n[1]))
+
+# все целиком
+t_statistic = group_diff / pooled_se
+t_statistic
+
+# тоже самое - готовой функцией
+mice_pheno_30 %>% 
+  t_test(Bodyweight ~ Diet)
+
+# проводим симуляцию как себя ведет t-значение, если различий нет
+# (как в тесте перестановок, но другая статистка)
+t_statistic_null =
+  tibble(run = 1:1000) %>%
+  group_by(run) %>% 
+  mutate(t = 
+           mice_pheno_30 %>% 
+           mutate(Diet = sample(Diet)) %>% 
+           t_test(Bodyweight ~ Diet) %>% 
+           pull(statistic))  
+
+# строим график
+# если данные (а точнее остатки) распределены нормально, 
+# то t_statistic ~ t(df) и можно по из этого вычислить p-value
+t_statistic_null %>% 
+  ggplot() + 
+  geom_histogram(aes(x = t, y = ..density..), alpha = .6, bins = 40) + 
+  stat_function(fun = dt, args = list(df = 30), linetype = "dashed") +
+  labs(x = "t_statistic (если различий между группами нет)")
+```
+
+## Доверительный интервал
+
+Доверительный интервал - это один из видов интервальной оценки какого-либо параметра. Его также можно использовать при сравнении групп. Однако для начала просто поговорим о том, что это такое и как его считать.
+
+**Доверительный интервал** — это интервал, построенный с помощью случайной выборки из распределения с неизвестным параметром, такой, что он содержит данный параметр с заданной вероятностью.
+
++ есть выборка (представляющая генеральную совокупность или природу прозводящего ее процесса) 
++ по этой выборке делается точечная оценка параметра (приближающаяся к неизвестному истинному значению)
++ мы никогда не узнаем истинное значение данного параметра (а, следовательно, и то, включает ли интервал это значение)
++ но мы можем основываясь на свойствах выборки научиться строить такой интервал $[L, U]$, что в ходе симуляций для такого типа выборок построенный тем же способом интервал будет в среднем содержать истинное значение параметра в, например, $95\%$ случаев (значимость $\alpha=0.95$, хотя выбор этого значения является произвольным)
++ это значит, что в среднем в $100-95=5\%$ случаев (с вероятностью $1-\alpha = 0.05$) истинное значение параметра будет попадать мимо
+
+### Параметрический доверительный интервал
+
+Нормальный интервал
+
+$$
+\Big[mean(x) - z^* \cdot \frac{sd(x)}{\sqrt{n}},\ mean(x) + z^* \cdot \frac{sd(x)}{\sqrt{n}}\Big]
+$$
+```{r}
+# z*
+qnorm(0.975)
+ggplot() + 
+  stat_function(fun = dnorm, args = list(mean = 0, sd = 1)) + xlim(-3,3) + ylim(0, 1)
+
+
+ggplot(data = data.frame(x = c(-3, 3)), aes(x)) +
+  stat_function(fun = dnorm, n = 101, args = list(mean = 0, sd = 1)) + ylab("density") +
+  #scale_y_continuous(breaks = NULL) +
+  geom_vline(xintercept = qnorm(c(0.025, 0.975)), col = "red", linetype = "dashed")
+
+# normal CI
+
+set.seed(1)
+x = rnorm(100, mean = 50, sd = 8)
+mean(x) + qnorm(c(0.025, 0.975)) * sd(x) / sqrt(length(x))
+```
+
+t интервал => используется по умолчанию!
+
+$$
+\Big[mean(x) - t^* \cdot \frac{sd(x)}{\sqrt{n}},\ mean(x) + t^* \cdot \frac{sd(x)}{\sqrt{n}}\Big]
+$$
+
+```{r}
+qt(0.975, df = 10)
+set.seed(1)
+x = rnorm(10, mean = 50, sd = 8)
+mean(x) + qnorm(c(0.025, 0.975)) * sd(x) / sqrt(length(x)) # z*: qnorm
+mean(x) - qnorm(c(0.975)) * sd(x) / sqrt(length(x)) # z*: qnorm
+mean(x) + qnorm(c(0.975)) * sd(x) / sqrt(length(x)) # z*: qnorm
+
+mean(x) + qt(c(0.025, 0.975), df = 10) * sd(x) / sqrt(length(x)) # t*: qt
+
+t.test(x, mu = 0) # base R
+mean_ci(x) # ggpubr
+```
+
+### Непараметрический доверительный интервал
+
+Для расчета используется принцип бутстрепа - "высасывания данных из пальца". 
+
+Для характеристики генеральной совокупности мы берем множество выборок, из каждой получаем точечную оценку параметра (среднего, медианы или чего угодно!), а из разброса точечных оценок можем вычислить точность полученой оценки истинного значения параметра. 
+
+Если же все, что у нас есть - это выборка с неизвестным (оно может быть и нормальным, и ненормальным) распределением, то мы можем притвориться, что это и есть генеральная совокупность. И мы попытаемся из нее брать искусственные выборки (бутстреп-выборки) того же размера, что и сама исходная выборка (выборка с возвратом, `sample(x, replace = T)`). В итоге расчитанное для каждой такой искусственной выборки значение параметра будет стремиться к значению параметра для исходной выборки, но разброс таких оценок будет отражать разброс данных.
+
+```{r}
+set.seed(1)
+orig_sample = rlnorm(30, .001, .5)
+tibble(y = orig_sample) %>% ggplot() + geom_boxplot(aes(y = y)) + geom_point(aes(x = 0, y = y), position = position_jitter(.2), alpha = .4)
+
+bs_median = 
+  replicate(1000, {
+  bs_sample = sample(orig_sample, replace = T)
+  median(bs_sample)
+})
+
+
+```
+
+# Качественные данные
+
++ качественные признаки (номинальные, дискретные, ординальные)
++ mosaicplot
++ pearson chi square test
++ fisher test
++ binomial test
++ mcneimar test
+
+```{r discrete_data}
+# Data: Titanic
+xtab <- as.table(rbind(
+  c(203, 118, 178, 212),
+  c(122, 167, 528, 673)
+))
+dimnames(xtab) <- list(
+  Survived = c("Yes", "No"),
+  Class = c("1st", "2nd", "3rd", "Crew")
+)
+xtab = t(xtab)
+
+# visual
+mosaicplot(xtab, color = T)
+
+chisq_test(xtab)
+chisq_test(t(xtab))
+
+expected_freq(chisq_test(xtab))
+mosaicplot(expected_freq(chisq_test(xtab)), color = T)
+observed_freq(chisq_test(xtab))
+mosaicplot(observed_freq(chisq_test(xtab)), color = T)
+chisq_descriptives(chisq_test(xtab))
+
+prop_test(xtab)
+pairwise_prop_test(xtab)
+fisher_test(xtab, simulate.p.value = T)
+```
+
+# Прочее
+
+Мощность непараметрических тестов
+
+```{r eval = F}
+# hometask: wilcoxon test power calculation
+n = 30
+set.seed(1)
+data = tibble(
+  groups = rep(c("Sample1", "Sample2"), each = n),
+  values = c(
+    MASS::rnegbin(n, 20, 1.5),
+    MASS::rnegbin(n, 30, 1.5)
+  )
+)
+data %>% 
+  ggplot(aes(x = groups, y = values)) +
+  geom_boxplot() + 
+  geom_point(position = position_jitter(.1), size=2, alpha=.6)
+
+library(coin)
+# реализация теста перестановок, разобранного на уроке
+oneway_test(values ~ as.factor(groups), data)
+data %>% 
+  group_by(groups) %>% 
+  summarise(mean = mean(values), var = var(values))
+
+sample_sizes = c(3, 10, 20, 30, 50, 80, 100, 150, 200, 300)
+res = 
+  matrix(NA, nrow = 1000, ncol = 10)
+dimnames(res) = 
+  list(sample_n = 1:1000,
+       sample_size = sample_sizes)
+
+for (n in 1:1000){
+  for (ss in sample_sizes){
+    res[n, as.character(ss)] =
+    tibble(
+      groups = rep(c("Sample1", "Sample2"), each = ss),
+      values = c(
+        MASS::rnegbin(ss, 20, 1.5),
+        MASS::rnegbin(ss, 30, 1.5)
+      )
+    ) %>% oneway_test(values ~ as.factor(groups), data = .) %>% pvalue()
+  }
+}
+
+
+
+mean(data$values)
+var(data$values)
+# var = mu + mu^2 / theta => theta = mu^2 / (var - mu)
+mean(data$values)^2 / (var(data$values) - mean(data$values))  # theta
+
+
+
+# simulations
+n_sim = 4
+runs = 1:n_sim
+sample_sizes = c(3, 10, 20, 30, 50, 80, 100, 150, 200, 300)
+
+expand_grid(
+  run = runs,
+  sample_size = sample_sizes
+) -> simulation_design
+  
+sim_comparison = function(sample_size){
+  tibble(
+    groups = rep(c(1, 2), each = sample_size),
+    values = c(
+      MASS::rnegbin(sample_size, 20, 1.5),
+      MASS::rnegbin(sample_size, 30, 1.5)
+    )
+  ) %>% 
+  oneway_test(values ~ as.factor(groups), data = .) %>% 
+  pvalue() %>% 
+  {. < 0.05}
+}
+
+simulation_design %>% 
+  group_by(run, sample_size) %>% 
+  mutate(comparison = sim_comparison(sample_size)) -> comparisons
+
+comparisons %>% 
+  group_by(sample_size) %>% 
+  summarise(n = n(),
+            n_positive = sum(comparison),
+            positive_rate = n_positive/n)
+```
+
+
++ anova (есть ли вообще отличия?) vs multiple pairwise tests
+
+```{r anova, eval = F}
+# если отличия есть, межгрупповые отличия больше внутригрупповых
+
+aov
+anova + lm
+car::Anova
+anova_test
+anova_summary
+```
+
++ anova как частный случай регрессии
++ lm -> anova -> DoE
+
+

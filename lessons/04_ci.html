@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Доверительные интервалы</title>
+
+<script src="libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="libs/bootstrap-3.3.5/css/lumen.min.css" rel="stylesheet" />
+<script src="libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="libs/navigation-1.1/tabsets.js"></script>
+<link href="libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="../imports/style.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Доверительные интервалы</h1>
+
+</div>
+
+
+<pre class="r"><code># загружаем необходимые библиотеки
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(magrittr))
+suppressPackageStartupMessages(library(cowplot))
+
+# настройка темы графиков
+theme_set(theme_bw())</code></pre>
+<div id="идея-доверительного-интервала" class="section level1">
+<h1>Идея доверительного интервала</h1>
+<p>Доверительный интервал - это один из видов интервальной оценки какого-либо параметра (в противоположность точечной оценке).</p>
+<p><strong>Доверительный интервал</strong> — это интервал, построенный с помощью случайной выборки из распределения с неизвестным параметром, такой, что он содержит данный параметр с заданной вероятностью (надёжностью).</p>
+<ul>
+<li>есть выборка (представляющая генеральную совокупность или природу прозводящего ее процесса)</li>
+<li>по этой выборке делается точечная оценка параметра (приближающаяся к неизвестному истинному значению)</li>
+<li>мы никогда не узнаем истинное значение данного параметра (а, следовательно, и то, включает ли интервал это значение)</li>
+<li>но мы можем основываясь на свойствах выборки научиться строить такой интервал <span class="math inline">\([L, U]\)</span>, который будет в среднем содержать истинное значение параметра, например, в <span class="math inline">\(95\%\)</span> случаев (значимость <span class="math inline">\(\alpha=0.95\)</span>, хотя выбор этого значения является произвольным)</li>
+<li>“будет в среднем содержать истинное значение параметра” значит, что если мы проведем много симуляций выборок, то <span class="math inline">\(\approx 95\%\)</span> расчитанных интервалов будут содержать истинное среднее (которое мы знаем в случае симуляции)</li>
+<li>в среднем в <span class="math inline">\(100-95=5\%\)</span> случаев (с вероятностью <span class="math inline">\(1-\alpha = 0.05\)</span>) истинное значение параметра будет попадать мимо</li>
+</ul>
+<p>На графике ниже приведена демонстрация работы доверительного интервала. Для некой популяции были сгенерированы <span class="math inline">\(N=100\)</span> выборок размером <span class="math inline">\(n=12\)</span> каждая. По каждой выборке было вычтено выборочное среднее и построен доверительный интервал. Соответственно, каждый интервал либо содержит истинное среднее (синие интервалы), либо не содержит (красные интервалы). Если у нас есть неизвестна генеральная совокупность, а лишь выборка (так обычно и бывает), то мы не знаем, содержит ли данный конкретный интервал истинное значение среднего, однако мы знаем, что в среднем <span class="math inline">\(\approx 95\%\)</span> таких интервалов его содержат (94 интервала из 100 в случае нашей симуляции).</p>
+<pre class="r"><code># создадим генеральную совокупность
+set.seed(1)
+true_mean = 50
+true_sd = 10
+population = rnorm(100000, mean = true_mean, sd = true_sd) # мы не знаем истинных значений среднего и стд. откл.
+
+# создадим N выборок размером n и для каждой посчитаем доверительный интервал
+N = 100
+n = 12
+sample_ci = 
+  matrix(NA, nrow = N, ncol = 3) %&gt;% # будем сохранять результаты в матрицу
+  set_colnames(c(&quot;mean&quot;, &quot;conf.lower&quot;, &quot;conf.upper&quot;)) # названия для колонок
+for (i in 1:N) { # N симуляций
+  generated_sample = sample(population, n) # генерируем выборку размером n 
+  # используем готовую функцию для расчета среднего и ДИ
+  sample_ci[i, ] = mean_cl_normal(generated_sample) %&gt;% as.matrix()
+}
+
+sample_ci %&gt;% 
+  as_tibble() %&gt;% 
+  mutate(n = 1:n()) %&gt;% # добавляем номер строки
+  # содержит ли ДИ истинное среднее?
+  mutate(has_mu = ifelse(true_mean&gt;=conf.lower &amp; true_mean&lt;=conf.upper, &quot;T&quot;, &quot;F&quot;)) %&gt;% 
+  ggplot() + 
+    geom_pointrange(aes(x = n, ymin = conf.lower, y = mean, ymax = conf.upper, col = has_mu), 
+                    size = .6, fatten = .8) +
+    geom_hline(yintercept = true_mean, col = &quot;black&quot;, linetype = &quot;dashed&quot;) +
+    theme(axis.title.x = element_blank(),
+          axis.text.x = element_blank(),
+          axis.ticks.x = element_blank(), 
+          legend.position = &quot;none&quot;) + 
+  labs(y = &quot;x&quot;) + 
+  scale_color_manual(values = c(&quot;T&quot;=&quot;dodgerblue&quot;, &quot;F&quot;=&quot;red&quot;))</code></pre>
+<p><img src="04_ci_files/figure-html/unnamed-chunk-1-1.svg" width="480" /></p>
+<p>Отличительной особенностью доверительного интервала (и стандартной ошибки среднего) по сравнению с дисперсией, стандартным отклонением и межквартильным разбросом является то, что доверительный интервал отражает точность оценки параметра на основе имеющихся данных, тогда как дисперсия (и другие) нужны для выражения разброса данных. Чем больше размер выборки, тем точнее мы можем оценить значение параметра. Однако меры разброса данных не зависят от размера выборки, бóльшая выборка нам может разве что помочь точнее оценить дисперсию.</p>
+</div>
+<div id="типы-доверительных-интервалов" class="section level1">
+<h1>Типы доверительных интервалов</h1>
+<div id="нормальный-доверительный-интервал" class="section level2">
+<h2>Нормальный доверительный интервал</h2>
+<p>Предоложим, что у нас есть генеральная совокупность с нормальным распределением, в которой мы знаем истинное среднее (<span class="math inline">\(\mu = 50\)</span>) и стандартное отклонение (<span class="math inline">\(\sigma = 10\)</span>). Мы хотим по небольшым выборкам (например, <span class="math inline">\(n=12\)</span>) составлять такие интервалы, среди которых <span class="math inline">\(\approx 95\%\)</span> содержали истинное значение среднего. Попробуем провести симуляцию генерации <span class="math inline">\(N = 10000\)</span> таких выборок и посмотрим на средние значения в этих выборках (точечные оценки истинного среднего).</p>
+<pre class="r"><code>N = 10000 # число симуляций
+n = 12 # размер выборки
+set.seed(1) # устанавливаем фиксированную &quot;точку отсчета&quot; для генератора случайных чисел
+population = rnorm(100000, mean = 50, sd = 10) # генеральная совокупность
+
+sample_means = numeric(N) # заготовка вектора под расчитанные выборочные средние
+for(i in 1:N){ # симулируем
+  generated_sample = sample(population, n) # делаем выборку из генеральной совокупности
+  sample_means[i] = mean(generated_sample) # считаем выборочное среднее
+}
+
+# строим гистограмму
+ggplot(tibble(x = sample_means)) +
+  geom_histogram(aes(x = x, y = ..density..), fill = &quot;gray&quot;, bins = 30) +
+  stat_function(fun = dnorm, args = list(mean = 50, sd = 10/sqrt(n)))</code></pre>
+<p><img src="04_ci_files/figure-html/CLT-1.svg" width="288" /></p>
+<p>Оказывается, что полученные значения <code>sample_means</code> (<span class="math inline">\(\bar{x}_i\)</span>) будут иметь нормальное распределение со средним, стремящимся к истинному среднему <span class="math inline">\(\mu\)</span>, и стандартным отклонением, стремящимся к <span class="math inline">\(\sigma/\sqrt{n}\)</span> (по центральной предельной теореме). Т.к. стандартное отклонение зависит от размера выборки, мы видим что большие выборки дают более близкие друг к другу -ведь они более правильные! Ниже приведен рисунок с двумя гистограммами распределения выборочных средних, на которых приведены по 200 выборочных средних для выборок размером <span class="math inline">\(n=5\)</span> или <span class="math inline">\(n=20\)</span>.</p>
+<p><img src="04_ci_files/figure-html/unnamed-chunk-2-1.svg" width="672" /></p>
+<p>Итак, по выборке мы можем получить приблизительную оценку <span class="math inline">\(\bar{x}\)</span> истинного значения среднего, а также оценку <span class="math inline">\(s\)</span> стандартного отклонения данных. По центральной предельной теореме это также нам позволит получить теоретическую оценку <span class="math inline">\(s/\sqrt{n}\)</span> разброса (стандартного отклонения) тех значений выборочных средних, которые мы бы получили, если бы анализировали несколько выборок размером <span class="math inline">\(n\)</span>. Эта оценка называется стандартная ошибка среднего и она нужна для оценки точности нашего представления о среднем значении.</p>
+<p>Т.к. выборка нам дает точечную оценку среднего и интервальную оценку разброса оценок, исходя из свойств нормального распределения мы можем вычислить диапазон, который будет содержать более 95% подобных выборочных оценок (а это и будет доверительный интервал!).</p>
+<p><span class="math display">\[0.95 = P\Big(q_{\mathcal{N}(\bar{x},\sigma)}^{0.025} \leq \mu \leq q_{\mathcal{N}(\bar{x}, \sigma)}^{0.975}\Big)\]</span></p>
+<p>В данном случае мы в качестве границ доверительного интервала использовали <span class="math inline">\(2.5\)</span> и <span class="math inline">\(97.5\%\)</span> квантили нормального распределения <span class="math inline">\(\mathcal{N}\big(\text{mean} = \bar{x},\ \text{sd} = \sigma\big)\)</span>, которые ограничивают <span class="math inline">\(95\%\)</span> данных (см. рисунок ниже).</p>
+<p><img src="04_ci_files/figure-html/unnamed-chunk-3-1.svg" width="384" /></p>
+<pre class="r"><code># общее количество данных - 100%
+# 2.5% данных должно быть не больше, чем левая граница диапазона
+# 97.5% данных должно быть не больше, чем правая граница диапазона
+# 97.5 - 2.5 = 95%
+qnorm(c(0.025, 0.975), mean = 50, sd = 10)</code></pre>
+<pre><code>#&gt; [1] 30.40036 69.59964</code></pre>
+<p>Равносильно этому мы можем трансформировать выборочное распределение к стандартному нормальному распределению</p>
+<p><span class="math display">\[T = \frac{\bar{x} - \mu}{\sigma / \sqrt{n}}\]</span></p>
+<p>а для полученного стандартизированного значения можно использовать квантили стандартного нормального распределения</p>
+<p><span class="math display">\[0.95 = P\Big(\bar{x} + q_{\mathcal{N}(0, 1)}^{0.025} \cdot \frac{\sigma}{\sqrt{n}} \leq \mu \leq \bar{x} + q_{\mathcal{N}(0, 1)}^{0.975} \cdot \frac{\sigma}{\sqrt{n}}\Big) \approx P\Big(\bar{x} -1.96 \cdot \frac{\sigma}{\sqrt{n}} \leq \mu \leq \bar{x} + 1.96 \cdot \frac{\sigma}{\sqrt{n}}\Big)\]</span></p>
+<p>Однако вместо истинного значения стандартного отклонения <span class="math inline">\(\sigma\)</span> мы имеем лишь его выборочную оценку <span class="math inline">\(s\)</span>, которая при достаточно больших выборках стремится к истинному значению. Поэтому считается, что в случае стандартизированное значение <span class="math inline">\(T\)</span> имеет <span class="math inline">\(t\)</span>-распределение с <span class="math inline">\(n\)</span> степенями свободы, а для расчета доверительного интервала используются квантили <span class="math inline">\(t\)</span>-распеделения <span class="math inline">\(q_{t(n)}^{0.025}\)</span> и <span class="math inline">\(q_{t(n)}^{0.975}\)</span>. Использование <span class="math inline">\(t\)</span>-распределения и его квантилей позволяет сделать поправку на неточность оценки разброса по маленькой выборке и приводит к небольшому уширению доверительного интервала.</p>
+<pre class="r"><code>### маленькая выборка - используем t-квантили
+
+# генерируем выборку
+set.seed(1)
+n = 25
+x = rnorm(n, mean = 50, sd = 10)
+round(x, 2)</code></pre>
+<pre><code>#&gt;  [1] 43.74 51.84 41.64 65.95 53.30 41.80 54.87 57.38 55.76 46.95 65.12
+#&gt; [12] 53.90 43.79 27.85 61.25 49.55 49.84 59.44 58.21 55.94 59.19 57.82
+#&gt; [23] 50.75 30.11 56.20</code></pre>
+<pre class="r"><code># доверительный интервал
+mean(x) + qt(c(0.025, 0.975), df = n) * sd(x) / length(x)</code></pre>
+<pre><code>#&gt; [1] 50.90394 52.46937</code></pre>
+<pre class="r"><code>### большая выборка - используем любые квантили (они почти равны)
+n = 100
+qnorm(c(0.025, 0.975))</code></pre>
+<pre><code>#&gt; [1] -1.959964  1.959964</code></pre>
+<pre class="r"><code>qt(c(0.025, 0.975), df = n)</code></pre>
+<pre><code>#&gt; [1] -1.983972  1.983972</code></pre>
+<pre class="r"><code>### расчет t-доверительного интервала готовыми функциями
+t.test(x, mu = 0)</code></pre>
+<pre><code>#&gt; 
+#&gt;  One Sample t-test
+#&gt; 
+#&gt; data:  x
+#&gt; t = 27.2, df = 24, p-value &lt; 2.2e-16
+#&gt; alternative hypothesis: true mean is not equal to 0
+#&gt; 95 percent confidence interval:
+#&gt;  47.76480 55.60851
+#&gt; sample estimates:
+#&gt; mean of x 
+#&gt;  51.68665</code></pre>
+<pre class="r"><code>t.test(x, mu = 0)$conf.int</code></pre>
+<pre><code>#&gt; [1] 47.76480 55.60851
+#&gt; attr(,&quot;conf.level&quot;)
+#&gt; [1] 0.95</code></pre>
+<pre class="r"><code>mean_cl_normal(x)</code></pre>
+<pre><code>#&gt;          y    ymin     ymax
+#&gt; 1 51.68665 47.7648 55.60851</code></pre>
+</div>
+<div id="непараметрический-доверительный-интервал-бутстреп" class="section level2">
+<h2>Непараметрический доверительный интервал (бутстреп)</h2>
+<div id="логика" class="section level3">
+<h3>Логика</h3>
+<p>В случае, когда распределение не нормальное, либо если мы хотим построить нормальное распределение для какого-то параметра, для которого нет удобной готовой формулы, как для среднего, на помощь может прийти <strong>бутстреп</strong>.</p>
+<p>Основная идея бутстрепа основана на том, что аналогично тому, как мы делаем выводы о генеральной совокупности из выборок (выборка <span class="math inline">\(\rightarrow\)</span> генеральная совокупность), мы могли бы делать выводы о выборке из искусственно сгенерированных выборок путем ресэмплинга (бутстреп-выборки). Для того, чтобы сгенерировать бутстреп выборку, мы берем исходную выборку и из нее делаем другую такого же размера, причем каждый элемент исходной выборки может попасть искусственную 0, 1, 2, … (это называется сэмплирование с возвратом, как если бы мы доставали фишки из мешка и после доставания каждой фишки тутже ее возвращали обратно, чтобы она снова могла попасться).</p>
+<pre class="r"><code>### генерация бутстреп-выборки с возвратом
+
+# для начала сгенерируем генеральную совокупность
+set.seed(2)
+population = rnorm(100000, mean = 50, sd = 10)
+
+# из генеральной совокупности возьмем одну выборку размером n
+# (на практике чаще всего у нас как раз и есть одна выборка, которую нам надо анализировать)
+n = 20
+generated_sample = sample(population, n)
+generated_sample %&gt;% round(1) # посмотрим, что получилось </code></pre>
+<pre><code>#&gt;  [1] 67.9 56.7 38.0 48.6 54.3 54.6 57.1 61.5 46.8 55.1 56.8 41.3 48.8 54.4
+#&gt; [15] 57.6 36.2 71.7 40.6 51.8 51.9</code></pre>
+<pre class="r"><code># запишем номера элементов в исходной выборке
+generated_sample_indices = 1:length(generated_sample)
+generated_sample_indices</code></pre>
+<pre><code>#&gt;  [1]  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20</code></pre>
+<pre class="r"><code># теперь создадим бутстреп-выборку
+boot_indices1 = sample(generated_sample_indices, replace = T) # запишем номера (индексы) выбранных из исходной выборки
+boot_indices1</code></pre>
+<pre><code>#&gt;  [1]  3  5  7  4  4  8  8  3  1  2  6 15 10  3  1 11  3  9 16  6</code></pre>
+<pre class="r"><code>boot_sample1 = generated_sample[ boot_indices1 ] # соберем из этих элементов бутстреп-выборку
+boot_sample1 %&gt;% round(1)</code></pre>
+<pre><code>#&gt;  [1] 38.0 54.3 57.1 48.6 48.6 61.5 61.5 38.0 67.9 56.7 54.6 57.6 55.1 38.0
+#&gt; [15] 67.9 56.8 38.0 46.8 36.2 54.6</code></pre>
+<pre class="r"><code>boot_sample1 %&gt;% round(1) %&gt;% table()</code></pre>
+<pre><code>#&gt; .
+#&gt; 36.2   38 46.8 48.6 54.3 54.6 55.1 56.7 56.8 57.1 57.6 61.5 67.9 
+#&gt;    1    4    1    2    1    2    1    1    1    1    1    2    2</code></pre>
+<pre class="r"><code># ... и еще одну
+boot_indices2 = sample(generated_sample_indices, replace = T) # запишем номера (индексы) выбранных из исходной выборки
+boot_indices2</code></pre>
+<pre><code>#&gt;  [1] 13  1 14 17 16 16 13 20  6  2  7 18 11 20  1 12 19 14 18 15</code></pre>
+<pre class="r"><code>boot_sample2 = generated_sample[ boot_indices1 ] # соберем из этих элементов бутстреп-выборку
+boot_sample2 %&gt;% round(1) </code></pre>
+<pre><code>#&gt;  [1] 38.0 54.3 57.1 48.6 48.6 61.5 61.5 38.0 67.9 56.7 54.6 57.6 55.1 38.0
+#&gt; [15] 67.9 56.8 38.0 46.8 36.2 54.6</code></pre>
+<pre class="r"><code>boot_sample2 %&gt;% round(1) %&gt;% table()</code></pre>
+<pre><code>#&gt; .
+#&gt; 36.2   38 46.8 48.6 54.3 54.6 55.1 56.7 56.8 57.1 57.6 61.5 67.9 
+#&gt;    1    4    1    2    1    2    1    1    1    1    1    2    2</code></pre>
+<p>Видно, что бутстреп-выборка состоит из элементов исходной выборки, каждый из которых может случайно оказаться в новой выборке и 0, и более 1 раз. Каждая новая бутстреп выборка содержит свое сочетание элементов из исходной выборки.</p>
+<p>Ограничением бутстрепа является репрезентативность выборки, т.к. по нерепрезентативной выборке не получится сделать адекватных выводов. Как говорится, “garbage in - garbage out”.</p>
+<p>Оценивая разброс оценок параметра в бутстреп-выборках мы можем оценить и разброс оценок параметра по выборкам в генеральной совокупности.</p>
+</div>
+<div id="пишем-с-нуля-код-для-бутстреп-доверительного-интервала" class="section level3">
+<h3>Пишем с нуля код для бутстреп доверительного интервала</h3>
+<p>План генерации генерации доверительного интервала (в этот раз будем оценивать, например, медиану) методом бутстреп таков:</p>
+<ol style="list-style-type: decimal">
+<li>Генерируем достаточное количество бутстреп выборок (рекомендуется не менее 10000);</li>
+<li>Для каждой бутстреп-выборки расчитывается оценка анализируемого параметра (медианы в данном случае);</li>
+<li>Анализируется распределение полученных значений и выбираются такие числа (квантили), которые ограничивают <span class="math inline">\(95\%\)</span> значений (если у нас <span class="math inline">\(95\%\)</span> доверительный интервал)</li>
+</ol>
+<pre class="r"><code># генерируем генеральную совокупность
+set.seed(2)
+population = rnorm(100000, mean = 50, sd = 10)
+
+# из генеральной совокупности возьмем одну выборку размером n
+n = 20
+generated_sample = sample(population, n)
+generated_sample_indices = 1:length(generated_sample)
+
+# bootstrapping
+N = 10000 
+boot_estimates = numeric(N) # сюда сохраним расчитанные бутстреп-оценки
+for (i in 1:N) {
+  boot_indices = sample(generated_sample_indices, replace = T) # шаг 1
+  boot_sample = generated_sample[boot_indices]
+  boot_estimates[i] = median(boot_sample) # шаг 2
+}
+
+# посмотрим на распределение
+tibble(x = boot_estimates) %&gt;% 
+  ggplot() +
+  geom_histogram(aes(x = x), bins = 20, fill = &quot;gray&quot;) +
+  geom_vline(xintercept = 50, col = &quot;dodgerblue&quot;) +
+  geom_vline(xintercept = median(generated_sample), col = &quot;dodgerblue&quot;, linetype = &quot;dashed&quot;) +
+  geom_vline(xintercept = quantile(boot_estimates, c(0.025, 0.975)), col = &quot;red&quot;, linetype = &quot;dotted&quot;) +
+  scale_x_continuous(breaks = c(45, 50, 60,
+                                as.numeric(round(quantile(boot_estimates, c(0.025, 0.975)), 1)), 
+                                round(median(generated_sample),1))) +
+  coord_cartesian(xlim=c(45, 60))</code></pre>
+<p><img src="04_ci_files/figure-html/bootci-1.svg" width="480" /></p>
+<pre class="r"><code># и сам доверительный интервал
+quantile(boot_estimates, c(0.025, 0.975)) # шаг 3</code></pre>
+<pre><code>#&gt;     2.5%    97.5% 
+#&gt; 48.69408 56.71974</code></pre>
+<p>Что же мы тут можем сказать?</p>
+<ul>
+<li>истинное значение параметра в генеральной совокупности (обычно неизвестное) было 50;</li>
+<li>данная конкретная выборка (как и все выборки) неидеально отражает генеральную совокупность, выборочная оценка параметра оказалась 54.4 (выборка несколько смещена)</li>
+<li>доверительный интервал для данной выборки оказался <span class="math inline">\([48.7,\ 56.7]\)</span>; он оказался несколько смещен в сторону выборочного среднего, но, все же, включает истинное значение параметра.</li>
+</ul>
+</div>
+<div id="библиотека-boot" class="section level3">
+<h3>Библиотека <code>boot</code></h3>
+<p>Все вышеприведенные действия не нужно писать самостоятельно - для этого есть готовая библиотека, которая очень быстро проводит аналогичные вычисления (и кроме бутстреп доверительного интервала типа “percentile” еще умеет считать разные другие, как, например, “bias-corrected accelerated”, считающийся более продвинутым).</p>
+<p>Для начала нам нужно создать функцию, которая расчитывает анализируемый параметр, если ей дать исходную выборку и индексы элементов в бутстреп-выборке.</p>
+<pre class="r"><code># нужна функция, считающая анализируемый параметр для заданных элементов выборки
+median_boot = function(x, i) { median(x[i]) }
+# например,
+median_boot(generated_sample, boot_indices)</code></pre>
+<pre><code>#&gt; [1] 48.75392</code></pre>
+<p>Теперь получаем бутстреп-выборки и расчитываем выборочные значения параметра с помощью функции <code>boot</code>, а затем считаем доверительный интервал с помощью функции <code>boot.ci</code>.</p>
+<pre class="r"><code># и, наконец, используем библиотеку
+library(boot)
+boot_samples_obj =
+  boot(
+    generated_sample, # выборка
+    statistic = median_boot, # функция для расчета параметра
+    R = 10000 # число симуляций (bootstrap replicates)
+  )
+boot_samples_obj # summary</code></pre>
+<pre><code>#&gt; 
+#&gt; ORDINARY NONPARAMETRIC BOOTSTRAP
+#&gt; 
+#&gt; 
+#&gt; Call:
+#&gt; boot(data = generated_sample, statistic = median_boot, R = 10000)
+#&gt; 
+#&gt; 
+#&gt; Bootstrap Statistics :
+#&gt;     original     bias    std. error
+#&gt; t1* 54.35157 -0.8270138     2.01629</code></pre>
+<pre class="r"><code>boot_samples_obj$t %&gt;% str # результаты симуляции</code></pre>
+<pre><code>#&gt;  num [1:10000, 1] 54.4 54.4 54.4 51.9 51.9 ...</code></pre>
+<pre class="r"><code>boot_samples_ci = boot.ci(boot_samples_obj, type=&quot;perc&quot;) # тот же тип бутстреп интервала, который мы расчитали
+boot_samples_ci$percent[4:5] # сами значения</code></pre>
+<pre><code>#&gt; [1] 48.69408 56.71974</code></pre>
+<pre class="r"><code># все то же, но короче
+generated_sample %&gt;% 
+  boot(statistic = function(x, i) median(x[i]),  R = 1e4) %&gt;% 
+  boot.ci(type = &quot;perc&quot;) %&gt;% {.$percent[4:5]}</code></pre>
+<pre><code>#&gt; [1] 48.69408 56.71974</code></pre>
+<pre class="r"><code># а для доверительного интервала для среднего уже есть совсем готовая функция
+mean_cl_boot(generated_sample) # tidyverse</code></pre>
+<pre><code>#&gt;          y     ymin     ymax
+#&gt; 1 52.57498 48.84712 56.62703</code></pre>
+</div>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
