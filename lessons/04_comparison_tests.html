@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Тесты - продолжение</title>
+
+<script src="libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="libs/bootstrap-3.3.5/css/lumen.min.css" rel="stylesheet" />
+<script src="libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="libs/navigation-1.1/tabsets.js"></script>
+<link href="libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="../imports/style.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Тесты - продолжение</h1>
+
+</div>
+
+
+<div id="преамбула" class="section level1">
+<h1>Преамбула</h1>
+<pre class="r"><code>suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(magrittr))
+suppressPackageStartupMessages(library(cowplot))
+suppressPackageStartupMessages(library(rstatix))
+suppressPackageStartupMessages(library(ggrepel))
+library(rio)
+theme_set(theme_bw())</code></pre>
+<p>Данные могут относиться к разным типам. Методы обработки данных зависят от типа данных.</p>
+<ul>
+<li>количественные
+<ul>
+<li>количественные непрерывные данные: например, длина тела</li>
+<li>количественные дискретные данные: например, число тычинок</li>
+</ul></li>
+<li>качественные
+<ul>
+<li>значения можно отсортировать: “молодой” &lt; “среднего возраста” &lt; “старый”, однако нельзя сказать, во сколько раз “молодой” меньше “старого”</li>
+<li>значения нельзя отсортировать: самка/самец, есть/нет и т.п.</li>
+</ul></li>
+</ul>
+</div>
+<div id="количественные-непрерывные-переменные" class="section level1">
+<h1>Количественные (непрерывные) переменные</h1>
+<!--
++ как измерить различие между группами?
+  + разница между средними
+  + внутригрупповые различия в сравнении с межгрупповыми различиями (разницы между групповыми средними)
++ нулевая гипотеза (отрицательный контроль): как ведут себя данные, если обе выборки взяты из одной генеральной совокупности?
++ нулевая гипотеза vs наблюдаемое межгрупповое различие
++ перестановочный тест (MC methods)
++ t-test
++ t-test vs доверительные интервалы
++ wilcox-test
+-->
+<div id="разница-между-группами" class="section level2">
+<h2>Разница между группами</h2>
+<p>Если перед нами имеются две группы измерений и мы хотим понять, есть ли достоверные различия между этими группами, нам нужно придумать, как эту разницу измерить. Обычно используются следующие варианты статистик (значений, которые вычисляются для выявления эффекта)</p>
+<ul>
+<li>разница между средними групп <span class="math inline">\(\bar{x}_1+\bar{x}_2\)</span></li>
+<li>разница между средними групп деленная на разницы значений (разброс) внутри группы, например <span class="math inline">\(\big(\bar{x}_1+\bar{x}_2\big)/\text{SE}_\text{pooled}(x_1, x_2)\)</span> (или квадраты этих разниц)</li>
+</ul>
+</div>
+<div id="нулевая-гипотеза-и-нуль-распределение" class="section level2">
+<h2>Нулевая гипотеза и нуль-распределение</h2>
+<p>После того, как мы поняли, каким образом мы будем измерять разницу между группами, надо разобраться с тем, какую разницу считать достоверной. Для этого надо выяснить, какие значения принимает данная статистика при условии, если разницы между группами нет и все элементы принадлежат к одной группе (это называется нуль-распределение, т.е. распеделение значений статистики если различий между группами нет).</p>
+<p>Предположим, у нас есть выборка значений веса для самок мышей, которые едят обычный корм. Экспериментаторы хотели узнать, влияет ли жирность корма на вес и получили данные о весе самок мышей, которых кормили жирным кормом. Вопрос: есть ли достоверная разница в весе? Для начала посмотрим, если случайно разбивать мышей на группы, считать разницу между групповыми средними, какие значения будут типичными для таких межгрупповых средних при условии отсутствия реальной разницы между группами. Гипотеза об остутствии эффекта, т.е. случайности различий, есть <strong>нулевая гипотеза</strong> (H0), а распределение полученных значений различий случайных групп будет называться <strong>нуль-распределением</strong>.</p>
+<pre class="r"><code>mice = import(&quot;data/mice_pheno.csv&quot;) # https://github.com/lapotok/biochemstat2019/mice_pheno.csv</code></pre>
+<pre class="r"><code>set.seed(1)
+mice %&lt;&gt;% 
+  filter(Sex == &quot;F&quot;) %&gt;% 
+  mutate(Diet = recode(Diet, 
+                       chow = &quot;control&quot;, 
+                       hf = &quot;high_fat&quot;)) # меняем обозначения
+control = mice %&gt;% filter(Diet == &quot;control&quot;) %&gt;% pull(Bodyweight)
+high_fat = mice %&gt;% filter(Diet == &quot;high_fat&quot;) %&gt;% pull(Bodyweight)
+
+# null distribution
+set.seed(1)
+N = 10000 # число симуляций
+n = 20 # размер выборки
+null = numeric(N) # значения статистики при нулевой гипотезе
+for (i in 1:N) {
+  group1 = sample(control, n) 
+  group2 = sample(control, n) # группы генерируются случайно
+  group_diff = mean(group1) - mean(group2)
+  null[i] = group_diff
+}
+
+tibble(x=null) %&gt;% ggplot() + geom_histogram(aes(x=x), fill=&quot;gray&quot;, bins=30)</code></pre>
+<p><img src="04_comparison_tests_files/figure-html/null_distr-1.svg" width="288" /></p>
+<p>Теперь мы можем посмотреть как часто может встретиться то или иное значение средних между двумя группами, между которыми нет разницы. Функция <code>quantile</code> позволяет найти такое значение [в нашем случае значение средних между группами], меньше которого находится заданный процент данных, например,</p>
+<pre class="r"><code>quantile(null, 0.25)</code></pre>
+<pre><code>#&gt;     25% 
+#&gt; -0.6795</code></pre>
+<p>т.е. среди полученных разниц между средними случайных групп значения <span class="math inline">\(\leq -0.6795\)</span> встречаются в <span class="math inline">\(25\%\)</span> случаев.</p>
+</div>
+<div id="нуль-распределение-и-наблюдаемый-эффект" class="section level2">
+<h2>Нуль-распределение и наблюдаемый эффект</h2>
+<p>Также можно можно сравнить наблюдаемую разницу между группами с нуль-распределением, чтобы понять, с какой вероятностью такая (или более значительная) разница могла бы возникнуть случайно.</p>
+<pre class="r"><code>observed_diff = mean(high_fat) - mean(control)
+observed_diff</code></pre>
+<pre><code>#&gt; [1] 2.375517</code></pre>
+<pre class="r"><code>tibble(x=null) %&gt;% ggplot() + geom_histogram(aes(x=x), fill=&quot;gray&quot;, bins=30) +
+  geom_vline(xintercept = observed_diff, col=&quot;red&quot;, linetype=&quot;dashed&quot;)</code></pre>
+<p><img src="04_comparison_tests_files/figure-html/null_vs_obsdiff-1.svg" width="288" /></p>
+<p>Посмотрев глазами на данный график, мы видим, что не так уж часто случайно сгенерированные группы имеют такое различие (см. гистограмму), то есть маловероятно, что наблюдаемые межгрупповые различия между мышами с разной диетой (красная линия) имеют случайный характер.</p>
+<p>Эта техника анализа, основанная на генерации случайных выборок, относится к большой группе методов с умным названием <a href="https://en.wikipedia.org/wiki/Monte_Carlo_method">Монте-Карло симуляции</a>.</p>
+<p>Но как понять из симуляции нуль-распределения, с какой вероятностью такие или бóльшие различия могли бы возникнуть случайно? Она равна доле значений разниц из нуль-распределения, которые <span class="math inline">\(\geq\)</span> наблюдаемой разнице. Т.е. если всего мы сгенерировали <span class="math inline">\(N = 10000\)</span> значений разниц, а из них <span class="math inline">\(M = 232\)</span> были больше по модулю, чем модуль наблюдаемого различия, то Монте-Карло оценка вероятности такого или большего различия при условии отсутствия разницы между группами (<em>p-value</em>) будет <span class="math inline">\(\textit{p-value} = M/N = 232/10000 = 0.232\)</span>.</p>
+<blockquote>
+<p>Однако математики <a href="http://www.ncbi.nlm.nih.gov/pubmed/21044043">показали</a>, что для более правильной оценки лучше использовать модифицированную формулу <span class="math inline">\(\textit{p-value} = (M+1)/(N+1)\)</span>.</p>
+</blockquote>
+<pre class="r"><code>M = sum(abs(null) &gt;= abs(observed_diff))
+N = length(null)
+M/N # MC p-value (approx)</code></pre>
+<pre><code>#&gt; [1] 0.0232</code></pre>
+<pre class="r"><code>(M+1)/(N+1) # MC p-value (corrected)</code></pre>
+<pre><code>#&gt; [1] 0.02329767</code></pre>
+</div>
+<div id="типы-сравнения-1-равно---не-равно-2-больше-3-меньше-одно--и-двусторонний-тест-one-vs-two-tailed-test" class="section level2">
+<h2>Типы сравнения: 1) равно - не равно, 2) больше, 3) меньше (одно- и двусторонний тест, one vs two-tailed test)</h2>
+<p>В данном примере, когда мы рассчитывали <em>p-value</em>, задаваемый нами вопрос звучал как “С какой вероятностью могло бы случайно возникнуть такое или большее (по модулю) различие?”. При этом нас интересует есть ли разница в принципе, не важно, больше или меньше первая группа, чем вторая (это называется двусторонний тест).</p>
+<p>Однако в данном примере мы ожидаем, что более жирная пища увеличит массу мышей, поэтому нас скорее интересуют достоверно ли увеличение массы мышей на жирной диете. Для расчета <em>p-value</em> мы сформулируем этот вопрос как “С какой вероятностью могла бы случайно первая группа оказаться настолько больше чем вторая?” (это называется односторонний тест с альтернативной гипотезой, что перавя группа больше второй).</p>
+<p><img src="04_comparison_tests_files/figure-html/one_two_tailed_diff-1.svg" width="672" /></p>
+<pre class="r"><code>## two-tailed test
+# *вопрос*: с какой вероятностью разница между случайными группами 
+# будет по модулю по больше наблюдаемой 
+# или есть ли разница между группами
+M = sum(abs(null) &gt;= abs(observed_diff))
+N = length(null)
+(M+1)/(N+1) # MC p-value (corrected)</code></pre>
+<pre><code>#&gt; [1] 0.02329767</code></pre>
+<pre class="r"><code># one-tailed test (upper-tailed), alternative: upper
+# *вопрос*: с какой вероятностью разница между случайными группами 
+# будет больше наблюдаемой 
+M = sum(null &gt;= observed_diff)
+N = length(null)
+(M+1)/(N+1) # MC p-value (corrected)</code></pre>
+<pre><code>#&gt; [1] 0.01179882</code></pre>
+<pre class="r"><code># (p-value меньше, т.к. в эту вероятность не включается вероятность того, что значение больше наблюдаемого)
+
+# one-tailed test (lower-tailed), alternative: lower
+# *вопрос*: с какой вероятностью разница между случайными группами 
+# будет меньше наблюдаемой 
+# (в нашем случае маловероятно уменьшение веса при жирной диете)
+M = sum(null &lt;= observed_diff)
+N = length(null)
+(M+1)/(N+1) # MC p-value (corrected)</code></pre>
+<pre><code>#&gt; [1] 0.9883012</code></pre>
+<p>Как видно из сравнения результатов, получающихся из использования одно- и двусторонних тестов, при одной и той же наблюдаемой разнице более низким <em>p-value</em> оказался для одностороннего теста, т.к. мы задавали более конкретный вопрос. Вероятность, что разница будет какой-то (позитивной, негативной, но не нулевой) явно будет больше, чем вероятность того, что разница будет позитивной.</p>
+</div>
+<div id="перестановочный-тест" class="section level2">
+<h2>Перестановочный тест</h2>
+<p>Ранее мы проводили симуляции с использованием “генеральной совокупности” с целью понять, как будут себя вести выборки. А теперь проанализируем одну такую выборку.</p>
+<p>Данный тест проверяет, насколько данное разбиение на группы “лучше” случайного (если не особо - значит различий между группами нет). Нулевая гипотеза гласит, что обе группы взяты из одной генеральной совокупности и что наблюдаемая разница между группами не будет принципиально больше, чем типичное значение разницы между случайно сгенерированных групп, где значения взяты и перемешаны из обеих исходных групп. Т.к. для построения нуль-распределения мы используем значения из обеих исходных групп, мы учитываем их общий разброс значений.</p>
+<pre class="r"><code># создадим выборки контроля и опыта
+set.seed(1)
+n = 20
+high_fat_sample = sample(high_fat, n)
+control_sample = sample(control, n)
+
+observed_diff = mean(high_fat_sample) - mean(control_sample)
+observed_diff</code></pre>
+<pre><code>#&gt; [1] 4.9245</code></pre>
+<pre class="r"><code>total = c(control_sample, high_fat_sample)
+
+# null distribution 
+N = 10000 # число симуляций
+null = numeric(N) # значения статистики при нулевой гипотезе
+for (i in 1:N) {
+  group1 = sample(total, n) 
+  group2 = sample(total, n) # группы генерируются случайно
+  group_diff = mean(group1) - mean(group2)
+  null[i] = group_diff
+}
+
+tibble(x=null) %&gt;% 
+  ggplot() + 
+  geom_histogram(aes(x=x), fill = &quot;gray&quot;, bins = 30) +
+  geom_vline(xintercept = observed_diff, col = &quot;red&quot;, linetype = &quot;dashed&quot;)</code></pre>
+<p><img src="04_comparison_tests_files/figure-html/permut_test-1.svg" width="384" /></p>
+<p>Теперь мы можем аналогичным образом посчитать Монте-Карло оценку <em>p-value</em> для перестановочного одностороннего теста с альтернативной гипотезой, что в группе мышей с жирной пищей средняя масса больше.</p>
+<pre class="r"><code>M = sum(null &gt; observed_diff)
+N = length(null)
+(M+1)/(N+1) # MC p-value</code></pre>
+<pre><code>#&gt; [1] 9.999e-05</code></pre>
+<p>Мы получили бóльшее значение <em>p-value</em> чем в аналогичном тесте, где нуль-распределение расчитывали только по контрольным мышам. В данном случае общий разброс в данных больше, ошибки среднего больше и детектировать сигнал сложнее.</p>
+<p>В <code>R</code> есть функция, которая осуществляет этот тест</p>
+<pre class="r"><code># сначала переформатируем данные в табличку
+mice_30 = 
+  tibble(
+    groups = factor(rep(c(&quot;high_fat&quot;, &quot;control&quot;), times = c(n, n)), 
+                       levels = c(&quot;high_fat&quot;, &quot;control&quot;)),
+    values = c(high_fat_sample, control_sample)
+  )
+mice_30 %&gt;% sample_n(6)</code></pre>
+<pre><code>#&gt; # A tibble: 6 x 2
+#&gt;   groups   values
+#&gt;   &lt;fct&gt;     &lt;dbl&gt;
+#&gt; 1 high_fat   31.2
+#&gt; 2 high_fat   25.4
+#&gt; 3 high_fat   27.6
+#&gt; 4 control    28.1
+#&gt; 5 high_fat   31.2
+#&gt; 6 control    19.9</code></pre>
+<pre class="r"><code># теперь применим саму функцию
+coin::oneway_test(values ~ groups, mice_30, alternative = &quot;greater&quot;)</code></pre>
+<pre><code>#&gt; 
+#&gt;  Asymptotic Two-Sample Fisher-Pitman Permutation Test
+#&gt; 
+#&gt; data:  values by groups (high_fat, control)
+#&gt; Z = 3.1615, p-value = 0.0007849
+#&gt; alternative hypothesis: true mu is greater than 0</code></pre>
+<pre class="r"><code>coin::oneway_test(values ~ groups, mice_30, alternative = &quot;greater&quot;) %&gt;% coin::pvalue()</code></pre>
+<pre><code>#&gt; [1] 0.000784919</code></pre>
+</div>
+<div id="тест-манна-уитни-уилконсона" class="section level2">
+<h2>Тест Манна-Уитни (Уилконсона)</h2>
+<p>Мы хотим узнать, есть ли разница между группами, для которых предпосылка о нормальности распределения неверна, мы также можем использовать тест Манна-Уитни. Аналогично примеру выше проводим односторонний тест с альтернативной гипотезой о том, что среднее в первой группе больше среднего во второй (<code>alternative = &quot;greater&quot;</code>).</p>
+<pre class="r"><code>wilcox_test(mice_30, values ~ groups, alternative = &quot;greater&quot;)</code></pre>
+<pre><code>#&gt; # A tibble: 1 x 7
+#&gt;   .y.    group1   group2     n1    n2 statistic        p
+#&gt; * &lt;chr&gt;  &lt;chr&gt;    &lt;chr&gt;   &lt;int&gt; &lt;int&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+#&gt; 1 values high_fat control    20    20      318. 0.000706</code></pre>
+<pre class="r"><code>levels(mice_30$groups)</code></pre>
+<pre><code>#&gt; [1] &quot;high_fat&quot; &quot;control&quot;</code></pre>
+<blockquote>
+<p>Хочется отметить, что какая группа первая, а какая - вторая, определяется по группирующей переменной. Как правило, она имеет тип <code>factor</code> и порядок уровней в нем можно определить функцией <code>levels()</code>, а с использованием функции <code>factor()</code> можно менять очередность уровней.</p>
+<pre class="r"><code>factor1 = as.factor(c(&quot;c&quot;, &quot;a&quot;, &quot;a&quot;, &quot;c&quot;, &quot;c&quot;, &quot;b&quot;))
+levels(factor1) # по умолчанию уровни по алфавиту</code></pre>
+<pre><code>#&gt; [1] &quot;a&quot; &quot;b&quot; &quot;c&quot;</code></pre>
+<pre class="r"><code>factor2 = factor(factor1, levels = c(&quot;b&quot;, &quot;c&quot;, &quot;a&quot;))
+levels(factor2)</code></pre>
+<pre><code>#&gt; [1] &quot;b&quot; &quot;c&quot; &quot;a&quot;</code></pre>
+</blockquote>
+</div>
+<div id="t-тест" class="section level2">
+<h2><span class="math inline">\(t\)</span>-тест</h2>
+<p>Если данные распределены нормально и есть выборка не очень маленькая, то можно использовать и параметрический тест - <span class="math inline">\(t\)</span>-тест. Если распределение сильно отклоняется от нормального, то тогда этот тест может давать неверные результаты, основываясь на неправильных предпосылках. А если выборка маленькая, то какое угодно распределение похоже на нормальное, а также такая выборка может быть малорепрезентативной, поэтому более консервативный тест будет уместен.</p>
+<pre class="r"><code>t_test(mice_30, values ~ groups, alternative = &quot;greater&quot;)</code></pre>
+<pre><code>#&gt; # A tibble: 1 x 8
+#&gt;   .y.    group1   group2     n1    n2 statistic    df        p
+#&gt; * &lt;chr&gt;  &lt;chr&gt;    &lt;chr&gt;   &lt;int&gt; &lt;int&gt;     &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;
+#&gt; 1 values high_fat control    20    20      3.62  32.5 0.000497</code></pre>
+<div id="варианты-t-теста" class="section level3">
+<h3>Варианты <span class="math inline">\(t\)</span>-теста</h3>
+<ul>
+<li>количество и тип групп
+<ul>
+<li>одна группа (сравниваем среднее в группе с определенным значением <span class="math inline">\(\mu\)</span>)</li>
+<li>две группы (как у нас в примере)
+<ul>
+<li>непарный тест - когда элементы обеих групп независимы</li>
+<li>парный тест - когда элементы связаны, например, одна и та же мышь до и после приема лекарства</li>
+</ul></li>
+</ul></li>
+<li>тип сравнения
+<ul>
+<li>двусторонний тест (<em>p-value</em> отражает вероятность того, что такое или большее по модулю различие между группами могло получиться случайно, т.е. альтернативная гипотеза о неравенстве групп)</li>
+<li>односторонний тест (альтернативная гипотеза: среднее группы №1 больше среднего в группе №2)</li>
+</ul></li>
+</ul>
+<pre class="r"><code>### 50 оттенков t-теста
+
+## одна группа: проверим гипотезу о том, что средний вес мыши более 24 унций
+t_test(mice_30 %&gt;% filter(groups == &quot;control&quot;), values ~ 1, mu = 24, alternative = &quot;greater&quot;)</code></pre>
+<pre><code>#&gt; # A tibble: 1 x 7
+#&gt;   .y.    group1 group2         n statistic    df     p
+#&gt; * &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt;      &lt;int&gt;     &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+#&gt; 1 values 1      null model    20     -1.45    19 0.918</code></pre>
+<pre class="r"><code># p.value ~ 0.9 =&gt; не можем отвергнуть нулевую гипотезу о том, что средний вес не более 24
+
+## две группы, непарный тест 
+t_test(mice_30, values ~ groups)</code></pre>
+<pre><code>#&gt; # A tibble: 1 x 8
+#&gt;   .y.    group1   group2     n1    n2 statistic    df        p
+#&gt; * &lt;chr&gt;  &lt;chr&gt;    &lt;chr&gt;   &lt;int&gt; &lt;int&gt;     &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;
+#&gt; 1 values high_fat control    20    20      3.62  32.5 0.000993</code></pre>
+<pre class="r"><code>## две группы, парный тест
+# генерируем данные:
+# вес до приема лекарства
+before = c(200.1, 190.9, 192.7, 213, 241.4, 196.9, 172.2, 185.5, 205.2, 193.7)
+# вес после приема лекарства
+after &lt;-c(392.9, 393.2, 345.1, 393, 434, 427.9, 422, 383.9, 392.3, 352.2)
+# переформатируем
+paired_data =  tibble( 
+  mice_number = rep(1:10, times = 2),
+  group = factor(rep(c(&quot;before&quot;, &quot;after&quot;), each = 10), levels=c(&quot;before&quot;, &quot;after&quot;)),
+  weight = c(before,  after)
+)
+paired_data %&gt;% head()</code></pre>
+<pre><code>#&gt; # A tibble: 6 x 3
+#&gt;   mice_number group  weight
+#&gt;         &lt;int&gt; &lt;fct&gt;   &lt;dbl&gt;
+#&gt; 1           1 before   200.
+#&gt; 2           2 before   191.
+#&gt; 3           3 before   193.
+#&gt; 4           4 before   213 
+#&gt; 5           5 before   241.
+#&gt; 6           6 before   197.</code></pre>
+<pre class="r"><code># или так
+paired_data_wide = 
+  paired_data %&gt;% 
+  pivot_wider(names_from = group, values_from = weight, id_cols = mice_number)
+paired_data_wide %&gt;% head()</code></pre>
+<pre><code>#&gt; # A tibble: 6 x 3
+#&gt;   mice_number before after
+#&gt;         &lt;int&gt;  &lt;dbl&gt; &lt;dbl&gt;
+#&gt; 1           1   200.  393.
+#&gt; 2           2   191.  393.
+#&gt; 3           3   193.  345.
+#&gt; 4           4   213   393 
+#&gt; 5           5   241.  434 
+#&gt; 6           6   197.  428.</code></pre>
+<p><img src="04_comparison_tests_files/figure-html/unnamed-chunk-5-1.svg" width="384" /></p>
+<pre class="r"><code># парный тест по сути - это проверка того, 
+# что разница между соответствующими значениями отличается от нуля (или больше/меньше)
+paired_data_wide =
+  paired_data_wide %&gt;% 
+  mutate(diff = after - before)
+
+paired_data_wide %&gt;% head()</code></pre>
+<pre><code>#&gt; # A tibble: 6 x 4
+#&gt;   mice_number before after  diff
+#&gt;         &lt;int&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+#&gt; 1           1   200.  393.  193.
+#&gt; 2           2   191.  393.  202.
+#&gt; 3           3   193.  345.  152.
+#&gt; 4           4   213   393   180 
+#&gt; 5           5   241.  434   193.
+#&gt; 6           6   197.  428.  231.</code></pre>
+<pre class="r"><code># (after-before) &gt; 0 ?
+t_test(paired_data_wide, diff ~ 1, mu = 0, alternative = &quot;greater&quot;)</code></pre>
+<pre><code>#&gt; # A tibble: 1 x 7
+#&gt;   .y.   group1 group2         n statistic    df            p
+#&gt; * &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;      &lt;int&gt;     &lt;dbl&gt; &lt;dbl&gt;        &lt;dbl&gt;
+#&gt; 1 diff  1      null model    10      20.9     9 0.0000000031</code></pre>
+<pre class="r"><code># before &lt; after ?
+t_test(paired_data, weight ~ group, alternative = &quot;less&quot;, paired = T)</code></pre>
+<pre><code>#&gt; # A tibble: 1 x 8
+#&gt;   .y.    group1 group2    n1    n2 statistic    df            p
+#&gt; * &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt;  &lt;int&gt; &lt;int&gt;     &lt;dbl&gt; &lt;dbl&gt;        &lt;dbl&gt;
+#&gt; 1 weight before after     10    10     -20.9     9 0.0000000031</code></pre>
+</div>
+<div id="величина-эффекта-и-мощность-t-теста" class="section level3">
+<h3>Величина эффекта и мощность <span class="math inline">\(t\)</span>-теста</h3>
+<p>Достоверность различия между группами - это не единственное, что нас интересует. Также важным параметром является величина эффекта, то есть разница между средними, деленная на оценку стандартного отклонения. Т.е. различие может быть едва заметным на фоне разброса значений в данных, а может значительно перекрывать его. При этом различие как со слабой величиной эффекта может быть как достоверным, так и нет.</p>
+<pre class="r"><code># для начала, напишем функцию для сравнения
+compare_groups = function(n, mean1, mean2, sd_total, print_results = T){
+  my_samples = tibble( # создаем таблицу для сравнения
+    groups = rep(c(1,2), times = c(n, n)), # названия групп
+    values = c(rnorm(n, mean1, sd_total), rnorm(n, mean2, sd_total)) # симуляция 2 выборок
+  )
+  # считаем величину эффекта и печатаем ее значение
+  cohens_d(my_samples, values ~ groups) %&gt;% pull(effsize) -&gt; effect_size
+  if (print_results) cat(&quot;Effect size:&quot;, effect_size, &quot;\n&quot;)
+  # считаем p-value и печатаем его значение (если надо!)
+  t_test(my_samples, values ~ groups) %&gt;% pull(p) -&gt; p_value
+  if (print_results)  cat(&quot;P-value:&quot;, p_value, &quot;\n&quot;)
+  # функция говорит, когда нулевая гипотеза отвергнута
+  invisible(p_value &lt; 0.05)
+}
+
+set.seed(1)
+### Пример №1: сильный и значимый эффект
+compare_groups(n = 30,
+               mean1 = 50,
+               mean2 = 57,
+               sd_total = 10)</code></pre>
+<pre><code>#&gt; Effect size: 0.8703056 
+#&gt; P-value: 0.00135</code></pre>
+<pre class="r"><code>### Пример №2: сильный и незначимый эффект
+compare_groups(n = 8,
+               mean1 = 50,
+               mean2 = 57,
+               sd_total = 10)</code></pre>
+<pre><code>#&gt; Effect size: 0.4419973 
+#&gt; P-value: 0.392</code></pre>
+<pre class="r"><code>### Пример №3: слабый и незначимый эффект
+compare_groups(n = 30,
+               mean1 = 50,
+               mean2 = 51,
+               sd_total = 10)</code></pre>
+<pre><code>#&gt; Effect size: 0.0603733 
+#&gt; P-value: 0.816</code></pre>
+<pre class="r"><code>### Пример №4: слабый и значимый эффект
+compare_groups(n = 1000,
+               mean1 = 50,
+               mean2 = 51,
+               sd_total = 10)</code></pre>
+<pre><code>#&gt; Effect size: 0.1084747 
+#&gt; P-value: 0.0154</code></pre>
+<p>Как видно из приведенных выше примеров,</p>
+<ul>
+<li>если эффект слабый, то для того, чтобы его обнаружить, нужен большой объем выборки</li>
+<li>если эффект сильный, то для того, чтобы его обнаружить, достаточно и небольшой выборки</li>
+</ul>
+<p>Если мы по прикидочным экспериментам заподозрили наличие некой разницы между группами, то, оказывается, мы можем примерно прикинуть, какой размер выборки нам потребуется, чтобы обнаружить эффект данной величины. Чтобы показать основную идею, проведем симуляцию.</p>
+<pre class="r"><code># размеры выборки, которые мы протестируем
+sample_sizes = c(3, 5, 8, 12, 30, 50, 100, 300, 500, 1000, 2000)
+# значения величины эффекта
+effect_sizes = c(0.2, 0.5, 0.8)
+# количество симуляций для подсчета доли &quot;позитивных&quot; тестов
+N = 100
+
+# заготавливаем пустую матрицу для результатов
+n_positive_tests = matrix(data = 0, 
+                   nrow = length(sample_sizes),
+                   ncol = length(effect_sizes))
+dimnames(n_positive_tests) = list(sample_sizes = sample_sizes,
+                                  effect_sizes = effect_sizes)
+
+set.seed(1)
+for (sample_size in sample_sizes) {
+  for (effect_size in effect_sizes) {
+    for (i in 1:N) {
+      n_positive_tests[ as.character(sample_size), as.character(effect_size) ] = 
+        n_positive_tests[ as.character(sample_size), as.character(effect_size) ] +
+        compare_groups(n = sample_size,
+                       mean1 = 50,
+                       mean2 = 50 + effect_size*10,
+                       sd_total = 10, 
+                       print_results = F)
+    }
+  }
+}
+n_positive_tests %&gt;% 
+  as.data.frame() %&gt;% 
+  rownames_to_column() %&gt;% 
+  as_tibble() %&gt;% 
+  pivot_longer(-rowname, names_to = &quot;effect_size&quot;, values_to = &quot;effect_found&quot;) %&gt;% 
+  mutate(effect_found = effect_found/N) %&gt;% 
+  mutate(rowname = as.numeric(rowname)) %&gt;% 
+  ggplot()+
+  geom_line(aes(x=rowname, y=effect_found, col=effect_size)) +
+  scale_x_log10() +
+  labs(title = &quot;Объем выборки для обнаружения\nэффектов разного размера&quot;, 
+       x=&quot;Размер выборки&quot;, 
+       y=&quot;Процент найденных различий (мощность)&quot;, 
+       col=&quot;Эффект&quot;)</code></pre>
+<p><img src="04_comparison_tests_files/figure-html/unnamed-chunk-7-1.svg" width="576" /></p>
+<p>Т.к. уровень значимости проводимых тестов по умолчанию выставлен на 0.05 (хотя это можно менять), только в <span class="math inline">\(5\%\)</span> случаев мы будем находить различие между выборками там, где его нет (ложно-позитивный сигнал). А вот процент случаев, когда мы будем находить различие там, где оно есть, зависит от размера выборки и от величины сигнала. Если мы не хотим часто пропускать существующий сигнал, надо увеличивать объем выборки. Доля случаев (вероятность, если проводить много симуляций), когда мы обнаруживаем истинное различие, называется мощностью теста. Обычно исследователи хотят, чтобы она была побольше (обычно <span class="math inline">\(80\%\)</span> - это стандартное пожелание). Т.к. в случае реального сравнения мы не знаем, есть ли различие или нет, мы можем с помощью симуляции для эффекта данной величины и данного размера выборки установить мощность теста. Если мы не обнаружили различия, но мощность теста низкая при таких условиях, то можно увеличить объем выборки, и это поможет обнаружить эффект, если он есть. Если в общем случае нужно проводить симуляцию, чтобы узнать мощность теста, то для <span class="math inline">\(t\)</span>-теста эти вычисления можно провести по аналитической формуле, или с использованием функции <code>power.t.test()</code>, которая их осуществляет.</p>
+<pre class="r"><code>## хотим узнать, какая мощность у проведенного теста
+set.seed(1)
+my_samples = tibble( # создаем таблицу для сравнения
+    groups = rep(c(1,2), times = c(30, 30)), # названия групп
+    values = c(rnorm(30, 50, 10), rnorm(30, 52, 10)) # симуляция 2 выборок
+)
+
+t_test(my_samples, values ~ groups) # различия не значимы... с какой выборкой можно их найти?</code></pre>
+<pre><code>#&gt; # A tibble: 1 x 8
+#&gt;   .y.    group1 group2    n1    n2 statistic    df     p
+#&gt; * &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt;  &lt;int&gt; &lt;int&gt;     &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+#&gt; 1 values 1      2         30    30     -1.12  56.7 0.266</code></pre>
+<pre class="r"><code>power.t.test(n = 30, # число измерений в каждой группе
+             delta = 50-52, # разница между средними
+             sd = 10,
+             power = NULL) # хотим узнать!</code></pre>
+<pre><code>#&gt; 
+#&gt;      Two-sample t test power calculation 
+#&gt; 
+#&gt;               n = 30
+#&gt;           delta = 2
+#&gt;              sd = 10
+#&gt;       sig.level = 0.05
+#&gt;           power = 0.1154342
+#&gt;     alternative = two.sided
+#&gt; 
+#&gt; NOTE: n is number in *each* group</code></pre>
+<pre class="r"><code># =&gt; только 12% инстинных различий будет найдено... не густо, надо бы выборку побольше!
+
+## хотим узнать, какая должна быть выборка, чтобы
+## с желаемой мощностью увидеть такие различия
+power.t.test(n = NULL, # хотим узнать!
+             delta = 50-52, # разница между средними
+             sd = 10,
+             power = 0.8) # желаемая мощность (доля находимых истинных отличий)</code></pre>
+<pre><code>#&gt; 
+#&gt;      Two-sample t test power calculation 
+#&gt; 
+#&gt;               n = 393.4067
+#&gt;           delta = 2
+#&gt;              sd = 10
+#&gt;       sig.level = 0.05
+#&gt;           power = 0.8
+#&gt;     alternative = two.sided
+#&gt; 
+#&gt; NOTE: n is number in *each* group</code></pre>
+<pre class="r"><code># =&gt; нужно по 400 элементов в каждой выборке!</code></pre>
+<p>Однако если Вы набрали необходимую выборку, но различий так и не нашли, стоит провести эти расчеты повторно, ибо исходная оценка величины эффекта (или стандартного отклонения) могла быть неточной.</p>
+</div>
+</div>
+</div>
+<div id="качественные-дискретные-переменные" class="section level1">
+<h1>Качественные (дискретные) переменные</h1>
+<!--
++ mosaicplot
++ chisq
++ binom
++ fisher
++ pairwise
++ MC simulation test
+-->
+<div id="пример" class="section level2">
+<h2>Пример</h2>
+<p>Для примера расмотрим данные пассажиров Титаника.</p>
+<pre class="r"><code># Titanic: Survived ~ Class
+titanic = apply(Titanic, c(1, 4), sum)
+titanic</code></pre>
+<pre><code>#&gt;       Survived
+#&gt; Class   No Yes
+#&gt;   1st  122 203
+#&gt;   2nd  167 118
+#&gt;   3rd  528 178
+#&gt;   Crew 673 212</code></pre>
+<p>Из этой таблицы видно, что есть какое-то количество пассажиров в каждом классе и какая-то часть из них выжила. Сделать какие-то дальнейшие выводы пока сложно. Если посчитать сколько всего (колонка <code>Sum</code>) было пассажиров в каждом классе, сколько всего выжило, а сколько - нет, то такую таблицу уже проще интерпретировать.</p>
+<pre class="r"><code>titanic %&gt;% addmargins()</code></pre>
+<pre><code>#&gt;       Survived
+#&gt; Class    No Yes  Sum
+#&gt;   1st   122 203  325
+#&gt;   2nd   167 118  285
+#&gt;   3rd   528 178  706
+#&gt;   Crew  673 212  885
+#&gt;   Sum  1490 711 2201</code></pre>
+<p>Мы видим, что количество пассажиров в разных классах разное, да и число выживших отличается от числа не выживших. Как всегда, первое, что нужно сделать с данными - это на них посмотреть. Удобный график для визуализации этого - <code>Mosaic plot</code>.</p>
+<pre class="r"><code>par(mar=c(3,2,2, 0), cex.main = 1) # настройки отображения
+mosaicplot(titanic, color = T, main = &quot;Титаник: зависимость класса от выживания&quot;)</code></pre>
+<p><img src="04_comparison_tests_files/figure-html/observed-1.svg" width="480" /></p>
+<p>Взглянув на график мы наглядно видим соотношение долей в разных категориях. По ширине колонок мы видим, что число пассажиров в разных классах разнится, а по высоте ячеек мы видим, что и число выживших/погибших разное для разных классов, а в среднем погибло около трети (<span class="math inline">\(711/2201=0.323\)</span>).</p>
+<p>Нас интересует вопрос, зависит ли шанс выжить от класса пассажиров. Количество пассажиров в каждом классе фиксировано, но если бы шанс выжить не зависел от класса, то мы могли ожидать, что доля выживших в каждом классе была бы одинаковой. Ожидаемое количество в ячейке “Class = 1st &amp; Survived = Yes” равна общему числу пассажиров, умноженному на долю выживших и умноженному на долю из 1го класса:</p>
+<p><span class="math display">\[ \text{Ожидаемое число}(\text{Class:1st &amp; Survived:Yes}) = \overbrace{2201}^{\text{общее число}} \cdot \overbrace{711/2201}^{\text{доля выживших}} \cdot \overbrace{325/2201}^{\text{доля из 1 класса}} \approx 105 \]</span></p>
+<p>Аналогично можно расчитать ожидаемое число для каждой ячейки.</p>
+<pre class="r"><code># напишем функцию, которая это будет делать
+calc_expected = function(tbl) {
+  tble = tbl # создаем объект для результата (проще всего скопировать исходную таблицу и менять ее значения)
+  tblm = tbl %&gt;% addmargins() # считаем суммы по строкам/колонкам (это называется margins, sums, totals и т.п.)
+  for (i in 1:nrow(tbl)){ # для каждой строки...
+    for(j in 1:ncol(tbl)){ # для каждого столбца...
+      tble[i, j] = # пишем в соответствующую ячейку 
+        tblm[nrow(tblm), ncol(tblm)] * # общее количество элементов
+        tblm[i, ncol(tblm)] / tblm[nrow(tblm), ncol(tblm)] * # доля по строке
+        tblm[nrow(tblm), j] / tblm[nrow(tblm), ncol(tblm)] # доля по колонке
+    }
+  }
+  tble # возвращаем расчитанную таблицу
+}
+titanic_expected = calc_expected(titanic) # проверяем
+titanic_expected</code></pre>
+<pre><code>#&gt;       Survived
+#&gt; Class        No       Yes
+#&gt;   1st  220.0136 104.98637
+#&gt;   2nd  192.9350  92.06497
+#&gt;   3rd  477.9373 228.06270
+#&gt;   Crew 599.1140 285.88596</code></pre>
+<p>А когда мы сравним график для ожидаемых значений с графиком для наблюдаемых значений сразу становится понятно, что к чему.</p>
+<p><img src="04_comparison_tests_files/figure-html/unnamed-chunk-10-1.svg" width="672" /></p>
+</div>
+<div id="нулевая-гипотеза-и-наблюдаемый-эффект-перестановочный-тест" class="section level2">
+<h2>Нулевая гипотеза и наблюдаемый эффект: перестановочный тест</h2>
+<p>Теперь вопрос: насколько вероятно такое распределение выживших погибших пассажиров между классами при верной нулевой гипотезе (т.е. если бы зависимости от класса не было и группы бы генерировались случайно)?</p>
+<p>Для начала нам нужно придумать статистику для измерения степени наравномерности распределения числа выживших/погибших между классами. Нам нужно определить насколько сильно отличается наблюдаемая картина от ожидаемой при условии отсутствия зависимости. Формула явно должна включать разность между наблюдаемым числом и ожидаемым, однако, к примеру, в группе с всего 2 элементами отклонение всего на 1 было бы на гораздо существеннее, чем отклонение на 1 в группе из 1000 элементов. Поэтому для стандартизации различия полученную разницу нужно поделить на само ожидаемое значение. В итоге получаем статистику наподобие <span class="math inline">\(\sum_i |O_i-E_i|/E_i\)</span>. Используются разные вариации на тему, например, <span class="math inline">\(\chi^2 = \sum_i(O_i-E_i)^2/E_i\)</span>.</p>
+<pre class="r"><code>calc_chisq = function(tbl) {
+  tble = calc_expected(tbl) # считаем ожидаемые значения
+  sum( (tbl - tble)^2 / tble ) # разом применяем к целой таблице формулу chi^2
+}
+
+titanic %&gt;% calc_chisq()</code></pre>
+<pre><code>#&gt; [1] 190.4011</code></pre>
+<p>Далее нам нужно провести симуляцию случайного разбиения пассажиров на классы и в посмотреть на распределение нашей статистики в полученных группах. Чтобы понять, как это сделать, сначала нужно перевести данные в длинный формат. Пока мы видим в таблице агрегированные данные о пассажирах, где непонятно, кто где и что с ним стало. А нужно составить “перепись населения” с данным по каждому.</p>
+<pre class="r"><code># aggregated -&gt; long data
+titanic_long = tibble(
+  class = c(
+    rep(rownames(titanic), times = titanic[,1]), # yes
+    rep(rownames(titanic), times = titanic[,2]) # no
+  ),
+  survived = c(
+    rep(1, times = sum(titanic[,1])), # yes
+    rep(0, times = sum(titanic[,2])) # no
+  )
+)
+
+# смотрим на небольшой фрагмент полученной таблицы
+set.seed(1)
+titanic_long %&gt;% sample_n(8) %&gt;% arrange(class)</code></pre>
+<pre><code>#&gt; # A tibble: 8 x 2
+#&gt;   class survived
+#&gt;   &lt;chr&gt;    &lt;dbl&gt;
+#&gt; 1 1st          0
+#&gt; 2 2nd          1
+#&gt; 3 3rd          1
+#&gt; 4 3rd          1
+#&gt; 5 Crew         1
+#&gt; 6 Crew         0
+#&gt; 7 Crew         1
+#&gt; 8 Crew         1</code></pre>
+<p>А вот теперь, когда у нас есть данные по каждому пассажиру с его классом и данными по его выживанию, мы можем генерировать случайные группы, перемешивая метки групп между пассажирами (при этом сохраняя число пассажиров в пределах каждого класса).</p>
+<pre class="r"><code>observed_chisq = 
+  titanic_long %&gt;%  
+  table() %&gt;% # сначала агрегируем данные по типам классам и выживанию
+  calc_chisq() # считаем статистику
+
+# делаем симуляцию
+set.seed(1)
+N = 1000
+null = numeric(N)
+for (i in 1:N) { 
+  titanic_long_shuffled = titanic_long
+  titanic_long_shuffled$class = sample(titanic_long_shuffled$class) # перемешиваем названия групп
+  null[i] = titanic_long_shuffled %&gt;% table() %&gt;% calc_chisq() # считаем статистику для случайных групп
+}
+
+gn = 
+  tibble(x = null) %&gt;% 
+  ggplot() + geom_histogram(aes(x=x, y = ..density..), bins = 30, fill = &quot;gray&quot;) +
+  labs(x = &quot;chi^2&quot;)
+# + stat_function(fun = dchisq, args = list(df = 3))
+
+gl = 
+  gn + 
+  geom_vline(xintercept = observed_chisq, col = &quot;red&quot;, linetype = &quot;dashed&quot;) + 
+  scale_x_log10() + labs(x = &quot;chi^2 (log масштаб)&quot;)
+
+plot_grid(gn, gl)</code></pre>
+<p><img src="04_comparison_tests_files/figure-html/unnamed-chunk-11-1.svg" width="672" /></p>
+<p>Видно, что область типичных значений статистики <span class="math inline">\(\chi^2\)</span> для случайных групп примерно (на глаз) от 0 до 10, а значение <span class="math inline">\(\chi^2\)</span> для рассматриваемых групп (190.4) лежит далеко в стороне от этой области - т.е. мы можем отклонить нулевую гипотезу (т.е. распределение не случайно, смертность в разных классах разная). Мы можем найти такое значение <span class="math inline">\(\chi^2\)</span>, которое <span class="math inline">\(95\%\)</span> случаев не привышается для случайных групп.</p>
+<pre class="r"><code>quantile(null, 0.95)</code></pre>
+<pre><code>#&gt;      95% 
+#&gt; 7.502418</code></pre>
+<p>Т.е. если <span class="math inline">\(\chi^2 &gt; 7.5\)</span> мы можем отвергнуть нулевую гипотезу с <span class="math inline">\(5\%\)</span> уровнем значимости. Для полученного значения <span class="math inline">\(\chi^2=190.4\)</span> мы можем вычислить Монте-Карло оценку <em>p-value</em> (уточненная оценка рассчитывается по формуле <span class="math inline">\(\textit{p-value} = (M+1)/(N+1)\)</span>).</p>
+<pre class="r"><code>M = sum(null &gt; 190.4) # число симулированных значений нуль-распределения, которые &gt; 190.4
+N = length(null) # общее число симулированных значений нуль-распределения
+(M+1)/(N+1) # MC p-value</code></pre>
+<pre><code>#&gt; [1] 0.000999001</code></pre>
+<p>Таким образом, у случайных групп настолько неравномерное распределение по группам могло бы наблюдаться с пренебрежимо малой вероятностью. Поэтому мы смело можем отвергнуть нулевую гипотезу.</p>
+</div>
+<div id="тесты-для-категорийных-данных" class="section level2">
+<h2>Тесты для категорийных данных</h2>
+<p>К числу наиболее распространенных тестов для сравнения групп являются <span class="math inline">\(\chi^2\)</span> тест Пирсона и тест Фишера.</p>
+<div id="chi2-тест-пирсона" class="section level3">
+<h3><span class="math inline">\(\chi^2\)</span> тест Пирсона</h3>
+<p>В разговоре про нулевую гипотезу и перестановочный тест мы провели симуляцию значений статистики <span class="math inline">\(\chi^2\)</span> для данных, где обозначения групп были перемешаны (нуль-распределение). Т.е. если значение статистики для реальных данных существенно отличается от типичных значений из нуль-распределения, то мы можем отвергнуть гипотезу о независимости (в нашем примере про Титаник - независимости выживания от класса пассажиров).</p>
+<p>Оказывается, что обычно нуль распределение статистики <span class="math inline">\(\chi^2 = \sum_i (O_i-E_i)^2/E_i\)</span> не сильно зависит от наших конкретных данных и в общем случае имеет распределение <span class="math inline">\(\chi^2\)</span> с количеством степеней свободы, соответствующим размерности таблицы данных (<span class="math inline">\(\text{df} = (r-1)\cdot(c-1)=(4-1)\cdot(2-1)=3\)</span>, где <span class="math inline">\(r\)</span> - число строк, а <span class="math inline">\(c\)</span> - число столбцов).</p>
+<pre class="r"><code>gn + stat_function(fun = dchisq, args = list(df = 3))</code></pre>
+<p><img src="04_comparison_tests_files/figure-html/unnamed-chunk-14-1.svg" width="384" /></p>
+<p>Т.е. не обязательно каждый раз проводить симуляцию нуль-распределения, а можно пользоваться данным приближением, которое позволяет сравнивать рассчитанное значение статистики с теоретическим нуль-распределением и получать <em>p-value</em>. И вообще есть готовая функция <code>chisq_test</code>, которая все это делает. Однако вся эта история с симуляцией позволяет нагляднее посмотреть на нуль-распределение, <em>p-value</em>, посчитать их эмпирически и потрогать это своими руками.</p>
+<pre class="r"><code># напрямую расчитываем p-value из свойств распределения
+pchisq(observed_chisq, df = 3, lower.tail = F)</code></pre>
+<pre><code>#&gt; [1] 4.999928e-41</code></pre>
+<pre class="r"><code># используем готовую функцию 
+chisq_test(titanic)</code></pre>
+<pre><code>#&gt; # A tibble: 1 x 5
+#&gt;   statistic        p    df method          p.signif
+#&gt; *     &lt;dbl&gt;    &lt;dbl&gt; &lt;int&gt; &lt;chr&gt;           &lt;chr&gt;   
+#&gt; 1      190. 5.00e-41     3 Chi-square test ****</code></pre>
+<pre class="r"><code># еще есть функция,которая позволяет проводить множественные тесты для сравнения каждых подгрупп
+pairwise_prop_test(titanic)</code></pre>
+<pre><code>#&gt; # A tibble: 6 x 5
+#&gt;   group1 group2        p    p.adj p.adj.signif
+#&gt; * &lt;chr&gt;  &lt;chr&gt;     &lt;dbl&gt;    &lt;dbl&gt; &lt;chr&gt;       
+#&gt; 1 1st    2nd    3.13e- 7 9.38e- 7 ****        
+#&gt; 2 1st    3rd    2.55e-30 1.27e-29 ****        
+#&gt; 3 1st    Crew   1.62e-35 9.73e-35 ****        
+#&gt; 4 2nd    3rd    6.90e- 7 1.38e- 6 ****        
+#&gt; 5 2nd    Crew   1.94e- 8 7.75e- 8 ****        
+#&gt; 6 3rd    Crew   6.03e- 1 6.03e- 1 ns</code></pre>
+</div>
+<div id="тест-фишера" class="section level3">
+<h3>Тест Фишера</h3>
+<p>В процессе создания теста перестанок мы получали путем симуляции нуль-распределение (многократное перемешивание обозначений групп), значения которого сравнивали с наблюдаемым значением статистики и определяли, насколько вероятно такое значение могло получиться случайно. Однако для небольших выборок можно провести все возможные перестановки и вычислить точное значение <em>p-value</em>. Тест Фишера теоретически рассчитывает результаты для всех перестановок по законам комбинаторики.</p>
+<pre class="r"><code># fisher_test(titanic) # не тянет - слишком много
+fisher_test(titanic, simulate.p.value = T) # приближенный тест</code></pre>
+<pre><code>#&gt; # A tibble: 1 x 2
+#&gt;        p p.signif
+#&gt;    &lt;dbl&gt; &lt;chr&gt;   
+#&gt; 1 0.0005 ***</code></pre>
+<pre class="r"><code>titanic_females = apply(Titanic, c(1,2,4), sum)[,2,]
+fisher_test(titanic_females) # маленькую подвыборку смог посчитать</code></pre>
+<pre><code>#&gt; # A tibble: 1 x 2
+#&gt;          p p.signif
+#&gt;      &lt;dbl&gt; &lt;chr&gt;   
+#&gt; 1 8.77e-31 ****</code></pre>
+</div>
+</div>
+</div>
+<div id="когда-групп-больше-чем-две" class="section level1">
+<h1>Когда групп больше чем две</h1>
+<p><a id="multiple_comparisons"></a></p>
+<p>До данного момента мы рассматривали ситуации, когда групп для сравнения было две. Чем же отличается ситуация, когда групп больше? Мы перед собой можем ставить два разных вопроса:</p>
+<ol style="list-style-type: decimal">
+<li>Есть ли различия вообще, глобально (зависят ли значения признака от групповой переменной)</li>
+<li>Какие из всех возможных пар групп отличаются?</li>
+</ol>
+<p>Первый для ответа на первый вопрос используют дисперсионный анализ в случае нормально распределенных данных (мы его разберем далее, в разделе про регрессию), либо ранговый тест Крускалла-Уоллиса для непараметрических данных (функция <code>kruskal_test()</code>, используется аналогично <code>wilcox_test()</code>).</p>
+<p>Для категиальных данных можно использовать <span class="math inline">\(\chi^2\)</span>-тест Пирсона для таблицы с несколькими категориями, как мы рассмотрели выше.</p>
+<p>Для нахождения тех пар групп, которые отличаются, необходимо проводить несколько попарных тестов (<span class="math inline">\(t\)</span> или Манна-Уитни, в зависимости о того, нормально ли распределены данные). Каждый из тестов может ошибаться в <span class="math inline">\(5\%\)</span> случаев, а если мы проведем, скажем <span class="math inline">\(10^5\)</span> сравнений, то мы гарантированно получаем <span class="math inline">\(\approx 5\cdot10^3\)</span> ложно-позитивных сигналов.</p>
+<p>В случае анализа геномных данных, в которых сравнивается экспрессия десятков тысяч генов в множестве разных проб, это может приводить к гигантскому количеству “шума”. Поэтому используют разного рода поправки на множественные сравнения, чтобы уменьшить количество ложных открытий.</p>
+<p>Все методы работы с множественными сравнениями делятся на две группы:</p>
+<ul>
+<li><p>контроль FWER (family-wise error rate, что можно перевести как групповая вероятность ошибки; еще используется термин experiment-wise error rate): метод Бонферрони, Холма, Шидака, Тьюки и т.п. &gt; Мы используем данные методы, если хотим, чтобы вероятность сделать хотя бы одну ошибку на весь большой эксперимент (из <span class="math inline">\(m\)</span> сравнений) была не больше <span class="math inline">\(\alpha=0.05\)</span> (<span class="math inline">\(5\%\)</span>).</p></li>
+<li><p>контроль FDR (false discovery rate, что переводится как доля ложно отклоненных гипотез среди общего количество отклонений; можно также сказать “доля ложных открытий”): метод Бенджамини — Хохберга &gt; Мы используем методы из данной группы, чтобы доля ложных открытий среди всех сделанных открытий не превышала заданного порога (<span class="math inline">\(5\%\)</span>).</p></li>
+</ul>
+<p>На практике почти все поправки хорошо справляются со своей задачей, однако про поправку Бонферрони следует заметить, что она существенно понижает мощность тестирования при большом количестве сравнений (т.е. у нас будет меньше ошибок из-за меньшего количества открытий, “не ошибается тот, кто ничего не делает”). Также, чтобы искусственно не занижать мощность множественных сравнений, имеет смысл проводить только те тестирования, которые интересны исследователю.</p>
+<p>В приведенном поНапример, в рассмотренном ниже примере иммунохимическую активность в разных пробах имеет смысл сравнивать только с контролем, а не проводить все возможные попарные сравнения.</p>
+<pre class="r"><code>protein_stability = import(&quot;data/protein_stability.xlsx&quot;)
+# все возможные попарные сравнения =&gt; более жесткая поправка (p.adj)
+t_test(protein_stability, ConcUndiluted ~ Sample)
+# сравниваем только с контролем =&gt; менее жесткая поправка (p.adj)
+t_test(protein_stability, ConcUndiluted ~ Sample, ref.group = &quot;-70&quot;)</code></pre>
+<pre><code>#&gt; # A tibble: 10 x 10
+#&gt;    .y.   group1 group2    n1    n2 statistic    df       p   p.adj
+#&gt;  * &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;  &lt;int&gt; &lt;int&gt;     &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
+#&gt;  1 Conc… -70    +04       18     9     0.588  11.8 5.68e-1 1.00e+0
+#&gt;  2 Conc… -70    +25       18     9     8.10   15.4 6.08e-7 4.86e-6
+#&gt;  3 Conc… -70    +37       18     9     6.27   11.4 5.22e-5 3.65e-4
+#&gt;  4 Conc… -70    +45       18     9    11.4    10.6 2.97e-7 2.67e-6
+#&gt;  5 Conc… +04    +25        9     9     5.14   14.5 1.35e-4 6.75e-4
+#&gt;  6 Conc… +04    +37        9     9     4.57   15.9 3.18e-4 1.00e-3
+#&gt;  7 Conc… +04    +45        9     9     9.02   15.4 1.52e-7 1.52e-6
+#&gt;  8 Conc… +25    +37        9     9     0.277  14.0 7.86e-1 1.00e+0
+#&gt;  9 Conc… +25    +45        9     9     5.60   12.9 8.85e-5 5.31e-4
+#&gt; 10 Conc… +37    +45        9     9     4.67   15.7 2.69e-4 1.00e-3
+#&gt; # … with 1 more variable: p.adj.signif &lt;chr&gt;</code></pre>
+<pre><code>#&gt; # A tibble: 4 x 10
+#&gt;   .y.   group1 group2    n1    n2 statistic    df       p   p.adj
+#&gt; * &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;  &lt;int&gt; &lt;int&gt;     &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
+#&gt; 1 Conc… -70    +04       18     9     0.588  11.8 5.68e-1 5.68e-1
+#&gt; 2 Conc… -70    +25       18     9     8.10   15.4 6.08e-7 1.82e-6
+#&gt; 3 Conc… -70    +37       18     9     6.27   11.4 5.22e-5 1.04e-4
+#&gt; 4 Conc… -70    +45       18     9    11.4    10.6 2.97e-7 1.19e-6
+#&gt; # … with 1 more variable: p.adj.signif &lt;chr&gt;</code></pre>
+<p>Кроме использования множественных <span class="math inline">\(t\)</span>-тестов или тестов Манна-Уитни также можно использовать специальные тесты с автоматической поправкой на множественные сравнения (Дунн, Коновер, Тьюки и т.п.).</p>
+<p>Если сравнивать несколько групп с помощью доверительных интервалов (что <a href="https://bio304-class.github.io/bio304-book/comparing-sample-means.html#the-fallacy-of-indirect-comparison">менее предпочтительно</a>, чем с использованием прямых тестов), то следует использовать “одновременные доверительные интервалы” (simultaneous confidence intervals), т.е. интервалы с поправкой на множественные сравнения. В <code>R</code> такие интервалы (и прямые тесты) можно строить с помощью функции <code>glht()</code> из пакета <code>multcomp</code>(там можно либо вручную задать какие сравнения должны быть сделаны, либо задать предустановленные контрасты “Dunnett” для сравнений с контролем или “Tukey” для всех попарных сравнений).</p>
+<p>А еще можно сказать, что задача сравнения групп является частным случаем того, что делает регрессия. Сравнение групп можно переформулировать как проверка наличия зависимости между значениями признака и значениями группирующей переменной, а регрессия как раз нужна для анализа таких зависимостей и построения предсказаний на основе найденных закономерностей.</p>
+</div>
+<div id="дальнейшее-чтение" class="section level1">
+<h1>Дальнейшее чтение</h1>
+<p>Мне в написании этой инструкции помогли следующие материалы (и еще помогут потом, для дальшейшего усовершенствования):</p>
+<ul>
+<li><a href="http://genomicsclass.github.io/book/">PH525x series - Biomedical Data Science</a></li>
+<li><a href="https://ocw.mit.edu/courses/mathematics/18-05-introduction-to-probability-and-statistics-spring-2014/readings/">MIT - Introduction to Probability and Statistics</a></li>
+<li><a href="https://garstats.wordpress.com/2016/05/27/the-percentile-bootstrap/">the percentile bootstrap</a></li>
+<li><a href="http://www.di.fc.ul.pt/~jpn/r/bootstrap/resamplings.html">Resampling</a></li>
+<li><a href="https://bio304-class.github.io/bio304-book/">Biology 304: Biological Data Analysis</a></li>
+</ul>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
