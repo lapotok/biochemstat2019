@@ -60,7 +60,6 @@ samples = tibble(sample_sizes = as.factor(sample_sizes),
                  sample_values = sample_values)
 samples_summary = 
   samples %>% 
-  #mutate(sample_sizes = sample_sizes) %>% 
   group_by(sample_sizes) %>% 
   summarise(n = n(),
             mean = mean(sample_values),

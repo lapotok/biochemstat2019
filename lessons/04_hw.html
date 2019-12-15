@@ -288,7 +288,6 @@ samples = tibble(sample_sizes = as.factor(sample_sizes),
                  sample_values = sample_values)
 samples_summary = 
   samples %&gt;% 
-  #mutate(sample_sizes = sample_sizes) %&gt;% 
   group_by(sample_sizes) %&gt;% 
   summarise(n = n(),
             mean = mean(sample_values),
