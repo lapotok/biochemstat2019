@@ -1,0 +1,263 @@
+---
+title: "Домашняя работа №4"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r options, eval = T, echo = F}
+knitr::opts_chunk$set(
+  comment = "#>",
+  #collapse = TRUE,
+  #cache = TRUE,
+  width = 72,
+  tidy.opts=list(width.cutoff=72, tidy=TRUE)#,
+  #out.width = "70%"#,
+  #fig.align = 'center'#,
+  #fig.height = 3,
+  #fig.asp = 1#,
+  #fig.show = "hold"
+  )
+```
+```{r libs}
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(magrittr))
+suppressPackageStartupMessages(library(cowplot))
+suppressPackageStartupMessages(library(rstatix))
+suppressPackageStartupMessages(library(ggrepel))
+library(rio)
+theme_set(theme_bw())
+```
+
+
+### 1. Доверительный интервал
+
+У меня есть выборка. Я построил по ней 95% доверительный интервал. 
+
+  + какой уровень значимости у данного интервала?
+  + что подразумевается под уровнем значимости и с какой вероятностью данный конкретный интервал содержит истинное значение среднего?
+  + что будет, если вы повторите расчет такого интервала для множества выборок?
+  
+### 2. Интервальные оценки
+
+Оценки различных параметров делятся на точечные (например, среднее, медиана, мода) и интервальные, характеризующие разброс (дисперсия, стандартное отклонение, стандартная ошибка, доверительный интервал). Какие преимущества имеет использование каждого из этих способов указания разброса? В каком случае вы использовали ту или иную интервальную оценку?
+
+### 3. График с $\text{mean}\ \pm\ \text{SE}$ (стандартная ошибка) и $\text{mean}\ \pm\ \text{SD}$ (стандартное отклонение). 
+
+На примере тестовых данных посмотрим, как себя ведет стандартная ошибка в сравнении со стандартным отклонением при разном размере выборки ($n$).
+
+```{r, fig.width=8, fig.height=4}
+set.seed(1)
+n = c(3, 12, 30, 100, 500)
+
+sample_sizes = c()
+sample_values = c()
+for (n_i in n) {
+  sample_sizes = c( sample_sizes, rep(n_i, n_i) )
+  sample_values = c( sample_values, rnorm(n_i, mean = 50, sd = 10) )
+}
+samples = tibble(sample_sizes = as.factor(sample_sizes),
+                 sample_values = sample_values)
+samples_summary = 
+  samples %>% 
+  #mutate(sample_sizes = sample_sizes) %>% 
+  group_by(sample_sizes) %>% 
+  summarise(n = n(),
+            mean = mean(sample_values),
+            sd = sd(sample_values),
+            se = sd(sample_values)/sqrt(n))
+
+ggplot() +
+  geom_point(aes(x = sample_sizes, y = sample_values), 
+             data = samples, 
+             position = position_jitter(.1), 
+             alpha = 0.5) +
+  geom_pointrange(aes(x = sample_sizes, 
+                      y = mean, 
+                      ymin = mean-sd, 
+                      ymax = mean+sd, 
+                      col = "blue"), 
+                  data = samples_summary, 
+                  position = position_nudge(.2)) +
+  geom_pointrange(aes(x = sample_sizes, 
+                      y = mean, 
+                      ymin = mean-sd/sqrt(n), 
+                      ymax = mean+sd/sqrt(n), 
+                      col = "red"), 
+                  data = samples_summary, 
+                  position = position_nudge(.3)) +
+  scale_colour_manual(name = 'Типы разбросов', # изменяю подписи к легенде
+         values =c('blue','red'), labels = c('mean +/- SD','mean +/- SE')) +
+  labs(title = "Зависимость ширины разбросов от размера выборки", x = "Размер выборки", y = "Измеряемый признак (переменная)")
+```
+
+Изучите код, который делает этот график и напишите комментарии к каждому действию - что происходит.
+
+Ответьте на следующие вопросы по графику.
+
++ Как ведет себя разброс $\text{mean}\ \pm\ \text{SD}$ при разных $n$? 
++ Почему для $n=3$ разброс получился меньше? Посмотрите что будет происходить, если сгенерировать другие выборки (измените `set.seed()`).
++ Как ведет себя разброс $\text{mean}\ \pm\ \text{SE}$ при разных $n$? 
++ Из увиденного сделайте вывод, какую информацию нам дает SD и какую - SE.
+
+### 4. Интерпретация ДИ и p-values
+
+Если нам нужно сравнить две группы, мы можем сделать следующие действия
+
++ провести $t$-тест и получить *p-value*, выражающее 
++ рассчитать доверительный интервал для разницы между групповыми средними
++ рассчитать доверительный интервал для среднего в каждой группе и понять, пересекаются ли они
+
+Сделайте выводы о идентичности или различии в группах для случаев A-C; сравните результаты, полученные этими тремя способами. *Для удобства сравнения здесь я буду использовать альтернативную реализацию функции для $t$-теста (`t.test()`), которая может работать с векторами.*
+
+```{r, echo=F, eval=F}
+N = 1e5
+res = numeric(N) %>% set_names(1:N)
+for (i in 1:N){
+  set.seed(i)
+  sample1 = rnorm(30, mean = 50, sd = 10);
+  sample2 = rnorm(30, mean = 54, sd = 10);
+  tt = t.test(sample1, sample2)
+  res[i] = tt$p.value
+}
+res[res > 0.0490 & res < 0.0501] %>% sort()
+```
+
+A)
+
+```{r t_g_0.05}
+set.seed(1)
+sample1 = rnorm(30, mean = 50, sd = 10);
+sample2 = rnorm(30, mean = 52, sd = 10);
+t.test(sample1, sample2)
+t.test(sample1)$conf.int
+t.test(sample2)$conf.int
+```
+
+
+B)
+
+```{r t_l_0.05}
+set.seed(1)
+sample1 = rnorm(30, mean = 50, sd = 10);
+sample2 = rnorm(30, mean = 56, sd = 10);
+t.test(sample1, sample2)
+t.test(sample1)$conf.int
+t.test(sample2)$conf.int
+```
+
+C)
+
+```{r t_eq_0.05}
+set.seed(94965)
+sample1 = rnorm(30, mean = 50, sd = 10);
+sample2 = rnorm(30, mean = 54, sd = 10);
+t.test(sample1, sample2)
+t.test(sample1)$conf.int
+t.test(sample2)$conf.int
+```
+
+### 4. Различие или эквивалентность групп
+
++ Если при сравнении двух групп мы получили $\textit{p-value}<0.05$ о чем это может говорить? (рассмотрите разные варианты, возможные ошибки на всех этапах)
++ Если при сравнении двух групп мы получили $\textit{p-value} \geq 0.05$ о чем это может говорить? (рассмотрите разные варианты, возможные ошибки на всех этапах)
+
+### 5. Различие или эквивалентность групп - практика
+
+Рассмотрим такие две выборки из двух групп (`g1` и `g2`).
+
+```{r, fig.width=4, fig.height=3}
+# генерируем данные
+set.seed(1)
+g1 = rnorm(30, mean = 50, sd = 10)
+g2 = rnorm(30, mean = 53, sd = 10)
+
+# строим график
+tibble(g1, g2) %>% 
+  pivot_longer(everything(), "g") %>% 
+  ggplot(aes(x=g, y=value)) + 
+  geom_boxplot() +
+  geom_point(position = position_jitter(.2))
+```
+
+Для начала с помощью бутстрепа найдем доверительный интервал для разницы между средними для каждой группы. Для этого возьмем много искусственных выборок (бутстреп-выборки) из данных нам выборок и для каждой симуляции посчитаем разницу между средними.
+
+```r
+N = 10000 # число симуляций
+diffs = numeric(N)
+for (i in 1:N) {
+  g1__bootstrap_resample = [здесь сгенерируйте бутстреп выборку из выборки 1 с заменой]
+  g2__bootstrap_resample = [здесь сгенерируйте бутстреп выборку из выборки 1 с заменой]
+  diffs[i] = [среднее в бутстреп-выборке 1 - среднее в бутстреп-выборке 2]
+}
+```
+
+Далее постройте гистограмму для полученного распределения разниц и посчитайте доверительный интервал для разницы между группами, т.е. найдете значения, которые ограничивают 2.5% самых низких значений разниц и 2.5% самых больших - этот диапазон есть 95% доверительный интервал, расчитанный перцентильным методом. Сравните этот доверительный интервал с параметрическим $t$ доверительным интервалом (`t.test()`). Значимо ли статистически полученное различие?
+
+Бывает статистическая значимость результата (она же достоверность), и совершенно с ней не связанная научная или медицинская (или еще какая-нибудь) значимость. Для определения второй требуется знание той области, в которой проводятся исследования. Например, значимо ли снижение веса с 140 до 139 кг (на 1 кг, 1%) или с 140 до 100 кг (на 40 кг, 40%)? А когда специалист определит какое изменение является значимым, существенным, весомым, тогда уже можно проверять, достоверность того, что это изменение такое.
+
+Теперь мы также можем ответить на другой вопрос. Можно ли считать группы сходными? Предположим, мы считаем, что группы сходны, если они отличаются не более чем на 5 единиц (т.е. различие лежит в корридоре $(-5,\ 5)$). Итак, посчитайте какая доля значений в `diffs` будет лежать в этом корридоре: чем больше - тем больше свидетельств в пользу эквивалентности групп. А доля значений, не лежащих в этом корридоре - это будет *p-value* теста (*p* > 0.05 => различия слишком большие для эквивалентных групп).
+
+```r
+within_limits = sum( логическое условие принадлежности значений diffs диапазону (-5, 5) ) / общее_число_значений
+p.value = 1 - within_limits
+
+# проверьте себя с помощью готового теста 
+# (значения p.value должны быть похожими)
+tibble(g1, g2) %>% 
+  pivot_longer(everything(), "g") %>% 
+  lm(value ~ g, .) %>% 
+  emmeans("g") %>% 
+  contrast("dunnett") %>% 
+  test(null = 0, delta = 5, side = "=")
+```
+```{r eval = F, echo = F}
+N = 10000 # число симуляций
+diffs = numeric(N)
+for (i in 1:N) {
+  g1__bootstrap_resample = sample(g1, replace = T)
+  g2__bootstrap_resample = sample(g2, replace = T)
+  diffs[i] = mean(g1__bootstrap_resample)-mean(g2__bootstrap_resample)
+}
+
+tibble(x=diffs) %>% ggplot() + geom_histogram(aes(x=x), fill="gray")
+
+quantile(diffs, c(0.025, 0.975)) # diff CI
+
+t.test(g1, g2)
+
+min(sum(diffs > 0), sum(diffs < 0)) / N
+
+tibble(g1, g2) %>% pivot_longer(everything(), "g") %>% lm(value ~ g, .) %>% emmeans("g")
+tibble(g1, g2) %>% pivot_longer(everything(), "g") %>% lm(value ~ g, .) %>% emmeans("g") %>% contrast("dunnett") 
+tibble(g1, g2) %>% pivot_longer(everything(), "g") %>% lm(value ~ g, .) %>% emmeans("g") %>% contrast("dunnett") %>% test(null = 0, delta = 5, side = "=")
+# вероятность того, что случайно могут получиться различия больше, чем на 10% по модулю
+sum(abs(diffs) > 0.1*mean(c(g1, g2))) / N
+
+
+tibble(g1, g2) %>% 
+  pivot_longer(everything(), "g") %>% 
+  lm(value ~ g, .) %>% 
+  emmeans("g") %>% 
+  contrast("dunnett") %>% 
+  test(null = 0, delta = 5, side = "=")
+
+tibble(g1, g2) %>% 
+  pivot_longer(everything(), "g") %>% 
+  lm(log(value) ~ g, .) %>% 
+  emmeans("g") %>% 
+  contrast("dunnett") %>% 
+  test(null = 0, delta = log(1.1), side = "=")
+
+sum(abs(diffs) > 0.1*mean(c(g1, g2))) / N
+
+sum(diffs > 0.1*mean(c(g1, g2))) / N
+```
+
+
+<!--
+Type I vs type II errors calc; trade off
+HPInterval
+случаи, когда нельзя использовать сравнения (выбросы и очень скошенные распределения - медиана)
+прочие несоблюдения предпосылок
+-->

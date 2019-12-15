@@ -725,6 +725,105 @@ power.t.test(n = NULL, # хотим узнать!
 <p>Однако если Вы набрали необходимую выборку, но различий так и не нашли, стоит провести эти расчеты повторно, ибо исходная оценка величины эффекта (или стандартного отклонения) могла быть неточной.</p>
 </div>
 </div>
+<div id="различие-или-эквивалентность-групп" class="section level2">
+<h2>Различие или эквивалентность групп</h2>
+<p>Итак, мы говорили, что нулевая гипотеза говорит о том, что различий между группами нет, а наблюдаемые слабые различия случайны. Если такие или более резкие различия между группами маловероятно могли бы быть обнаружены для одинаковых групп, то мы отвергаем нулевую и считаем истинной альтернативную гипотезу. Однако если различия недостаточны, чтобы отвергнуть нулевую гипотезу, можем ли мы это считать ее доказательством? Ответ - нет, например у нас м! Для тестирования эквивалентности есть свои тесты.</p>
+<p>Мы должны определить для себя, что для нас есть эквивалентность. Например, если падение активности белка при хранении прошло не более, чем на 20.5 мкг/мл с исходного уровня 205 мкг/мл (10%), то мы можем считать такое падение несущественным и белок после хранения можем считать эквивалентным (на качественном уровне, критерий выбираем сами) исходному.</p>
+<pre class="r"><code>protein_stability = import(&quot;data/protein_stability.xlsx&quot;) # https://github.com/lapotok/biochemstat2019/data/protein_stability.xlsx</code></pre>
+<p>Проанализируем данные с помощью <span class="math inline">\(t\)</span>-теста и теста на эквивалентность (test for equivalency, test for noninferiority, test for nonsuperiority). Смотрим, можно ли считать эквивалентной активность белка при хранении при -70 и при +4.</p>
+<div id="полная-выборка-18-точек-в-контроле-и-9-в-опыте" class="section level3">
+<h3>Полная выборка (18 точек в контроле и 9 в опыте)</h3>
+<p>Готовим данные и проводим обычный <span class="math inline">\(t\)</span>-тест.</p>
+<pre class="r"><code>ps_full = protein_stability %&gt;% filter(Sample %in% c(&quot;-70&quot;, &quot;+04&quot;))
+ps_full %&gt;% t_test(ConcUndiluted ~ Sample) </code></pre>
+<pre><code>#&gt; # A tibble: 1 x 8
+#&gt;   .y.           group1 group2    n1    n2 statistic    df     p
+#&gt; * &lt;chr&gt;         &lt;chr&gt;  &lt;chr&gt;  &lt;int&gt; &lt;int&gt;     &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+#&gt; 1 ConcUndiluted -70    +04       18     9     0.588  11.8 0.568</code></pre>
+<pre class="r"><code># t-test for the difference between two means:
+# p &gt; 0.05 =&gt; не можем отвергнуть нулевую гипотезу об отсутствии различий
+# ... но можем ли мы быть уверены, что средние групп равны (т.е. группы одинаковы)?</code></pre>
+<p>Проводим анализируем разницу между группами, доверительные интервалы и проводим тест на эквивалентность</p>
+<pre class="r"><code>library(emmeans)
+# рассчитаем одновременные доверительные интервалы для каждого среднего
+ps_full_em = emmeans(lm(ConcUndiluted ~ Sample, ps_full), &quot;Sample&quot;)
+ps_full_em</code></pre>
+<pre><code>#&gt;  Sample emmean   SE df lower.CL upper.CL
+#&gt;  -70       205 2.34 25      200      209
+#&gt;  +04       202 3.30 25      195      209
+#&gt; 
+#&gt; Confidence level used: 0.95</code></pre>
+<pre class="r"><code># расчитаем разницу между группами (контраст, т.е. разница)
+contrast(ps_full_em, &quot;dunnett&quot;, rev=T)</code></pre>
+<pre><code>#&gt;  contrast  estimate   SE df t.ratio p.value
+#&gt;  -70 - +04     2.71 4.05 25 0.669   0.5098</code></pre>
+<pre class="r"><code># ... и доверительный интервал для нее
+confint(contrast(ps_full_em, &quot;dunnett&quot;, rev=T))</code></pre>
+<pre><code>#&gt;  contrast  estimate   SE df lower.CL upper.CL
+#&gt;  -70 - +04     2.71 4.05 25    -5.63       11
+#&gt; 
+#&gt; Confidence level used: 0.95</code></pre>
+<pre class="r"><code># протестируем гипотезу, что падение активности прошло не более, чем на 20.5 мкг/мл (-70 - +04) &lt; 0 + 20.5
+test(contrast(ps_full_em, &quot;dunnett&quot;, rev=T), null = 0, delta = 20.5, side = &quot;&lt;&quot;)</code></pre>
+<pre><code>#&gt;  contrast  estimate   SE df t.ratio p.value
+#&gt;  -70 - +04     2.71 4.05 25 -4.397  0.0001 
+#&gt; 
+#&gt; Statistics are tests of nonsuperiority with a threshold of 20.5 
+#&gt; P values are left-tailed</code></pre>
+<pre class="r"><code># test of nonsuperiority, p = 0.0001 =&gt; нулевую гипотезу о наличии разницы можно отвергнуть =&gt; считаем, что ее нет</code></pre>
+</div>
+<div id="уменьшенная-выборка-по-3-точки" class="section level3">
+<h3>Уменьшенная выборка (по 3 точки)</h3>
+<p>Готовим данные и проводим обычный <span class="math inline">\(t\)</span>-тест.</p>
+<pre class="r"><code>set.seed(2)
+ps_part = protein_stability %&gt;% filter(Sample %in% c(&quot;-70&quot;, &quot;+04&quot;)) %&gt;% sample_n_by(Sample, size=3)
+ps_part</code></pre>
+<pre><code>#&gt; # A tibble: 6 x 2
+#&gt;   Sample ConcUndiluted
+#&gt;   &lt;chr&gt;          &lt;dbl&gt;
+#&gt; 1 -70             207.
+#&gt; 2 -70             224.
+#&gt; 3 -70             200.
+#&gt; 4 +04             190.
+#&gt; 5 +04             208.
+#&gt; 6 +04             189.</code></pre>
+<pre class="r"><code>ps_part %&gt;% t_test(ConcUndiluted ~ Sample)</code></pre>
+<pre><code>#&gt; # A tibble: 1 x 8
+#&gt;   .y.           group1 group2    n1    n2 statistic    df     p
+#&gt; * &lt;chr&gt;         &lt;chr&gt;  &lt;chr&gt;  &lt;int&gt; &lt;int&gt;     &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+#&gt; 1 ConcUndiluted -70    +04        3     3      1.54  3.96 0.198</code></pre>
+<pre class="r"><code># t-test for the difference between two means:
+# p &gt; 0.05 =&gt; не можем отвергнуть нулевую гипотезу об отсутствии различий
+# ... но можем ли мы быть уверены, что средние групп равны (т.е. группы одинаковы)?</code></pre>
+<p>Проводим анализируем разницу между группами, доверительные интервалы и проводим тест на эквивалентность</p>
+<pre class="r"><code># рассчитаем одновременные доверительные интервалы для каждого среднего
+ps_part_em = emmeans(lm(ConcUndiluted ~ Sample, ps_part), &quot;Sample&quot;)
+ps_part_em</code></pre>
+<pre><code>#&gt;  Sample emmean   SE df lower.CL upper.CL
+#&gt;  -70       210 6.57  4      192      229
+#&gt;  +04       196 6.57  4      178      214
+#&gt; 
+#&gt; Confidence level used: 0.95</code></pre>
+<pre class="r"><code># расчитаем разницу между группами (контраст, т.е. разница)
+contrast(ps_part_em, &quot;dunnett&quot;, rev=T)</code></pre>
+<pre><code>#&gt;  contrast  estimate   SE df t.ratio p.value
+#&gt;  -70 - +04     14.4 9.29  4 1.544   0.1975</code></pre>
+<pre class="r"><code># ... и доверительный интервал для нее
+confint(contrast(ps_part_em, &quot;dunnett&quot;, rev=T))</code></pre>
+<pre><code>#&gt;  contrast  estimate   SE df lower.CL upper.CL
+#&gt;  -70 - +04     14.4 9.29  4    -11.5     40.2
+#&gt; 
+#&gt; Confidence level used: 0.95</code></pre>
+<pre class="r"><code># протестируем гипотезу, что падение активности прошло не более, чем на 20.5 мкг/мл (-70 - +04) &lt; 0 + 20.5
+test(contrast(ps_part_em, &quot;dunnett&quot;, rev=T), null = 0, delta = 20.5, side = &quot;&lt;&quot;)</code></pre>
+<pre><code>#&gt;  contrast  estimate   SE df t.ratio p.value
+#&gt;  -70 - +04     14.4 9.29  4 -0.662  0.2722 
+#&gt; 
+#&gt; Statistics are tests of nonsuperiority with a threshold of 20.5 
+#&gt; P values are left-tailed</code></pre>
+<pre class="r"><code># test of nonsuperiority, p = 0.2722 =&gt; нулевую гипотезу о наличии разницы нельзя отвергнуть =&gt; считаем, что ее нет</code></pre>
+</div>
+</div>
 </div>
 <div id="качественные-дискретные-переменные" class="section level1">
 <h1>Качественные (дискретные) переменные</h1>
@@ -788,7 +887,7 @@ titanic_expected</code></pre>
 #&gt;   3rd  477.9373 228.06270
 #&gt;   Crew 599.1140 285.88596</code></pre>
 <p>А когда мы сравним график для ожидаемых значений с графиком для наблюдаемых значений сразу становится понятно, что к чему.</p>
-<p><img src="04_comparison_tests_files/figure-html/unnamed-chunk-10-1.svg" width="672" /></p>
+<p><img src="04_comparison_tests_files/figure-html/unnamed-chunk-14-1.svg" width="672" /></p>
 </div>
 <div id="нулевая-гипотеза-и-наблюдаемый-эффект-перестановочный-тест" class="section level2">
 <h2>Нулевая гипотеза и наблюдаемый эффект: перестановочный тест</h2>
@@ -856,7 +955,7 @@ gl =
   scale_x_log10() + labs(x = &quot;chi^2 (log масштаб)&quot;)
 
 plot_grid(gn, gl)</code></pre>
-<p><img src="04_comparison_tests_files/figure-html/unnamed-chunk-11-1.svg" width="672" /></p>
+<p><img src="04_comparison_tests_files/figure-html/unnamed-chunk-15-1.svg" width="672" /></p>
 <p>Видно, что область типичных значений статистики <span class="math inline">\(\chi^2\)</span> для случайных групп примерно (на глаз) от 0 до 10, а значение <span class="math inline">\(\chi^2\)</span> для рассматриваемых групп (190.4) лежит далеко в стороне от этой области - т.е. мы можем отклонить нулевую гипотезу (т.е. распределение не случайно, смертность в разных классах разная). Мы можем найти такое значение <span class="math inline">\(\chi^2\)</span>, которое <span class="math inline">\(95\%\)</span> случаев не привышается для случайных групп.</p>
 <pre class="r"><code>quantile(null, 0.95)</code></pre>
 <pre><code>#&gt;      95% 
@@ -876,7 +975,7 @@ N = length(null) # общее число симулированных значе
 <p>В разговоре про нулевую гипотезу и перестановочный тест мы провели симуляцию значений статистики <span class="math inline">\(\chi^2\)</span> для данных, где обозначения групп были перемешаны (нуль-распределение). Т.е. если значение статистики для реальных данных существенно отличается от типичных значений из нуль-распределения, то мы можем отвергнуть гипотезу о независимости (в нашем примере про Титаник - независимости выживания от класса пассажиров).</p>
 <p>Оказывается, что обычно нуль распределение статистики <span class="math inline">\(\chi^2 = \sum_i (O_i-E_i)^2/E_i\)</span> не сильно зависит от наших конкретных данных и в общем случае имеет распределение <span class="math inline">\(\chi^2\)</span> с количеством степеней свободы, соответствующим размерности таблицы данных (<span class="math inline">\(\text{df} = (r-1)\cdot(c-1)=(4-1)\cdot(2-1)=3\)</span>, где <span class="math inline">\(r\)</span> - число строк, а <span class="math inline">\(c\)</span> - число столбцов).</p>
 <pre class="r"><code>gn + stat_function(fun = dchisq, args = list(df = 3))</code></pre>
-<p><img src="04_comparison_tests_files/figure-html/unnamed-chunk-14-1.svg" width="384" /></p>
+<p><img src="04_comparison_tests_files/figure-html/unnamed-chunk-18-1.svg" width="384" /></p>
 <p>Т.е. не обязательно каждый раз проводить симуляцию нуль-распределения, а можно пользоваться данным приближением, которое позволяет сравнивать рассчитанное значение статистики с теоретическим нуль-распределением и получать <em>p-value</em>. И вообще есть готовая функция <code>chisq_test</code>, которая все это делает. Однако вся эта история с симуляцией позволяет нагляднее посмотреть на нуль-распределение, <em>p-value</em>, посчитать их эмпирически и потрогать это своими руками.</p>
 <pre class="r"><code># напрямую расчитываем p-value из свойств распределения
 pchisq(observed_chisq, df = 3, lower.tail = F)</code></pre>
@@ -964,7 +1063,7 @@ t_test(protein_stability, ConcUndiluted ~ Sample)</code></pre>
 #&gt; 10 Conc… +37    +45        9     9     4.67   15.7 2.69e-4 1.00e-3
 #&gt; # … with 1 more variable: p.adj.signif &lt;chr&gt;</code></pre>
 <p>Кроме использования множественных <span class="math inline">\(t\)</span>-тестов или тестов Манна-Уитни также можно использовать специальные тесты с автоматической поправкой на множественные сравнения (Дунн, Коновер, Тьюки и т.п.).</p>
-<p>Если сравнивать несколько групп с помощью доверительных интервалов (что <a href="https://bio304-class.github.io/bio304-book/comparing-sample-means.html#the-fallacy-of-indirect-comparison">менее предпочтительно</a>, чем с использованием прямых тестов), то следует использовать “одновременные доверительные интервалы” (simultaneous confidence intervals), т.е. интервалы с поправкой на множественные сравнения. В <code>R</code> такие интервалы (и прямые тесты) можно строить с помощью функции <code>glht()</code> из пакета <code>multcomp</code>(там можно либо вручную задать какие сравнения должны быть сделаны, либо задать предустановленные контрасты “Dunnett” для сравнений с контролем или “Tukey” для всех попарных сравнений).</p>
+<p>Если сравнивать несколько групп с помощью доверительных интервалов (что <a href="https://bio304-class.github.io/bio304-book/comparing-sample-means.html#the-fallacy-of-indirect-comparison">менее предпочтительно</a>, чем с использованием прямых тестов), то следует использовать “одновременные доверительные интервалы” (simultaneous confidence intervals), т.е. интервалы с поправкой на множественные сравнения. В <code>R</code> такие интервалы (и прямые тесты) можно строить с помощью функции <code>glht()</code> из пакета <code>multcomp</code> или фунции <code>emmeans</code> из одноименного пакета (там можно либо вручную задать какие сравнения должны быть сделаны, либо задать предустановленные контрасты “Dunnett” для сравнений с контролем или “Tukey” для всех попарных сравнений).</p>
 <p>А еще можно сказать, что задача сравнения групп является частным случаем того, что делает регрессия. Сравнение групп можно переформулировать как проверка наличия зависимости между значениями признака и значениями группирующей переменной, а регрессия как раз нужна для анализа таких зависимостей и построения предсказаний на основе найденных закономерностей.</p>
 </div>
 <div id="дальнейшее-чтение" class="section level1">

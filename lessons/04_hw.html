@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Домашняя работа №4</title>
+
+<script src="libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="libs/bootstrap-3.3.5/css/lumen.min.css" rel="stylesheet" />
+<script src="libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="libs/navigation-1.1/tabsets.js"></script>
+<link href="libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="../imports/style.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Домашняя работа №4</h1>
+
+</div>
+
+
+<pre class="r"><code>suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(magrittr))
+suppressPackageStartupMessages(library(cowplot))
+suppressPackageStartupMessages(library(rstatix))
+suppressPackageStartupMessages(library(ggrepel))
+library(rio)
+theme_set(theme_bw())</code></pre>
+<div id="доверительный-интервал" class="section level3">
+<h3>1. Доверительный интервал</h3>
+<p>У меня есть выборка. Я построил по ней 95% доверительный интервал.</p>
+<ul>
+<li>какой уровень значимости у данного интервала?</li>
+<li>что подразумевается под уровнем значимости и с какой вероятностью данный конкретный интервал содержит истинное значение среднего?</li>
+<li>что будет, если вы повторите расчет такого интервала для множества выборок?</li>
+</ul>
+</div>
+<div id="интервальные-оценки" class="section level3">
+<h3>2. Интервальные оценки</h3>
+<p>Оценки различных параметров делятся на точечные (например, среднее, медиана, мода) и интервальные, характеризующие разброс (дисперсия, стандартное отклонение, стандартная ошибка, доверительный интервал). Какие преимущества имеет использование каждого из этих способов указания разброса? В каком случае вы использовали ту или иную интервальную оценку?</p>
+</div>
+<div id="график-с-textmean-pm-textse-стандартная-ошибка-и-textmean-pm-textsd-стандартное-отклонение." class="section level3">
+<h3>3. График с <span class="math inline">\(\text{mean}\ \pm\ \text{SE}\)</span> (стандартная ошибка) и <span class="math inline">\(\text{mean}\ \pm\ \text{SD}\)</span> (стандартное отклонение).</h3>
+<p>На примере тестовых данных посмотрим, как себя ведет стандартная ошибка в сравнении со стандартным отклонением при разном размере выборки (<span class="math inline">\(n\)</span>).</p>
+<pre class="r"><code>set.seed(1)
+n = c(3, 12, 30, 100, 500)
+
+sample_sizes = c()
+sample_values = c()
+for (n_i in n) {
+  sample_sizes = c( sample_sizes, rep(n_i, n_i) )
+  sample_values = c( sample_values, rnorm(n_i, mean = 50, sd = 10) )
+}
+samples = tibble(sample_sizes = as.factor(sample_sizes),
+                 sample_values = sample_values)
+samples_summary = 
+  samples %&gt;% 
+  #mutate(sample_sizes = sample_sizes) %&gt;% 
+  group_by(sample_sizes) %&gt;% 
+  summarise(n = n(),
+            mean = mean(sample_values),
+            sd = sd(sample_values),
+            se = sd(sample_values)/sqrt(n))
+
+ggplot() +
+  geom_point(aes(x = sample_sizes, y = sample_values), 
+             data = samples, 
+             position = position_jitter(.1), 
+             alpha = 0.5) +
+  geom_pointrange(aes(x = sample_sizes, 
+                      y = mean, 
+                      ymin = mean-sd, 
+                      ymax = mean+sd, 
+                      col = &quot;blue&quot;), 
+                  data = samples_summary, 
+                  position = position_nudge(.2)) +
+  geom_pointrange(aes(x = sample_sizes, 
+                      y = mean, 
+                      ymin = mean-sd/sqrt(n), 
+                      ymax = mean+sd/sqrt(n), 
+                      col = &quot;red&quot;), 
+                  data = samples_summary, 
+                  position = position_nudge(.3)) +
+  scale_colour_manual(name = &#39;Типы разбросов&#39;, # изменяю подписи к легенде
+         values =c(&#39;blue&#39;,&#39;red&#39;), labels = c(&#39;mean +/- SD&#39;,&#39;mean +/- SE&#39;)) +
+  labs(title = &quot;Зависимость ширины разбросов от размера выборки&quot;, x = &quot;Размер выборки&quot;, y = &quot;Измеряемый признак (переменная)&quot;)</code></pre>
+<p><img src="04_hw_files/figure-html/unnamed-chunk-1-1.svg" width="768" /></p>
+<p>Изучите код, который делает этот график и напишите комментарии к каждому действию - что происходит.</p>
+<p>Ответьте на следующие вопросы по графику.</p>
+<ul>
+<li>Как ведет себя разброс <span class="math inline">\(\text{mean}\ \pm\ \text{SD}\)</span> при разных <span class="math inline">\(n\)</span>?</li>
+<li>Почему для <span class="math inline">\(n=3\)</span> разброс получился меньше? Посмотрите что будет происходить, если сгенерировать другие выборки (измените <code>set.seed()</code>).</li>
+<li>Как ведет себя разброс <span class="math inline">\(\text{mean}\ \pm\ \text{SE}\)</span> при разных <span class="math inline">\(n\)</span>?</li>
+<li>Из увиденного сделайте вывод, какую информацию нам дает SD и какую - SE.</li>
+</ul>
+</div>
+<div id="интерпретация-ди-и-p-values" class="section level3">
+<h3>4. Интерпретация ДИ и p-values</h3>
+<p>Если нам нужно сравнить две группы, мы можем сделать следующие действия</p>
+<ul>
+<li>провести <span class="math inline">\(t\)</span>-тест и получить <em>p-value</em>, выражающее</li>
+<li>рассчитать доверительный интервал для разницы между групповыми средними</li>
+<li>рассчитать доверительный интервал для среднего в каждой группе и понять, пересекаются ли они</li>
+</ul>
+<p>Сделайте выводы о идентичности или различии в группах для случаев A-C; сравните результаты, полученные этими тремя способами. <em>Для удобства сравнения здесь я буду использовать альтернативную реализацию функции для <span class="math inline">\(t\)</span>-теста (<code>t.test()</code>), которая может работать с векторами.</em></p>
+<ol style="list-style-type: upper-alpha">
+<li></li>
+</ol>
+<pre class="r"><code>set.seed(1)
+sample1 = rnorm(30, mean = 50, sd = 10);
+sample2 = rnorm(30, mean = 52, sd = 10);
+t.test(sample1, sample2)</code></pre>
+<pre><code>#&gt; 
+#&gt;  Welch Two Sample t-test
+#&gt; 
+#&gt; data:  sample1 and sample2
+#&gt; t = -1.1245, df = 56.741, p-value = 0.2655
+#&gt; alternative hypothesis: true difference in means is not equal to 0
+#&gt; 95 percent confidence interval:
+#&gt;  -6.961113  1.954785
+#&gt; sample estimates:
+#&gt; mean of x mean of y 
+#&gt;  50.82458  53.32775</code></pre>
+<pre class="r"><code>t.test(sample1)$conf.int</code></pre>
+<pre><code>#&gt; [1] 47.37386 54.27531
+#&gt; attr(,&quot;conf.level&quot;)
+#&gt; [1] 0.95</code></pre>
+<pre class="r"><code>t.test(sample2)$conf.int</code></pre>
+<pre><code>#&gt; [1] 50.35797 56.29753
+#&gt; attr(,&quot;conf.level&quot;)
+#&gt; [1] 0.95</code></pre>
+<ol start="2" style="list-style-type: upper-alpha">
+<li></li>
+</ol>
+<pre class="r"><code>set.seed(1)
+sample1 = rnorm(30, mean = 50, sd = 10);
+sample2 = rnorm(30, mean = 56, sd = 10);
+t.test(sample1, sample2)</code></pre>
+<pre><code>#&gt; 
+#&gt;  Welch Two Sample t-test
+#&gt; 
+#&gt; data:  sample1 and sample2
+#&gt; t = -2.9214, df = 56.741, p-value = 0.004993
+#&gt; alternative hypothesis: true difference in means is not equal to 0
+#&gt; 95 percent confidence interval:
+#&gt;  -10.961113  -2.045215
+#&gt; sample estimates:
+#&gt; mean of x mean of y 
+#&gt;  50.82458  57.32775</code></pre>
+<pre class="r"><code>t.test(sample1)$conf.int</code></pre>
+<pre><code>#&gt; [1] 47.37386 54.27531
+#&gt; attr(,&quot;conf.level&quot;)
+#&gt; [1] 0.95</code></pre>
+<pre class="r"><code>t.test(sample2)$conf.int</code></pre>
+<pre><code>#&gt; [1] 54.35797 60.29753
+#&gt; attr(,&quot;conf.level&quot;)
+#&gt; [1] 0.95</code></pre>
+<ol start="3" style="list-style-type: upper-alpha">
+<li></li>
+</ol>
+<pre class="r"><code>set.seed(94965)
+sample1 = rnorm(30, mean = 50, sd = 10);
+sample2 = rnorm(30, mean = 54, sd = 10);
+t.test(sample1, sample2)</code></pre>
+<pre><code>#&gt; 
+#&gt;  Welch Two Sample t-test
+#&gt; 
+#&gt; data:  sample1 and sample2
+#&gt; t = -2.0059, df = 52.904, p-value = 0.04999
+#&gt; alternative hypothesis: true difference in means is not equal to 0
+#&gt; 95 percent confidence interval:
+#&gt;  -1.008177e+01 -1.847235e-04
+#&gt; sample estimates:
+#&gt; mean of x mean of y 
+#&gt;  49.52482  54.56580</code></pre>
+<pre class="r"><code>t.test(sample1)$conf.int</code></pre>
+<pre><code>#&gt; [1] 46.50664 52.54301
+#&gt; attr(,&quot;conf.level&quot;)
+#&gt; [1] 0.95</code></pre>
+<pre class="r"><code>t.test(sample2)$conf.int</code></pre>
+<pre><code>#&gt; [1] 50.40549 58.72611
+#&gt; attr(,&quot;conf.level&quot;)
+#&gt; [1] 0.95</code></pre>
+</div>
+<div id="различие-или-эквивалентность-групп" class="section level3">
+<h3>4. Различие или эквивалентность групп</h3>
+<ul>
+<li>Если при сравнении двух групп мы получили <span class="math inline">\(\textit{p-value}&lt;0.05\)</span> о чем это может говорить? (рассмотрите разные варианты, возможные ошибки на всех этапах)</li>
+<li>Если при сравнении двух групп мы получили <span class="math inline">\(\textit{p-value} \geq 0.05\)</span> о чем это может говорить? (рассмотрите разные варианты, возможные ошибки на всех этапах)</li>
+</ul>
+</div>
+<div id="различие-или-эквивалентность-групп---практика" class="section level3">
+<h3>5. Различие или эквивалентность групп - практика</h3>
+<p>Рассмотрим такие две выборки из двух групп (<code>g1</code> и <code>g2</code>).</p>
+<pre class="r"><code># генерируем данные
+set.seed(1)
+g1 = rnorm(30, mean = 50, sd = 10)
+g2 = rnorm(30, mean = 53, sd = 10)
+
+# строим график
+tibble(g1, g2) %&gt;% 
+  pivot_longer(everything(), &quot;g&quot;) %&gt;% 
+  ggplot(aes(x=g, y=value)) + 
+  geom_boxplot() +
+  geom_point(position = position_jitter(.2))</code></pre>
+<p><img src="04_hw_files/figure-html/unnamed-chunk-3-1.svg" width="384" /></p>
+<p>Для начала с помощью бутстрепа найдем доверительный интервал для разницы между средними для каждой группы. Для этого возьмем много искусственных выборок (бутстреп-выборки) из данных нам выборок и для каждой симуляции посчитаем разницу между средними.</p>
+<pre class="r"><code>N = 10000 # число симуляций
+diffs = numeric(N)
+for (i in 1:N) {
+  g1__bootstrap_resample = [здесь сгенерируйте бутстреп выборку из выборки 1 с заменой]
+  g2__bootstrap_resample = [здесь сгенерируйте бутстреп выборку из выборки 1 с заменой]
+  diffs[i] = [среднее в бутстреп-выборке 1 - среднее в бутстреп-выборке 2]
+}</code></pre>
+<p>Далее постройте гистограмму для полученного распределения разниц и посчитайте доверительный интервал для разницы между группами, т.е. найдете значения, которые ограничивают 2.5% самых низких значений разниц и 2.5% самых больших - этот диапазон есть 95% доверительный интервал, расчитанный перцентильным методом. Сравните этот доверительный интервал с параметрическим <span class="math inline">\(t\)</span> доверительным интервалом (<code>t.test()</code>). Значимо ли статистически полученное различие?</p>
+<p>Бывает статистическая значимость результата (она же достоверность), и совершенно с ней не связанная научная или медицинская (или еще какая-нибудь) значимость. Для определения второй требуется знание той области, в которой проводятся исследования. Например, значимо ли снижение веса с 140 до 139 кг (на 1 кг, 1%) или с 140 до 100 кг (на 40 кг, 40%)? А когда специалист определит какое изменение является значимым, существенным, весомым, тогда уже можно проверять, достоверность того, что это изменение такое.</p>
+<p>Теперь мы также можем ответить на другой вопрос. Можно ли считать группы сходными? Предположим, мы считаем, что группы сходны, если они отличаются не более чем на 5 единиц (т.е. различие лежит в корридоре <span class="math inline">\((-5,\ 5)\)</span>). Итак, посчитайте какая доля значений в <code>diffs</code> будет лежать в этом корридоре: чем больше - тем больше свидетельств в пользу эквивалентности групп. А доля значений, не лежащих в этом корридоре - это будет <em>p-value</em> теста (<em>p</em> &gt; 0.05 =&gt; различия слишком большие для эквивалентных групп).</p>
+<pre class="r"><code>within_limits = sum( логическое условие принадлежности значений diffs диапазону (-5, 5) ) / общее_число_значений
+p.value = 1 - within_limits
+
+# проверьте себя с помощью готового теста 
+# (значения p.value должны быть похожими)
+tibble(g1, g2) %&gt;% 
+  pivot_longer(everything(), &quot;g&quot;) %&gt;% 
+  lm(value ~ g, .) %&gt;% 
+  emmeans(&quot;g&quot;) %&gt;% 
+  contrast(&quot;dunnett&quot;) %&gt;% 
+  test(null = 0, delta = 5, side = &quot;=&quot;)</code></pre>
+<!--
+Type I vs type II errors calc; trade off
+HPInterval
+случаи, когда нельзя использовать сравнения (выбросы и очень скошенные распределения - медиана)
+прочие несоблюдения предпосылок
+-->
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
