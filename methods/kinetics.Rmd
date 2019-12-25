@@ -1,0 +1,163 @@
+---
+title: "Обработка данных по кинетике"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+# Преамбула
+
+```{r}
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(magrittr))
+suppressPackageStartupMessages(library(drc))
+```
+
+
+# Кинетические кривые
+
+Рассмотрим тестовые данные определения начальной скорости.
+
+```{r, fig.height=3, fig.width=4}
+initrate_data = 
+  tibble(
+    time = c(0, 0.4, 0.8, 1,  1.2, 1.7, 2.1, 2.5, 2.9, 3.3, 3.8, 4.2, 4.6, 5, 5.4, 5.8, 6.2, 6.7, 7.1, 7.5, 7.9, 8.3, 8.8, 9.2, 9.6, 10),
+    OD = c(0.4, 3.6, 2.5, 5.1, 8.9, 12.9, 13.6, 15.6, 18.3, 17.9, 16.2, 18.6, 17.7, 17.6, 14.4, 17.7, 19.8, 22.6, 20.2, 20.5, 18.2, 19.9, 16.6, 20.5, 20.9, 20.1)
+)
+
+initrate_data %>% 
+  ggplot(aes(x=time, y=OD)) + 
+  geom_point(alpha=.6, size=2) + 
+  geom_hline(yintercept = 0) + geom_vline(xintercept = 0) +
+  theme_minimal()
+```
+
+```{r echo=F,eval=F}
+x = seq(0, 10, l=25)
+c = 0
+d = 20 # upper limit
+e = 7 # steepness
+y = c + (d-c) * (1 - exp(-x/e)) + rnorm(length(x), 0, .5)
+initrate_data = tibble(time = x, OD = y)
+initrate_data %>% 
+  ggplot(aes(x=time, y=OD)) + 
+  geom_point(alpha=.6, size=2) + 
+  geom_hline(yintercept = 0) + geom_vline(xintercept = 0) +
+  theme_minimal()
+```
+
+
+Для фитирования этой кривой можно использовать
+
++ различные модели, встроенные в пакет `drc` (их полный список можно отобразить командой `drc::getMeanFunctions()`, а описание и формулу каждой можно получить в справке к пакету, например `?AR.2`)
++ любые модели на Ваш вкус, которые Вы можете сами задать через функцию `nls()` (что несколько сложнее, т.к. возможно придется задавать какие-то стартовые значения)
+
+## Попробуем задать модель самостоятельно
+
+Например, можно использовать такую ассимптотическую функцию, где $d$ - это значение, к которому стремится кривая, а $e$ - параметр, отражающий угол наклона.
+
+$$
+y = d \cdot (1 -  e^{-\frac{x}{e}})
+$$
+
+```{r, fig.height=3, fig.width=4}
+# кодируем модель сами
+m1 = nls(formula = OD ~ d * (1 - exp(-time/e)), # заводим полную формулу
+         data = initrate_data, # указываем данные, откуда брать то, что не параметры
+         start = # указываем стартовые значения параметров
+           list(d = 22, # верхний предел можем установить по графику
+                e = 1)) # ну... укажем какое-то положительное число 
+# ура, модель построилась - смотрим
+m1
+
+# теперь построим график
+predictions = tibble(time=seq(0, 10, l=100))
+predictions$OD_pred = predict(m1, newdata = predictions)
+
+initrate_data %>% 
+  ggplot(aes(x=time, y=OD)) + 
+  geom_point(alpha=.6, size=2) +
+  geom_line(aes(x=time, y=OD_pred), 
+            data=predictions, alpha=.5) + 
+  geom_hline(yintercept = 0) + geom_vline(xintercept = 0) +
+  theme_minimal()
+```
+
+В общем-то, ничего страшного, построили! Вот только из этой модели мы не можем добыть доверительных интервалов, плюс чуть больше надо самому писать, какие-то начальные значения задавать.
+
+## Используем готовую модель из пакета `drc`
+
+Задавать модель проще.
+
+```{r}
+m2 = drm(OD ~ time, # сокращенная формула: что X, что Y
+         data = initrate_data, 
+         fct = AR.2()) # название модели
+m2 # такие же коэффициенты!
+```
+
+Зато с ней можно корректно сравнивать параметры, получать доверительный интервал для предсказаний.
+
+Однако эти модели нам нужны были для "нахождения линейного начального участка".
+
+## Определяем начальную скорость
+
+Тот самый начальный линейный участок - это касательная к графику в окрестности нулевой точки.
+
+Скорость реакции - это отношение изменения концентрации к изменению времени, т.е. производная от концентрации. Если мы подобрали формулу функции, описывающей зависимость, и коэффициенты к ней, тогда мы можем зная формулу вычислить ее производную в начальной точке, которая и будет являться углом наклона кривой! Это все легко сделать в `R`.
+
+```{r, fig.height=3, fig.width=4}
+# задаем функцию
+f = expression( d * (1 - exp(-x/e)) )
+
+# считаем производную по X
+d_f = D(f, 'x') 
+d_f
+
+# достаем из модели значения параметров
+d = m2$coefficients[1] %>% as.numeric()
+e = m2$coefficients[2] %>% as.numeric()
+
+# считаем значение производной в нулевой точке
+init_slope = eval({x = 0; d_f})
+init_slope
+
+predictions = data.frame(time=seq(0, 10, l=100))
+predictions$OD_pred = predict(m2, newdata = predictions)
+
+initrate_data %>% 
+  ggplot(aes(x=time, y=OD)) + 
+  geom_point(alpha=.6, size=2) +
+  geom_line(aes(x=time, y=OD_pred), 
+            data=predictions, alpha=.5) + 
+  geom_abline(intercept = 0, 
+              slope = init_slope, 
+              col = "red", alpha=.7) +
+  geom_hline(yintercept = 0) + geom_vline(xintercept = 0) +
+  theme_minimal()
+```
+```{r, eval=F, echo=F}
+p =
+  initrate_data %>% 
+  ggplot(aes(x=time, y=OD)) + 
+  geom_point(alpha=.6, size=2) +
+  geom_line(aes(x=time, y=OD_pred), 
+            data=predictions, alpha=.5) + 
+  geom_abline(intercept = 0, 
+              slope = init_slope, col = "red")
+
+N = 50
+coefs = m2 %>% summary() %>% .$coefficients
+coef_samples = MASS::mvrnorm(N, coefs[,1], Sigma = vcov(m2))
+for (i in 1:N) {
+  d = coef_samples[i, 1]
+  e = coef_samples[i, 2]
+  p = 
+    p + geom_abline(intercept = 0,
+                    slope = eval({x = 0; d_f}), 
+                    col = "red", alpha=.1)
+}
+p
+```
+
+Таким образом, все точки (как линейного, так и нелинейного диапазона) помогают нам вычислить искомую величину, т.е. начальную скорость реакции.
