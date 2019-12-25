@@ -5,7 +5,7 @@ html_document:
     toc_float: 
       toc_collapsed: false
     number_sections: true
-    css: ../style.css
+    css: ../imports/style.css
     highlight: textmate
     theme: lumen
 #    includes:
