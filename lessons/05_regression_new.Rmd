@@ -892,7 +892,7 @@ $$
 
 Графически значение коэффициентов можно представить так:
 
-```{r, fig.height=3, fig.width=4, cache=T, echo=F, warning=F, message=F}
+```{r, fig.height=3, fig.width=5, cache=T, echo=F, warning=F, message=F}
 group_means = dd %>% group_by(.x) %>% summarise(mean=mean(y))
 dd %>% 
   ggplot(aes(x=.x, y=y)) +
@@ -904,7 +904,7 @@ dd %>%
   geom_segment(aes(x=2.75, xend=2.75, y=group_means[[2,2]], yend=group_means[[3,2]]), col = "green", size=.15, arrow = arrow(length=unit(0.2,"cm"), ends="last")) +
   geom_segment(aes(x=2.8, xend=3.2, y=group_means[[3,2]], yend=group_means[[3,2]]), col = "green") +
   annotate("text", x=0.7, y=group_means[[1,2]], label=latex2exp::TeX("$\\beta_{low}$"), col="red") +
-  annotate("text", x=1.5, y=(group_means[[1,2]]+group_means[[2,2]])/2, label=latex2exp::TeX("$\\beta_{low\\rightarrow average}$"), col="blue") +
+  annotate("text", x=1.45, y=(group_means[[1,2]]+group_means[[2,2]])/2, label=latex2exp::TeX("$\\beta_{low\\rightarrow average}$"), col="blue") +
   annotate("text", x=2.55, y=(group_means[[2,2]]+group_means[[3,2]])/2, label=latex2exp::TeX("$\\beta_{low\\rightarrow tall}$"), col="green")
 ```
 

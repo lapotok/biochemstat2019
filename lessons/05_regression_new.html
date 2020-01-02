@@ -846,7 +846,7 @@ y \ = \ &amp;\beta_{\text{low}}  \cdot 1 \ + \\
 \end{aligned}
 \]</span></p>
 <p>Графически значение коэффициентов можно представить так:</p>
-<p><img src="05_regression_new_files/figure-html/unnamed-chunk-39-1.svg" width="384" /></p>
+<p><img src="05_regression_new_files/figure-html/unnamed-chunk-39-1.svg" width="480" /></p>
 <p>Таким образом коэффициент <span class="math inline">\(\beta_\text{low}\)</span> (<code>(Intercept)</code>) задает базовый уровень (среднее для первой группы). А коэффициенты <span class="math inline">\(\beta_{\text{low}\rightarrow\text{average}}\)</span> (<code>.xaverage</code>) и <span class="math inline">\(\beta_{\text{low}\rightarrow\text{tall}}\)</span> (<code>.xtall</code>) задают сдвиги от базового уровня до среднего текущей группы. Таким образом, если статистически значим коэффициент <span class="math inline">\(\beta_{\text{low}\rightarrow\text{average}}\)</span>, то среднее группы <code>average</code> достоверно отличается от базового уровня, а если статистически значим коэффициент <span class="math inline">\(\beta_{\text{low}\rightarrow\text{tall}}\)</span>, то среднее группы <code>tall</code> достоверно отличается от базового уровня.</p>
 <pre class="r"><code>lmd = lm(y ~ .x, dd) # строим модель для определения коэффициентов зависимости
 summary(lmd)</code></pre>
