@@ -1,0 +1,1099 @@
+---
+title: "Регрессия"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+# Преамбула
+<!--
+План 
+
++ две цели 
+  + предсказать максимально точно без понимания (прогнозы, калибровки)
+  + делать выводы о причинах, следствиях, зависимостях...
+  
++ продолжение сравнения групп: две группы -> много групп -> непрерывная переменная-предиктор
++ пример - линейный тренд lm
+  + формулы коэффициентов
+  + формулы ошибок и интерпретация (чем больше разброс по x - тем точнее оценка!)
+  + доверительный и предиктивный интервал
+  + распределение всех параментров через бутстреп и байеса: множество кривых и их предсказаний
+  + совместное распределение коэффициентов 
+  + ошибки коэффициентов, их доверительные интервалы и распределения: маргинальные и совместные
+  + оценка нелинейности через x^2 член (линейный!)
++ нелинейная регрессия - 4PL кривые и т.п. nls, drm
+  + MM кривая
+  + 4/5PL кривая
++ Anova - частный случай регрессии: предсказание количественного признака по категорийному
++ DoE
++ контрасты
++ anova/Anova, glht
++ подбор предикторов
+  + лишние предикторы
+    + fork
+    + скоррелированные (ноги)
+    + непосредственные и опосредованные причины (фунгициды и число грибка)
+  + необходимые предикторы
+    + collider
+    + предикторы, делящие наблюдения на группы, ведущие себя по-разному (парадокс Симпсона)
+-->
+```{r options, eval = T, echo = F}
+knitr::opts_chunk$set(
+  comment = "#>",
+  #collapse = TRUE,
+  #cache = TRUE,
+  width = 72,
+  tidy.opts=list(width.cutoff=72, tidy=TRUE)#,
+  #out.width = "70%"#,
+  #fig.align = 'center'#,
+  #fig.height = 3,
+  #fig.asp = 1#,
+  #fig.show = "hold"
+  )
+```
+```{r libs}
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(magrittr))
+suppressPackageStartupMessages(library(cowplot))
+suppressPackageStartupMessages(library(rstatix))
+suppressPackageStartupMessages(library(ggrepel))
+library(rio)
+theme_set(theme_bw())
+```
+
+# Генерализация: попарное сравнение $\rightarrow$ дисперсионный анализ $\rightarrow$ линия тренда
+
+Мы уже рассмотрели проблему сравнения двух групп с помощью различных тестов. Однако, групп может быть больше, чем 2. В таком случае нас могут уже интересовать два возможных вопроса
+
++ есть ли различия между определенными (или всеми) парами групп
++ есть ли вообще какие-то различия: т.е. могут ли такие различия в данных объяснены случайностью выборки
+
+Рассмотрим в качестве примера приблизительно линейную зависимость веса и роста. Для начала сгенерируем значения $w$ (вес тела) и $h$ (рост). Для этого воспользуемся приблизительной формулой $w = -82.5 + a +0.75 \cdot h$, где $a$ - возраст, который примем за 30. Кроме того, примем стандартное отклонение равным 7. Получим 
+ 
+ $$w = -52.5 + 0.75 \cdot h + \varepsilon,\ \ \ \varepsilon \sim \mathcal{N}(0, 7^2)$$
+
+```{r cache=T}
+# генерируем данные
+set.seed(1)
+n = 200
+h = runif(n, 140, 210)
+w = -52.5 + 0.75 * h + rnorm(n, 0, 7)
+d = tibble(h, w)
+```
+
+В данном случае мы имеем дело с непрерывным предиктором `h`. Однако некоторые предикторы на практике являются дискретными. Создадим на основе непрерывной переменной `h` (рост) дискретную переменную `.h` с условным делением на низких, средних и высоких.
+
+```{r cache=T}
+d =
+  d %>% 
+  mutate(.h = ifelse( h < 150, # если ниже 150 - низкий
+                      "low", 
+                      ifelse( h < 170, # если 150 < h < 170 - средний
+                              "average", 
+                              "tall" ))) %>% # если выше 170 - высокий
+  mutate(.h = factor(.h, levels = c("low", "average", "tall"))) # превращаем в фактор
+```
+```{r tt_anova_lm, cache=T, echo=F}
+d = d %>% bind_cols(tibble(j=rnorm(n, .1)))
+
+d %<>% 
+  mutate(grand_mean = mean(w)) %>% # общее среднее
+  mutate(grand_mean_residuals = w - grand_mean) %>% # ошибки общего среднего как предсказания
+  mutate(w_pred = predict(lm(w ~ h, d))) %>% # предсказываем с помощью линейной регрессии
+  mutate(w_pred_residuals = w - w_pred) %>% # считаем ошибки этих предсказаний
+  group_by(.h) %>% 
+  mutate(group_mean = mean(w)) %>% # считаем средние для каждой группы
+  ungroup() %>% 
+  mutate(group_mean_residuals = w - group_mean) # ошибки групповых средний как предсказаний
+
+
+d2 = d %>% filter(.h != "tall") %>% select(-h) %>% rename(h = .h) %>% droplevels() # таблица с 2 группами
+d3 = d %>% select(-h) %>% rename(h = .h) %>% droplevels() # таблица с 3 группами
+dd = d %>% select(-.h)  # таблица с непрерывными данными
+
+# строим графики (пока без предсказаний)
+g2 = # график с 2 группами
+  d2 %>%  
+  ggplot(aes(x=as.numeric(h)+j/15, y=w)) + 
+  geom_point(alpha=.6) + xlab("h") +
+  scale_x_continuous(breaks=as.numeric(unique(d2$h)), labels = as.character(unique(d2$h)), limits = c(0.5, 2.5)) 
+
+g3 = # график с 3 группами
+  d3 %>%  
+  ggplot(aes(x=as.numeric(h)+j/15, y=w)) + 
+  geom_point(alpha=.6) + xlab("h") +
+  scale_x_continuous(breaks=as.numeric(unique(d3$h)), labels = as.character(unique(d3$h)), limits = c(0.5, 3.5)) 
+
+gg = # график с непрерывными данными
+  dd %>% 
+  ggplot(aes(x=h, y=w))+geom_point(alpha=.6) + xlab("h")
+
+#plot_grid(g2, g3, gg, ncol = 3, rel_widths = c(1.5, 2, 3))
+
+
+#plot_grid(g2 + geom_hline(yintercept = mean(g2$data$w), col = "red", linetype = "dashed", alpha=.6), 
+#          g3 + geom_hline(yintercept = mean(g3$data$w), col = "red", linetype = "dashed", alpha=.6), 
+#          gg + geom_hline(yintercept = mean(gg$data$w), col = "red", linetype = "dashed", alpha=.6), 
+#          ncol = 3, rel_widths = c(1.5, 2, 3))
+
+g2p = g2 + geom_hline(yintercept = mean(g2$data$w), col = "red", linetype = "dashed", alpha=.6) + 
+  geom_line(data=tibble(x=c(0.6, 1.4), y=d2 %>% filter(h == "low") %>% pull(w) %>% mean), mapping = aes(x=x,y=y), col = "blue") + 
+  geom_line(data=tibble(x=c(1.6, 2.4), y=d2 %>% filter(h == "average") %>% pull(w) %>% mean), mapping = aes(x=x,y=y), col = "blue")
+g3p = g3 + geom_hline(yintercept = mean(g3$data$w), col = "red", linetype = "dashed", alpha=.6) + 
+  geom_line(data=tibble(x=c(0.6, 1.4), y=d3 %>% filter(h == "low") %>% pull(w) %>% mean), aes(x=x,y=y), col = "blue") + 
+  geom_line(data=tibble(x=c(1.6, 2.4), y=d3 %>% filter(h == "average") %>% pull(w) %>% mean), aes(x=x,y=y), col = "blue") +
+  geom_line(data=tibble(x=c(2.6, 3.4), y=d3 %>% filter(h == "tall") %>% pull(w) %>% mean), aes(x=x,y=y), col = "blue")
+ggp = gg + geom_hline(yintercept = mean(gg$data$w), col = "red", linetype = "dashed", alpha=.6) + 
+  geom_smooth(method = "lm", col = "blue", se=F)
+
+grid0 = plot_grid(g2, 
+                  g3, 
+                  gg, 
+                  ncol = 3, rel_widths = c(1.5, 2, 3))
+
+grid1 = plot_grid(g2p, 
+                  g3p, 
+                  ggp, 
+                  ncol = 3, rel_widths = c(1.5, 2, 3))
+
+# добавляем ошибки предсказания общим средним
+grid2 = plot_grid(g2p + 
+                    geom_segment(aes(x=as.numeric(h)+j/15, xend=as.numeric(h)+j/15, 
+                                     y=mean(g2$data$w), yend=grand_mean+grand_mean_residuals), 
+                                 alpha=.5, col = "red"), 
+                  g3p + 
+                    geom_segment(aes(x=as.numeric(h)+j/15, xend=as.numeric(h)+j/15, 
+                                     y=mean(g3$data$w), yend=grand_mean+grand_mean_residuals), 
+                                 alpha=.5, col = "red"), 
+                  ggp + 
+                    geom_segment(aes(x=as.numeric(h)+j/4, xend=as.numeric(h)+j/4, 
+                                     y=grand_mean, yend=grand_mean+grand_mean_residuals), 
+                                 alpha=.5, col = "red"), 
+                  ncol = 3, rel_widths = c(1.5, 2, 3))
+
+# добавляем ошибки предсказания групповыми средними (или линией тренда)
+grid3 = plot_grid(g2p + 
+                    geom_segment(aes(x=as.numeric(h)+j/15, xend=as.numeric(h)+j/15, 
+                                     y=group_mean, yend=group_mean+group_mean_residuals), 
+                                 alpha=.3, col = "blue"), 
+                  g3p + 
+                    geom_segment(aes(x=as.numeric(h)+j/15, xend=as.numeric(h)+j/15, 
+                                     y=group_mean, yend=group_mean+group_mean_residuals), 
+                                 alpha=.3, col = "blue"), 
+                  ggp + 
+                    geom_segment(aes(x=as.numeric(h)+j/4, xend=as.numeric(h)+j/4, 
+                                     y=w_pred, yend=w_pred+w_pred_residuals), 
+                                 alpha=.4, col = "blue"), 
+                  ncol = 3, rel_widths = c(1.5, 2, 3))
+```
+
+Представим полученные данные о весе на графике: 1) оставляем только две группы по росту, 2) все 3 группы, 3) непрерывная зависимость от роста. 
+
+```{r, fig.width=9, fig.height=3, echo=F, cache=T}
+grid0
+```
+
+Из графиков можно сделать предварительные наблюдения, что вроде бы группы различаются и в целом тренд наблюдается. Но это надо еще уточнить. Нам предстоит ответить на вопрос о том, помогает ли нам знание о росте предсказать вес (если вес не зависил бы от роста, то различий между группами не было бы, а наилучшим предсказанием для веса человека с любым ростом было бы среднее по популяции). Посмотрим на предсказания веса, которые мы можем сделать опираясь (синяя линия) или не опираясь (красный пунктир) на данные о росте.
+
+```{r, fig.width=9, fig.height=3, echo=F, cache=T}
+grid1
+```
+
+На глаз кажется, что предсказанный вес, отмеченный синей линеей (т.е. с учетом информации о росте), больше соответствует истинному. Качество предсказаний двух моделей (без учета роста и с учетом роста) можно измерить и сравнить. Мерой качества служат ошибки предсказания, отмеченные красным на графиках (разница между предсказанным и истинным значением для каждого наблюдения).
+
+```{r, fig.width=9, fig.height=3, echo=F, cache=T}
+grid2
+```
+
+Для сравнения, на следующих графиках можно видеть ошибки предсказания с учетом роста. Можно заметить, что в среднем эти ошибки (длины отрезков) меньше для второй модели. Чтобы получить суммарную ошибку, индивидуальные ошибки $\varepsilon_i$ можно либо складывать по модулю ($\sum|\varepsilon_i|$), либо складывать квадраты ошибок ($\sum(\varepsilon_i)^2$).
+
+```{r, fig.width=9, fig.height=3, echo=F, cache=T}
+grid3
+```
+
+# Уравнения 
+
+Самое простое линейное уравнение, известное со школы:
+
+$$y = a + b \cdot x$$
+$y$  и двумя незавимыми $x_1$ и $x_2$ (predictor, regressor)
+
+В этом уравнении $y$ - зависимая переменная (outcome, response, отклик),  $x$ - незавимисимая переменная (predictor, regressor), а $a$ и $b$ - коэффициенты:
+
+ + $a$ = **intercept**: значение $y$ при $x=0$;
+ + $b$ = **slope**: наклон кривой (насколько прирастает $y$ при увеличении $x$ на 1).
+
+```{r, fig.width=4, fig.height=4, cache=T, echo=F}
+x = -3:2; y = 2 + 1.2*x;
+tibble(x=x, y=y) %>% 
+  ggplot(aes(x=x,y=y)) + geom_line(col="blue", size=1.1) +
+  geom_vline(xintercept = 0) + geom_hline(yintercept = 0) +
+  annotate("text", 0.15, 2, label="a") +
+  annotate("text", -.52, .6, label="b") +
+  annotate("text", -1.2, -.15, label="1") +
+  annotate("text", 1.9, -.15, label="x", size=6) +
+  annotate("text", 0.15, 4.3, label="y", size=6) +
+  labs(title="", x="", y="") +
+  geom_segment(aes(x=-0.666667, xend=-0.666667, y=1.2, yend=0), size=.3, linetype="dashed") +
+  geom_segment(aes(x=-1.666667, xend=-0.666667, y=0, yend=0), size=1) +
+  coord_cartesian(expand = F) +
+  theme_minimal()
+```
+
+## Общее уравнение регрессии
+
+Немного перепишем уравнение выше в более типичных обозначениях для коэффициентов.
+
+$$y = \beta_0 + \beta_1 \cdot x$$
+
+Т.е. предсказания для $y$ мы должны получить, перемножив значения предикторов (у нас покатолько один $x$) на коэффициенты. Для однообразия введем вспомогательный предиктор для коэффициента $\beta_0$, который для всех наблюдений будет равен 1.
+
+$$y = \beta_0 \cdot 1 + \beta_1 \cdot x$$
+Рассмотрим пример с ростом и весом. Тогда рост - это $x$, а вес - это $y$.
+
+```{r, echo=F, cache=T}
+d %<>% select(h, .h, w)
+```
+```{r}
+d = 
+  d %>% 
+    rename(x=h, .x=.h, y=w) # переименуем переменные для удобства (категорийную версию роста назовем .x)
+```
+
+Для начала рассмотрим линейную модель зависимости веса от непрерывной переменной рост.
+
+```{r, cache=T}
+dc = d %>% select(x,y) %>% head() # возьмем первые 6 строк
+dc
+```
+
+Построим линейную модель зависимости $y$ от $x$ (в `R` это записывается в виде формулы `y ~ x`, где сначала идет зависимая переменная, а потом - независимые, т.е. предикторы; подробнее про формулы можно посмотреть [здесь](https://cran.r-project.org/doc/manuals/r-release/R-intro.pdf) на стр. 51 и далее)
+
+```{r, cache=T}
+lmc = lm(y ~ x, dc)
+lmc
+lmc_coef = lmc$coef
+lmc_coef
+```
+
+Основным результатом работы этой функции явились подобранные коэффициенты предикторов - $\beta_0$ и $\beta_1$. То как эта функция видит предикторы исходя из формулы можно посмотреть так:
+
+```{r}
+mmc = model.matrix(data = dc, ~ x)
+mmc
+```
+
+Таким образом, `R` создает матрицу предикторов $X$, куда по умолчанию добавляется дополнительный предиктор с названием `(Intercept)` из одних единиц, чтобы на него умножать первый коэффициент по матричной формуле $X \beta$ (см. пояснение ниже). Посмотрим на результаты предсказания для $y$ (получим вектор значений предсказаний) с использованием подобранных коэффициентов $\beta$.
+
+```{r}
+mmc %*% lmc_coef # можем сами осуществить матричное умножение M . beta 
+predict(lmc) # предсказание с использованием стандартной функции predict 
+```
+
+Если предиктор дискретный (в нашем примере - группы, на которые мы можем искуственно поделить людей с разным ростом), то чтобы для него написать уравнение регрессии нужно использовать хитрость: например, коэффициент для intercept подбирается равным среднему для наблюдений базового уровня (низкий рост), а для каждого следующего уровня роста подбирается дополнительный коэффициент, обозначающий разницу между базовым уровнем и каждым другим уровнем. Тогда уравнение выглядит так:
+
+
+$$
+\begin{aligned}
+y \ = \ &\beta_{\text{low}}  \cdot 1 \ + \\
+& + \beta_{\text{low}\rightarrow\text{average}} \cdot I(x=\text{average}) \ + \\
+& + \beta_{\text{low}\rightarrow\text{tall}} \cdot I(x=\text{tall})
+\end{aligned}
+$$
+
+Здесь $I(x=\text{average})$ обозначает *индикаторную функцию*, которая принимает значение 1, если ее условие выполняется, и 0 - если не выполняется. Таким образом, в этой формуле предсказание собирается по кускам. Если уровень переменной рост для данного наблюдения равен `low`, то предсказание для него составит $\beta_{\text{low}}$, а если, к примеру, уровень переменной рост равен `tall`, то с учетом поправки предсказание изменится и составит уже $\beta_{\text{low}} + \beta_{\text{low}\rightarrow\text{tall}}$.
+
+Посмотрим как это происходит на конкретном примере
+
+```{r}
+dd = d %>% select(.x,y) %>% sample_n_by(.x, size=2) # смотрим 6 случайных строк из таблицы
+dd %>% str() # структура данных
+dd$.x # смотрим на группирующую переменную типа фактор
+dd # смотрим на таблицу
+```
+
+Теперь интересно посмотреть на матрицу предикторов (какой видит структуру предикторов `R`) и понять, как закодированы значения категорийной переменной рост `.x` в вспомогательных переменных `.xaverage` и `.xtall` (такие переменные называют dummy variables).
+
+```{r}
+mmd = model.matrix(data = dd, ~ .x)
+mmd
+```
+
+Теперь построим линейную модель и посчитаем предсказания для точек из исходных данных.
+
+```{r}
+lmd = lm(y ~ .x, dd) # строим модель
+lmd_coef = lmd$coef # получаем коэффициенты
+lmd_coef
+mmd %*% lmd_coef # можем рассчитать предсказания по формуле
+predict(lmd) # но обычно используем для этого готовую функцию
+```
+
+Видно, что с помощью подобранных коэффициентов можно получить все предсказанные значения: 
+
+$$
+\begin{aligned}
+58.550525 &= \underbrace{58.550525}_\text{(Intercept)} \cdot 1+\underbrace{1.113422}_\text{.xaverage} \cdot 0 +\underbrace{30.227689}_\text{.xtall} \cdot 0,\\
+59.66395 &= \underbrace{58.550525}_\text{(Intercept)} \cdot 1 +\underbrace{1.113422}_\text{.xaverage} \cdot 1 +\underbrace{30.227689}_\text{.xtall} \cdot 0,\\
+88.77821 &= \underbrace{58.550525}_\text{(Intercept)} \cdot 1 +\underbrace{1.113422}_\text{.xaverage} \cdot 0 +\underbrace{30.227689}_\text{.xtall} \cdot 1
+\end{aligned}
+$$
+
+## Формулы в матричном виде
+
+Почти в любой книге про регрессию могут встретиться формулы для компантной записи уравнения линейной регрессии в матричном виде. Рассмотрим, что это значит.
+
+Общее уравнение для линейной регрессии с одной зависимой переменной $y$ и двумя незавимыми $x_1$ и $x_2$ выглядит так:
+
+$$y = \beta_0 + \beta_1 x_{1} + \beta_2 x_{2} + \varepsilon$$
+
+Если мы хотим пострить предсказание для конкретных наблюдений $i$ от $1$ до $n$, то его можно записать так
+
+$$y_{(i)} = \beta_0 + \beta_1 x_{1(i)} + \beta_2 x_{2(i)} + \varepsilon_{(i)}$$
+
+Если хотят подчеркнуть, что для ошибки в модели имеют нормальное распределение (а это одна из предпосылок для линейных моделей!), то это можно записать как
+
+$$\varepsilon \sim \mathcal{N}(0, \sigma^2)$$
+
+а предсказанные с помощью модели значения обычно обозначаются как
+
+$$\hat{y} = \beta_0 + \beta_1 x_{1} + \beta_2 x_{2}$$
+
+Т.е. предсказания - это конкретные значения, а расстояние от них до реальных значений и есть ошибка. Эквивалентно можно сказать, что сами наблюдения распределены нормально вокруг предсказанного значения
+
+$$y \sim \mathcal{N}\big(\hat{y},\ \sigma^2\big)$$
+
+Вышеуказанные уравнения с отдельно прописанными предикторами и их коэффициентами неудобно тем, что они зависят от числа предикторов. Чтобы сделать формулу универсальной, все значения зависимой переменной свести в вектор (также свести в вектора коэффициенты и ошибки), а все значения предикторов -- в матрицу.
+
+$$
+\begin{aligned}
+& \mathbf{Y} = \begin{pmatrix}
+y_1\\
+y_2\\
+\vdots\\
+y_N
+\end{pmatrix}
+,\ \ 
+\mathbf{X} = \begin{pmatrix}
+1&x_{1(1)}&x_{2(1)}\\
+1&x_{1(2)}&x_{2(2)}\\
+\vdots&\vdots&\vdots\\
+1&x_{1(N)}&x_{2(N)}
+\end{pmatrix}
+,\ \ 
+\boldsymbol{\beta} = \begin{pmatrix}
+\beta_0\\
+\beta_1\\
+\beta_2
+\end{pmatrix}
+,\ \ 
+\boldsymbol{\varepsilon} = \begin{pmatrix}
+\varepsilon_1\\
+\varepsilon_2\\
+\vdots\\
+\varepsilon_N
+\end{pmatrix}
+\end{aligned}
+$$
+Тогда формула будет выглядеть более компактно:
+
+$$
+\mathbf{Y}=\mathbf{X}\boldsymbol{\beta}+\boldsymbol{\varepsilon} \\\\
+$$
+а расшифровать ее можно следующим образом (там применяются операции [умножения матриц](https://www.mathsisfun.com/algebra/matrix-multiplying.html)):
+
+$$
+\begin{aligned}
+\begin{pmatrix}
+Y_1\\
+Y_2\\
+\vdots\\
+Y_N
+\end{pmatrix} = 
+\begin{pmatrix}
+1&x_{1(1)}&x_{2(1)}\\
+1&x_{1(2)}&x_{2(2)}\\
+\vdots&\vdots&\vdots\\
+1&x_{1(N)}&x_{2(N)}
+\end{pmatrix}
+\begin{pmatrix}
+\beta_0\\
+\beta_1\\
+\beta_2
+\end{pmatrix} +
+\begin{pmatrix}
+\varepsilon_1\\
+\varepsilon_2\\
+\vdots\\
+\varepsilon_N
+\end{pmatrix}
+\end{aligned}
+$$
+
+что есть инструкция по получению каждого значения зависимой переменной и эквивалетно приведенному выше выражению
+
+$$y_{(i)} = \beta_0 + \beta_1 x_{1(i)} + \beta_2 x_{2(i)} + \varepsilon_{(i)}$$
+
+Подробнее про это можно почитать [здесь](http://genomicsclass.github.io/book/pages/expressing_design_formula.html).
+
+## Доверительный и предиктивный интервалы
+
+Предсказание, которые мы получаем с помощью линейных моделей, неточно по двум причинам:
+
+1. Для получения оценок коэффициентов мы использовали лишь небольшую долю возможных наблюдений (выборку). Если мы бы взяли другую выборку, то коэффициенты получились бы немного другие. Т.е. значения коэффициентов при увеличении размера выборки лишь стремятся к истинным значениям.
+2. Далее, когда мы будем использовать это уравнение для предсказания $y$ по новым измеренным $x$, нерепрезентативность $x$ и/или ошибки в его измерении могут внести дополнительный вклад в ошибку предсказания значения $y$ даже в том случае, если мы точно знали бы истинные значения коэффициентов.
+
+Доверительный интервал для предсказаний - это интервал, который оценивает ошибку предсказания вследствие неточно подобранных коэффициентов (см. формулу ниже: чем больше размер выборки $n$ и чем выше разброс $s_x^2$ взятых значений по $x$, тем меньше ошибка предсказания и тем уже интервал).
+
+$$
+\hat{y} \pm t_{crit} \cdot s_y \cdot \sqrt{\frac{1}{n} + \frac{(x^* - \bar{x})^2}{(n-1) s_x^2}}
+$$ 
+
+Предиктивный интервал отличается тем, что берет в расчет еще и неточность измерения новых точек, для которых будет проводиться предсказание. Его формула отличается большим значением ошибки.
+
+$$
+\hat{y} \pm t_{crit} \cdot s_y \cdot \sqrt{\color{red}{1} + \frac{1}{n} + \frac{(x^* - \bar{x})^2}{(n-1) s_x^2}}
+$$
+На графике ниже красной линией показана истинная зависимость `y ~ x`, а также приведена линия регрессии и корридор 95% доверительных интервалов для получаемых предсказаний. Т.е. если бы у нас было много выборок, по которым мы строили линии и доверительные интервалы, то примерно 95% таких корридоров бы содержали бы линию истинной зависимости.
+
+```{r, warning=F, message=F, fig.width=4, fig.height=3, echo=F, cache=T}
+#set.seed(1)
+#x = seq(1, 30, 0.001)
+#y = x * 1.2 + rnorm(length(x), 1, 4)
+#d = tibble(x, y)
+d_subset = 
+  d %>% 
+  sample_n(20) 
+p =
+  d_subset %>% 
+  ggplot() + labs(y="y") +
+  geom_point(aes(x=x, y), alpha=.3) +
+  stat_function(fun = function(x) -52.5+x*0.75, col="red") + # -x*1.2+1
+  coord_cartesian(xlim=range(d_subset$x), expand = F)
+
+p + geom_smooth(aes(x=x,y=y), 
+                se=T, method="lm", 
+                col="blue")
+```
+
+Ниже мы можем видеть 50 линий которые получились в результате использования 50 разных выборок для построения линий регрессии. Здесь мы можем наглядно видеть причину ошибки, величину которой оценивает доверительный интервал. 
+
+```{r, warning=F, message=F, fig.width=4, fig.height=3, echo=F, cache=T}
+N = 50
+coefs = matrix(ncol=2, nrow=N)
+for (i in 1:N) {
+  coefs[i,] = lm(y ~ x, d %>% sample_n(20)) %>% coef()
+  p = p + geom_abline(intercept = coefs[i, 1], 
+                      slope = coefs[i, 2],
+                      col="black", alpha = .1)
+}
+p
+```
+
+С использованием доступной для анализа выборки мы можем найти оптимальное сочетание коэффициентов ($\beta_0=\beta_\text{(Intercept)},\ \beta_1=\beta_\text{x}$), о котором мы говорили выше, а также можно оценить ошибку предсказания. Т.е. то, насколько точны предсказанные значения коэффициентов и в какой степени менее подходящими являются любые другие сочетания параметров. Мерой соответствия коэффициентов данным является праводподобие. На графике ниже цветом отмечено, какие сочетания более правдоподобны, исходя из полученных оценок ошибок.
+
+```{r, warning=F, message=F, fig.width=4, fig.height=3, echo=F, cache=T}
+# значения коэффициентов +- ошибки (совместное распределение)
+suppressPackageStartupMessages(library(arm))
+m = lm(y~x, d_subset)
+m_ci = confint(m)
+mc = m$coef
+set.seed(3)
+#d_subset = d %>% sample_n(20)
+sim(lm(y ~ x, d_subset), n.sims=200)@coef %>% 
+  as_tibble() %>% 
+  ggplot(aes(x=`(Intercept)`, y=x)) + 
+  stat_density_2d(col = "black", alpha=.3) +
+  stat_density_2d(aes(fill = ..level..), geom = "polygon") + 
+  scale_fill_gradientn(colours = alpha(terrain.colors(20), 0.3), limits = c(0,.3)) +
+  geom_point(alpha=.3) +
+  geom_point(aes(x=-52.5, y=0.75), shape=24, fill="firebrick", col="black", size=3) +
+  geom_errorbarh(aes(y=mc[2], xmin=m_ci[1,1], xmax=m_ci[1,2]), col="#00000033", size=.6, height=.01) +
+  geom_errorbar(aes(x=mc[1], ymin=m_ci[2,1], ymax=m_ci[2,2]), col="#00000033", size=.6, width=2) +
+  geom_point(aes(x=mc[1], y=mc[2]), shape=17, col="blue", size=2.5)
+```
+
+Еще один способ оценки точности предсказания коэффициентов - бутстреп. Мы можем представить себе, что наша выборка есть генеральная совокупность и мы берем из нее много выборок (того же размера, с возвратом). Для каждой бутстреп-выборки считаем коэффициенты своей линейной модели. Далее смотрим на плотность всех полученных оценок. Их разброс отражает то, насколько точно выборка позволяет оценить коэффициенты, путем "раскачивания" этой выборки. Это похоже на проверку на прочность: насколько сильно поколеблется оценка коэффициентов, если мы уберем часть точек?
+
+```{r, warning=F, message=F, fig.width=4, fig.height=3, echo=F, cache=T}
+# bootstrapped coeffs
+set.seed(1)
+#replicate(200, {
+#  d_subset[ sample(1:nrow(d_subset), replace = T), ] %>% lm(y~x, .) %>% coef()
+#}) %>% t() %>% 
+
+boot::boot(d_subset, function(x, i) lm(y~x, x[i,])$coef, R = 200) %>% 
+  .$t %>%
+  as_tibble() %>% set_colnames(c("(Intercept)", "x")) %>% 
+  ggplot(aes(x=`(Intercept)`, y=x)) + 
+  stat_density_2d(col = "black", alpha=.3) +
+  stat_density_2d(aes(fill = ..level..), geom = "polygon") + 
+  scale_fill_gradientn(colours = alpha(terrain.colors(20), 0.3)) +
+  geom_point(alpha=.3) +
+  geom_point(aes(x=-52.5, y=0.75), shape=24, fill="firebrick", col="black", size=3) +
+  geom_errorbarh(aes(y=mc[2], xmin=m_ci[1,1], xmax=m_ci[1,2]), col="#00000033", size=.6, height=.01) +
+  geom_errorbar(aes(x=mc[1], ymin=m_ci[2,1], ymax=m_ci[2,2]), col="#00000033", size=.6, width=2) +
+  geom_point(aes(x=mc[1], y=mc[2]), shape=17, col="blue", size=2.5)
+```
+
+# Метод максимального правдоподобия
+
+Как можно измерить соответствие коэффициентов данным? В качестве примера мы рассматривали линейную модель $y = \beta_0 + \beta_1 \cdot x + \varepsilon$. Здесь мы рассмотрим еще более простой пример, приняв $\beta_1=0$, т.е. модель приобретает вид $y = \beta_0 + \varepsilon$ или, что то же самое, $y \sim \mathcal{N}(\mu=\beta_0, \sigma^2)$. Это совсем простая модель, в которой нет зависимости от предикторов (intercept-only model). Фактически, нам надо подобрать параметры $\mu$ и $\sigma^2$ для нормальго распределения.
+
+Как подобрать оптимальные $\mu$ и $\sigma^2$? Пусть у нас есть следующие точки
+
+```{r, fig.width=4, fig.height=3, echo=F, cache=T}
+set.seed(3966)
+x = rnorm(20, mean = 7, sd = 10)
+x
+```
+
+Критерием соответствия параметров значению точки является ее правдоподобие при данных параметрах. 
+
+Правдоподобие - это функция параметров и данных: $\mathcal{L}(x | \beta) = f(x, \beta)$. График плотности вероятности (Гауссова "шляпа", например) - это график правдоподобия различных возможных значений данных при фиксированных параметрах. Также мы можем посмотреть, насколько правдоподобна одна и та же точка при разных параметрах.
+
+```{r, fig.width=10, fig.height=3, echo=F, cache=T}
+m = lm(x~1)
+g0 = 
+  tibble(x=x) %>% 
+  ggplot(aes(x=x)) +
+  geom_point(aes(y=0), alpha=.6, size=2) +
+  theme_minimal() + coord_cartesian(ylim=c(0, 0.08))
+  
+g1 = 
+  g0 +
+  stat_function(fun = dnorm, geom="line", args = list(mean=m$coef, sd=10), xlim=c(-30, 45)) +
+  geom_segment(aes(y=0, yend=y, x=x, xend=x), data=tibble(x=x, y=dnorm(x, m$coef, 10)), alpha=.4, col="blue") +
+  labs(subtitle="Правильные коэффициенты")
+  
+g2 = 
+  g0 +
+  stat_function(fun = dnorm, geom="line", args = list(mean=25, sd=10), xlim=c(-30, 45)) +
+  geom_segment(aes(y=0, yend=y, x=x, xend=x), data=tibble(x=x, y=dnorm(x, 25, 10)), alpha=.4, col="blue") +
+  labs(subtitle="Неправильно подобрано\nсреднее")
+  
+g3 = 
+  g0 +
+  stat_function(fun = dnorm, geom="line", args = list(mean=m$coef, sd=30), xlim=c(-30, 45)) +
+  geom_segment(aes(y=0, yend=y, x=x, xend=x), data=tibble(x=x, y=dnorm(x, m$coef, 30)), alpha=.4, col="blue") +
+  labs(subtitle="Слишком большая\nдисперсия")
+g4 = 
+  g0 +
+  stat_function(fun = dnorm, geom="line", args = list(mean=m$coef, sd=2), xlim=c(-30, 45)) +
+  geom_segment(aes(y=0, yend=y, x=x, xend=x), data=tibble(x=x, y=dnorm(x, m$coef, 2)), alpha=.4, col="blue") +
+  labs(subtitle="Слишком маленькая\nдисперсия")
+
+plot_grid(g1, g2, g3, g4, nrow = 1)
+```
+
+Высота каждого отрезка на графике - правдоподобие данной точки при данных параметрах. Чтобы оценить правдоподобие всех точек, надо перемножить правдободобия всех точек. Можно увидеть, что неправильно подобранное среднее уменьшает длину всех отрезков. Слишком большая дисперсия также укорачивает почти все отрезки (особенно центральные), а слишком маленькая дисперсия увеличивает центральные отрезки, но укорачивает те, что по бокам. Т.е. в итоге лишь правильное сочетание среднего и дисперсии максимизирует правдоподобие. Трехмерная картинка позволяет посмотреть на правдоподобия разных сочетаний $\mu$ и $\sigma^2$.
+
+```{r data_ML, echo = F, message=F, warning=F, cache=T}
+library(mvtnorm)
+Sigma = matrix(c(2, 5, 5, 30), ncol=2, byrow = T)
+theta = rmvnorm(n = 20, mean = c(10, 20), sigma = Sigma)
+x = theta[,1]
+y = theta[,2]
+
+# surface grid
+n_lines = 150
+x_seq = seq(0, 16, l=n_lines)
+y_seq = seq(0, 60, l=n_lines)
+grid = expand.grid( x = x_seq, y = y_seq )
+
+z = dmvnorm(theta, mean = c(10, 20), sigma = Sigma)
+
+z_grid <- matrix(dmvnorm(grid, mean = c(10, 20), sigma = Sigma), 
+                 nrow = n_lines, ncol = n_lines) 
+
+Sigma1 = matrix(c(7, -7, -7, 27), ncol=2, byrow = T)
+
+z1 = dmvnorm(theta, mean = c(7, 22), sigma = Sigma1)
+z1_grid <- matrix(dmvnorm(grid, mean = c(7, 22), sigma = Sigma1), 
+                 nrow = n_lines, ncol = n_lines) 
+```
+```{r plotly, echo = F, fig.width=10, fig.height=10, cache=T, message=F, warning=F}
+library(plotly)
+
+axes = list(xaxis=list(title='Mu'), yaxis=list(title='Sigma'), zaxis=list(title='Правдоподобие'))
+
+p = plot_ly(x = x_seq, y = y_seq, z = t(z_grid), width = 600, height = 400)
+p = p %>% add_surface(colorscale='Cviridis', color = NA, lighting = list(ambient = 0.7, roughness = 0.9, specular = 0.1, fresnel = 0.9), type='surface', opacity=.9, showscale=F)
+p = p %>% 
+  layout(title='Правильные коэффициенты',
+         scene=list(xaxis=list(title="Mu"), yaxis=list(title="Sigma"), zaxis=list(title='Правдоподобие'),
+                    camera = list(eye = list(x = 1.5, y = 1.5, z = .1))))  
+p = p %>% add_trace(data = df, x = x, y = y, z = z, mode = "markers", type = "scatter3d", 
+            marker = list(size = 2, color = "red", symbol = 104))
+for (i in 1:length(x))
+  p = p %>% add_trace(x = rep(x[i],2), y = rep(y[i],2), z = c(0, z[i]), type = "scatter3d", mode = "lines", name = "lines", showlegend = FALSE, line=list(width=2, color="red"))
+
+p1 = plot_ly(x = x_seq, y = y_seq, z = t(z1_grid), width = 600, height = 400)
+p1 = p1 %>% add_surface(colorscale='Cviridis', color = NA, lighting = list(ambient = 0.7, roughness = 0.9, specular = 0.1, fresnel = 0.9), type='surface', opacity=.9, showscale=F)
+p1 = p1 %>% 
+  layout(title='Неправильные коэффициенты',
+         scene=list(xaxis=list(title='Mu'), yaxis=list(title='Sigma'), zaxis=list(title='Правдоподобие'),
+                    camera = list(eye = list(x = 1.5, y = 1.5, z = .1))))  
+p1 = p1 %>% add_trace(data = df, x = x, y = y, z = z1, mode = "markers", type = "scatter3d", 
+            marker = list(size = 2, color = "red", symbol = 104))
+for (i in 1:length(x))
+  p1 = p1 %>% add_trace(x = rep(x[i],2), y = rep(y[i],2), z = c(0, z1[i]), type = "scatter3d", mode = "lines", name = "lines", showlegend = FALSE, line=list(width=2, color="red"))
+
+p
+p1
+```
+
+Для линейных моделей используется метод наименьших квадратов, который следует из метода наибольшего правдоподобия. Квадраты ошибок являются мерой правдоподобия данных: чем меньше ошибки, тем больше правдоподобие.
+
+# Простейший пример - линейный тренд
+
+Для примера практического использования рассмотрим данные (концентрация и OD) для построения калибровочной кривой по методу Лоури. Анализируя точки визуально можем заключить, что видимых отклонений от линейности не обнаруживается.
+
+```{r, eval=F}
+load("data/lowry.RData") # откроем данные с https://github.com/lapotok/biochemstat2019/blob/master/data/lowry.RData?raw=true
+
+# построим калибровку
+lowry_cal_curve %>% 
+  ggplot(aes(x=protein_ug, y=OD750)) +
+  geom_point() +
+  stat_smooth(method = "lm", col = "red") # модель можно нарисовать прямо на графике
+```
+```{r, fig.height=3, fig.width=4, cache=T, echo=F}
+load(paste0(here::here(), "/data/lowry.RData"))
+
+# построим калибровку
+lowry_cal_curve %>% 
+  ggplot(aes(x=protein_ug, y=OD750)) +
+  geom_point() +
+  stat_smooth(method = "lm", col = "red") # модель можно нарисовать прямо на графике
+```
+
+Строим модель и смотрим, что о ней можно сказать
+
+```{r, fig.height=3, fig.width=4, cache=T}
+m = lm(OD750 ~ protein_ug, data = lowry_cal_curve) # строим модель
+m # вывод результатов по умолчанию
+summary(m) # более полная сводка результатов
+coef(m) # коэффициенты
+confint(m) # доверительные интервалы коэффициентов
+anova(m) # дисперсионный анализ: какие предикторы какой вклад вносят
+```
+
+Итак, функция `summary()` позволяет нам посмотреть на подобранные коэффициенты (`Estimate`), их ошибки (`Std. Error`) и значимость отличия этих коэффициентов от нуля (`Pr(>|t|)`, т.е. *p-value* по результатам $t$-теста).
+
+```
+Coefficients:
+             Estimate Std. Error t value Pr(>|t|)    
+(Intercept) 0.0040000  0.0039418   1.015    0.357    
+protein_ug  0.0085000  0.0001406  60.445 2.35e-08 ***
+```
+
+Видим, что коэффициент `(Intercept)` имеет ненулевое значение, но его отличие от 0 недостоверно (т.е. график почти проходит через 0). А вот коэффициент `protein_ug` имеет очень маленькую ошибку и его отличие от 0 статистически значимо (*p-value* << 0.05). Доверительные интервалы для коэффициентов позволяют сделать те же выводы, но более просты в интерпретации. `R` также позволяет нам извлечь сами значения коэффициентов из модели. С помощью дисперсионного анализа мы можем посмотреть, какую долю общей дисперсии (или `Sum Sq`) описала данная переменная ($0.165143/(0.165143+0.000226)=0.9986334\ (99.86\%)$ в данном случае). Дисперсионный анализ показывает "полезность" данной переменной для точности модели: насколько лучше становится предсказание (насколько меньше ошибки) после добавления данной переменной (значимость переменной для предсказания проверяется с помощью $F$-теста, результаты которого также приведены в таблице (`Pr(>F)`, т.е. *p-value* по результатам $F$-теста: значения < 0.05 означают, что предиктор статистически значим для предсказания; значения > 0.05 означают, что данный предиктор не более полезен для предсказания, чем могут быть даже случайные числа). 
+
+Линейную модель можно использовать, чтобы предсказывать $y$ по новым значениям $x$.
+
+```{r, cache=T}
+# прямые предсказания
+new_protein_concentrations = c(25, 35, 45, 1000, -20) # ?! модель тупая!
+predict(m, newdata = tibble(protein_ug=new_protein_concentrations))
+predict(m, newdata = tibble(protein_ug=new_protein_concentrations), interval = "confidence") # доверительный интервал (неточность модели)
+predict(m, newdata = tibble(protein_ug=new_protein_concentrations), interval = "prediction") # предиктивный интервал для предсказаний (неточность предсказаний)
+```
+
+Видно, что модель не знает, что концентрация белка не бывает отрицательной. Кроме того, как правило все линейные зависимости на практике линейны только на определенном диапазоне значений, и экстраполяция за эту зону приводит к непредсказуемым результатам. Поэтому предсказывать оптическую плотность для концентрации 1000 ug/ml некорректно.
+
+В случае калибровочных кривых нам, как правило, интересно предсказание не $y$ по $x$ (прямое), а $x$ по $y$ (обратное). Т.к. мы знаем формулу прямой зависимости $y = \beta_0 + \beta_1 \cdot x$, то легко можно выразить и обратную $x = (y-\beta_0)/\beta_1$.
+
+```{r, cache=T}
+# обратные предсказания
+(0.35 - coef(m)[1]) / coef(m)[2]
+(lowry_samples$OD750 - coef(m)[1]) / coef(m)[2] # сразу для вектора значений
+```
+
+Однако для вычисления ошибки предсказания существуют несколько различных методов. Они реализованы в пакете `investr` (INVerse ESTimation in R).
+
+```{r, cache=T}
+library(investr)
+invest(m, 0.35) # обратные предсказания с доверительными интервалами
+```
+```{r, eval=F}
+invest(m, 0.5) # не дает экстраполировать - и правильно делает!
+```
+```
+Error: Point estimate not found in the search interval (0, 50). Try tweaking the values of lower and upper. Use plotFit for guidance.
+```
+
+```{r, cache=T}
+lapply(c(0.1, 0.15, 0.2, 0.25), function(x) invest(m, y0=x)) # для каждой новой точки надо запускать функцию отдельно
+```
+```{r eval=F, echo=F}
+ODs = lowry_samples$OD750[ lowry_samples$OD750 < max(lowry_cal_curve$OD750) 
+                           & lowry_samples$OD750 > min(lowry_cal_curve$OD750)]
+invest_vectorize = function(m, y) {
+  lapply(y, function(x) {
+    invest(m, y0=x) %$% 
+      tibble(estimate=estimate, 
+             lower=lower, 
+             upper=upper)
+    }) %>% bind_rows()
+}
+
+invest_vectorize(m, ODs)
+```
+
+# Регрессия и выбросы
+
+Метод наименьших квадратов для подбора коэффициентов сильно чувствителен к выбросам в данных. Поэтому всего одна точка можем значительно отклонить результирующую линию.
+
+```{r, fig.height=3, fig.width=4, cache=T}
+# генерируем данные
+x = -5:6
+y= x*1.5 + 1 + rnorm(length(x), 0, .5)
+
+# вставляем значение-выброс
+x = c(x, 5.5)
+y = c(y, 30)
+
+d = tibble(x,y) 
+d %>% 
+  ggplot(aes(x=x, y=y)) + # строим график
+  geom_point(data = d %>% filter(y<30), size=2, shape=19, alpha=.7, col="blue") + # обычные точки
+  geom_point(data = d %>% filter(y==30), size=2, shape=8, alpha=.7) + # выброс звездочкой
+  geom_smooth(method="lm", linetype="dashed", col="darkgray", size=.6, fill="gray", alpha=.15) + # линия с выбросом
+  geom_smooth(method="lm", data=d %>% filter(y<30), fill="blue", size=.6, alpha=.2) + # линия без выброса
+  geom_hline(yintercept = 0) + geom_vline(xintercept = 0) +
+  theme_minimal()
+```
+
+Существуют и разновидности регрессии (например, `rlm`), которые устойчивы к выбросам.
+
+```{r, fig.height=3, fig.width=4, cache=T}
+d %>% 
+  ggplot(aes(x=x, y=y)) + # строим график
+  geom_point(data = d %>% filter(y<30), size=2, shape=19, alpha=.7, col="blue") + # обычные точки
+  geom_point(data = d %>% filter(y==30), size=2, shape=8, alpha=.7) + # выброс звездочкой
+  geom_smooth(method="lm", linetype="dashed", col="darkgray", size=.6, fill="gray", alpha=.15) + # линия с выбросом
+  geom_smooth(method="rlm", col="red", size=.6, fill="red", alpha=.2) + # устойчивая регрессия
+  geom_hline(yintercept = 0) + geom_vline(xintercept = 0) +
+  theme_minimal()
+```
+
+Однако можно пытаться определить наличие выбросов по тому влиянию, которое каждая точка оказывает на фитирование кривой. Т.е. насколько сильно поменяются коэффициенты, если эту точку удалить (`cooks.distance()`).
+
+```{r, cache=T}
+m = lm(y ~ x, data=d)
+m_cd = cooks.distance(m) 
+m_cd %>% round(2)
+m_cd > 4/nrow(d)
+```
+
+Мы видим, что точка №13 очень сильно влияет на модель (если значение `cook.distance` больше, чем $4/n$). Ее можно попробовать удалить.
+
+Кроме того, можно посмотреть на распределение остатков (ошибок) от предсказания по точкам из исходных данных.
+
+```{r, fig.height=3, fig.width=2, cache=T}
+m_resid = resid(m)
+tibble(x=m_resid) %>% 
+  ggplot(aes(x=1, y=x)) +
+  geom_boxplot(outlier.colour = "red") +
+  geom_point(position = position_jitter(.1), 
+             data=tibble(x=m_resid[m_resid < 15]),
+             size=2, alpha=.6) +
+  theme_minimal()
+```
+
+Видно, что один остаток резко выбивается. Такие остатки можно автоматически определить используя ряд инструментов
+
++ метод [1.5 IQR](https://en.wikipedia.org/wiki/Interquartile_range#Outliers)
++ `grubbs.test()`, `dixon.test()`, `chisq.out.test()` (пакет `outliers`)
++ `car::outlierTest()`
++ `EnvStats::rosnerTest()`
++ `DMwR::lofactor()`
++ `dr4pl::OutlierDetection()`
++ cook distance / pareto k diagnostics 
++ residuals/standardized residuals
+
+# Регрессия и диагностика аномалий
+
+Для применения линейных моделей есть ряд ограничений
+
++ нормальность распределения остатков
++ отсутствие выбросов
++ гомоскедантичность (т.е. равномерность разброса остатков для разных значений)
++ независимость наблюдений
+
+```{r, fig.width=6, fig.height=8, cache=T}
+library(ggfortify)
+autoplot(m, which = 1:6)
+```
+
+Как интерпретировать эти графики?
+
++ Residuals vs Fitted: все остатки должны лежат равномерно вокруг нуля для всех предсказанных значений $y$ (здесь мы видим явный линейный тренд);
++ Normal Q-Q: остатки должны иметь примерно нормальное распределение (быть вдоль линии: здесь это не так!);
++ Scale-Location: абсолютное значение остатков должно не зависеть от предсказываемого значения - так мы проверяем гомоскедантичность (линия должна быть горизонтальна и разброс не должен меняться: здесь есть явный нелинейный тренд);
++ Cook's Distance, Residuals vs Leverage, Cook's dist vs Leverage: не должно быть сильно выдающихся точек (с высокими leverage  и cook's distance: здесь выдающиеся точки подписаны номерами)
+
+Не только выбросы могут сильно влиять на модель. Точки с высокой важностью (high leverage points) также могут находиться на краю диапазона предикторов (может быть, сильно отстоят по расстоянию от остальных значений) и поэтому сильнее влияют на подбор коэффициентов.
+
+```{r, fig.width=4, fig.height=3, cache=T, echo=F}
+x = -5:6
+y= x*1.5 + 1 + rnorm(length(x), 0, .5)
+
+d[13, "x"] = 20
+d %>% 
+  ggplot(aes(x=x, y=y)) + # строим график
+  geom_point(size=2, shape=19, alpha=.7, col="blue") + # обычные точки
+  geom_smooth(method="lm", col="blue", size=.6, fill="gray", alpha=.15) + 
+  geom_hline(yintercept = 0) + geom_vline(xintercept = 0) +
+  theme_minimal() +
+  labs(subtitle="Точка большой важности, но не выброс")
+```
+
+Подробнее про это можно почитать [здесь](https://data.library.virginia.edu/diagnostic-plots/).
+
+# Регрессия и сравнение групп, коэффициенты и предсказания
+
+Как уже было сказано в самом начале, проблема сравнения групп тесно связана с регрессией. Если предиктор принимает дискретные значения, то эти значения являются названиями групп. При построении линейной модели такие дискретные переменные кодируются вспомогательными переменными, которые кодируют принадлежность наблюдения к той или иной группе. В примере с исследованием различия в весе людей, относящихся к разной группе по их росту (низкие, средние и высокие) кодирование переменной `.x` (группа роста) происходило следующим образом:
+
+```{r}
+# генерируем данные
+set.seed(1)
+n = 200
+h = runif(n, 140, 210)
+w = -52.5 + 0.75 * h + rnorm(n, 0, 7)
+
+dd = 
+  tibble(h, w) %>% 
+  mutate(.h = ifelse( h < 150, # если ниже 150 - низкий
+                      "low", 
+                      ifelse( h < 170, # если 150 < h < 170 - средний
+                              "average", 
+                              "tall" ))) %>% # если выше 170 - высокий
+  mutate(.h = factor(.h, levels = c("low", "average", "tall"))) %>% # превращаем в фактор
+  rename(.x = .h, y=w)
+
+dd_head = dd %>% sample_n_by(.x, size=2) # достанем несколько наблюдений из таблицы
+dd_head
+mmd = model.matrix(data = dd_head, ~ .x) # создадим матрицу перекодированных предикторов (lm делает это автоматически)
+mmd
+```
+
+А для предсказания веса исходя из принадлежности к группе использовалось следующее уравнение:
+
+$$
+\begin{aligned}
+y \ = \ &\beta_{\text{low}}  \cdot 1 \ + \\
+& + \beta_{\text{low}\rightarrow\text{average}} \cdot I(x=\text{average}) \ + \\
+& + \beta_{\text{low}\rightarrow\text{tall}} \cdot I(x=\text{tall})
+\end{aligned}
+$$
+
+Графически значение коэффициентов можно представить так:
+
+```{r, fig.height=3, fig.width=4, cache=T, echo=F, warning=F, message=F}
+group_means = dd %>% group_by(.x) %>% summarise(mean=mean(y))
+dd %>% 
+  ggplot(aes(x=.x, y=y)) +
+  geom_point(position = position_jitter(.1), alpha=.6) +
+  geom_segment(aes(x=0.8, xend=1.2, y=group_means[[1,2]], yend=group_means[[1,2]]), col = "red") +
+  geom_segment(aes(x=1.75, xend=1.75, y=group_means[[1,2]], yend=group_means[[2,2]]), col = "blue", size=.15, arrow = arrow(length=unit(0.2,"cm"), ends="last")) +
+  geom_hline(yintercept = group_means[,2] %>% pull(mean), col = c("red", "blue", "green"), linetype="dashed", size=.1) +
+  geom_segment(aes(x=1.8, xend=2.2, y=group_means[[2,2]], yend=group_means[[2,2]]), col = "blue") +
+  geom_segment(aes(x=2.75, xend=2.75, y=group_means[[2,2]], yend=group_means[[3,2]]), col = "green", size=.15, arrow = arrow(length=unit(0.2,"cm"), ends="last")) +
+  geom_segment(aes(x=2.8, xend=3.2, y=group_means[[3,2]], yend=group_means[[3,2]]), col = "green") +
+  annotate("text", x=0.7, y=group_means[[1,2]], label=latex2exp::TeX("$\\beta_{low}$"), col="red") +
+  annotate("text", x=1.5, y=(group_means[[1,2]]+group_means[[2,2]])/2, label=latex2exp::TeX("$\\beta_{low\\rightarrow average}$"), col="blue") +
+  annotate("text", x=2.55, y=(group_means[[2,2]]+group_means[[3,2]])/2, label=latex2exp::TeX("$\\beta_{low\\rightarrow tall}$"), col="green")
+```
+
+Таким образом коэффициент $\beta_\text{low}$ (`(Intercept)`) задает базовый уровень (среднее для первой группы). А коэффициенты $\beta_{\text{low}\rightarrow\text{average}}$ (`.xaverage`) и $\beta_{\text{low}\rightarrow\text{tall}}$ (`.xtall`) задают сдвиги от базового уровня до среднего текущей группы. Таким образом, если статистически значим коэффициент $\beta_{\text{low}\rightarrow\text{average}}$, то среднее группы `average` достоверно отличается от базового уровня, а если статистически значим коэффициент $\beta_{\text{low}\rightarrow\text{tall}}$, то среднее группы `tall` достоверно отличается от базового уровня.
+
+```{r}
+lmd = lm(y ~ .x, dd) # строим модель для определения коэффициентов зависимости
+summary(lmd)
+```
+
+Однако прежде чем смотреть на значения коэффициентов, имеет смысл в целом сначала оценить значимость предиктора `.x` для оценки `y` (см.  поле `F-statistic ... p-value` - это результат $F$-теста дисперсионного анализа). Более подробно результаты дисперсионного анализа можно посмотреть используя функцию `anova()`.
+
+```{r}
+anova(lmd)
+```
+
+В данном случае предиктор `.x` обладает высокой значимостью (*p-value* << 0.05), т.е. различия между группами в целом есть. Однако теперь стоит ответить на вопрос какие именно. На этот вопрос можно ответить, например, попарными сравнениями групповых средних. 
+
+```{r}
+dd %>% t_test(y ~ .x)
+```
+
+Мы могли бы построить доверительные интервалы для групповых средних. Однако такие доверительные интервалы **НЕЛЬЗЯ** использовать для сравнения средних.
+
+```{r, fig.height=3, fig.width=4, cache=T, echo=F, warning=F, message=F}
+nd = tibble(.x=c("low", "average", "tall"))
+ci = 
+  predict(lmd, newdata = nd, interval = "confidence") %>% 
+  as_tibble() %>% 
+  bind_cols(nd)
+
+dd %>% 
+  ggplot(aes(x=.x, y=y)) +
+  geom_point(position = position_jitter(.1), alpha=.5) + 
+  geom_pointrange(aes(x=.x, y=fit, ymin=lwr, ymax=upr), data=ci, color="red") +
+  annotate("text", .6, 110, label="Доверительные интервалы\nдля средних разных групп\nНЕ ПРЕДНАЗНАЧЕНЫ (!)\nдля сравнения друг с другом", col="red", hjust = 0) +
+  coord_cartesian(ylim=c(40, 120))
+```
+
++ доверительные интервалы предназначены для сравнения распределения значений с неким пороговым значением, а не двух распределений между собой;
++ если групп много, то должна быть использована попровка для множественного сравнения.
+
+Доверительный интервал для группового среднего оценивает значимость отличий этого среднего от какого-то другого значения (например, нуля). Например, доверительный интервал служит нужен для демонстрации точности оценки группового среднего или какого-либо параметра (например, регрессионного коэффициента).
+Использование для сравнения доверительных интервалов для средних вместо доверительных интервалов для разниц между средними приводит к [уменьшению мощности сравнения](https://towardsdatascience.com/why-overlapping-confidence-intervals-mean-nothing-about-statistical-significance-48360559900a) (т.е. так мы часто будем пропускать группы, которые на самом деле различаются).
+
+Посчитать доверительный интервал для разницы между группами можно, например, с помощью функции `t.test()`.
+
+```{r}
+average = dd %>% filter(.x == "average") %>% pull(y)
+tall = dd %>% filter(.x == "tall") %>% pull(y)
+
+t.test(average, tall)
+```
+
+Доверительный интервал здесь свидетельствует о том, что разница между средними отлична от 0.
+
+```
+95 percent confidence interval:
+ -22.72557 -16.40422
+```
+
+Для того, чтобы расчитать предсказания модели для групповых средних с их доверительными интервалами удобно использовать функцию `emmeans()`.
+
+```{r}
+library(emmeans)
+emm = emmeans(lmd, specs = ".x")
+emm
+```
+
+Однако нам больше интересно сравнить значения групповых средних между собой (это называется контрасты).
+
+```{r, fig.height=3, fig.width=4, cache=T}
+emm %>% contrast("pairwise") # попарные сравнения (с поправкой на множественные сравнения)
+emm %>% contrast("revpairwise") # попарные сравнения в обратном порядке
+emm %>% contrast("revpairwise") %>% confint() # одновременные доверительные интервалы для разниц между средними
+
+emm %>% contrast("revpairwise") %>% 
+  plot() + # соответствующий график
+  geom_vline(xintercept = 0, col="red", linetype="dashed", alpha=.5) # референсная линия нуля
+
+emm %>% contrast("trt.vs.ctrl1", ref="low") %>% confint() # только избранные сравнения (менее жесткая поправка)
+```
+
+Такие доверительные интервалы корректно использовать для сравнения групп. А кроме того, такие доверительные интевалы позволяют для разниц позволяют устанавливать [эквивалетность](https://rpsychologist.com/d3/equivalence/) между группами (тесты типа $t$-теста позволяют утверждать лишь о различиях, но есть и специальные тесты на эквивалентность). 
+
+Например, если бы мы решили (исходя из каких-то нестатистических соображений, а, например, медицинских или экономических), что отличия в весе на 20 кг следует считать несущественными, то тогда мы бы считали эквивалентной нулевой (т.е. достоверно не отличающиеся более, чем на определенное пороговое значение) разницу между весом в группах среднего и низкого роста.
+
+```{r, fig.height=3, fig.width=4, cache=T, echo=F}
+emm %>% contrast("revpairwise") %>% 
+  plot() + # соответствующий график
+  geom_vline(xintercept = c(-20, 0, 20), col="red", linetype=c("dotted", "dashed", "dotted"), alpha=.5) + 
+  annotate(xmin = -20, xmax = 20, ymin = -Inf, ymax = Inf, geom = 'rect', alpha = 0.05, fill="red")
+```
+
+# Расширяем понимание о линейности!
+
+Рассмотрим еще один пример данных, аналогичный данным измерения концентрации белка по методу Лоури, только в этот раз использовался метод Бредфорд.
+
+```{r, eval=F}
+load("data/bradford.RData")
+```
+```{r, echo=F}
+load(paste0(here::here(), "/data/bradford.RData"))
+```
+```{r, fig.height=3, fig.width=4, cache=T, echo=F}
+ggplot(bradford_cal_curve, aes(x=protein_ug, y=OD595)) +
+  geom_point() +
+  stat_smooth(method="lm", se=F, linetype="dashed", size=.4) +
+  expand_limits(x = c(0, 55)) +
+  stat_smooth(method="lm", formula = y ~ x + I(x^2), se=F, fullrange = T)
+```
+
+Можно видеть, что в данном эксперименте зависимость носит нелинейный характер, наблюдается насыщение сигнала. Для того, чтобы учесть эту нелинейность мы можем добавить квадратичный член в это уравнение, которое теперь будет иметь вид $y=\beta_0+\beta_1\cdot x+\beta_2 \cdot x^2$. Как не странно, `R` воспринимает это новое уравнение тоже как линейное, просто $x^2$ является еще одним предиктором и к нему надо будет подбирать отдельный коэффициент. Аналогично, мы могли бы добавить какие-то другие функции от $x$
+как дополнительные предикторы. Эта модель хорошо приближает данные в диапазоне калибровки, но видно, что для значений `protein_ug` более 40 эта зависимость явно перестанет подходить.
+
+```{r, cache=T}
+m2 = lm(OD595 ~ protein_ug + I(protein_ug^2), bradford_cal_curve) # "линейная модель" с квадратичным членом
+summary(m2) # видим еще один коэффициент, он ненулевой
+
+model.matrix(~ protein_ug, bradford_cal_curve) # вот как выглядят коэффициенты линейной модели без квадратичного члена
+model.matrix(~ protein_ug + I(protein_ug^2), bradford_cal_curve) # вот что меняется после добавления квадратичного члена
+model.matrix(~ protein_ug + I(protein_ug^2) + sqrt(protein_ug) + log(protein_ug + 1), bradford_cal_curve) # можно еще подобавлять других функций
+
+invest(m2, y0=0.6) # с такой моделью тоже можно получать обратные предсказания (и прямые, естественно, тоже)
+```
+
+# Нелинейная регрессия (НЕ ЗАКОНЧЕНО)
+
+Для некоторых случаев зависимость нельзя описать полиномом, либо зависимость описывается хорошо известным нелинейным уравнением. Для этого используется другая разновидность регрессии - нелинейная.
+
+```{r, eval=F}
+load("data/dr_data.RData")
+
+nt_igfbp4_1 %>% 
+  ggplot()+
+  geom_point(aes(x=dilution, y=signal, col=sample_id)) +
+  scale_y_log10() + scale_x_log10()
+
+calibr = nt_igfbp4_1 %>% filter(sample_id == "NT-IGFBP4 (HEK)" & dilution != Inf)
+
+calibr %>% 
+  ggplot()+
+  geom_point(aes(x=dilution, y=signal, col=sample_id)) +
+  scale_y_log10() + scale_x_log10()
+
+# c = low, d = up, b = slope, e = offset
+m3.0 = nls(signal ~ c+(d-c)/(1+exp(b*(log(dilution)-e))), 
+           data=calibr, 
+           start=list(d=1e6, c=1e2, e=1, b=4), trace=TRUE)
+summary(m3.0)
+# inverse prediction: exp(log(((d - c)/(signal - c)) - 1)/b + log(e))
+
+library(drc)
+m3.1 = drm(signal ~ dilution, data = calibr, fct = LL.4())
+m3.1
+ED(m3.1, c(1e4, 2e5), type = "absolute", interval = "delta")
+```
+
+# Корреляция (НЕ ЗАКОНЧЕНО)
+
+```{r, eval=F}
+# >>> https://rcompanion.org/handbook/I_10.html
+# Brendon Small and company recorded several measurements for students in their classes 
+# related to their nutrition education program: Grade, Weight in kilograms, intake 
+# of Calories per day, daily Sodium intake in milligrams, and Score 
+# on the assessment of knowledge gain.
+
+load("data/BrendonSmall_nutrition.RData")
+
+# var types
+BrendonSmall_nutrition %>% head()
+BrendonSmall_nutrition_num = BrendonSmall_nutrition[,c("Grade", "Weight", "Calories", "Sodium", "Score")]
+
+# cor matrix
+BrendonSmall_nutrition_num_cor = BrendonSmall_nutrition_num %>% cor(method = "pearson") 
+BrendonSmall_nutrition_num_cor %>% round(2)
+
+# visual
+pairs(BrendonSmall_nutrition_num, col = BrendonSmall_nutrition$Instructor)
+
+# r and p-values
+cor.test(BrendonSmall_nutrition_num[,1], BrendonSmall_nutrition_num[,2])
+
+library(PerformanceAnalytics)
+chart.Correlation(BrendonSmall_nutrition_num, method = "pearson")
+
+# plotting them all
+library(corrplot)
+iris_cor_p = cor.mtest(iris[, 1:4], conf.level = .95)$p
+corrplot::corrplot.mixed(cor(iris[, 1:4]), upper="ellipse", p.mat=iris_cor_p)
+chart.Correlation(iris[, 1:4], method = "pearson")
+```

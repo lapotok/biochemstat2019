@@ -371,6 +371,112 @@ ggplot() +
 
 3. То же самое, что пункт 2, только отличие в типе клеток (дикие и мутантные), добавление одного и того же лиганда. Различаются ли ответы между двумя группами
 
+```{r eval=F, echo=F}
+library(tidyverse)
+library(magrittr)
+library(rio)
+
+readxl::excel_sheets("data/baglay.xlsx")
+wt = import("data/baglay.xlsx", sheet = "Дикий тип")
+mt = import("data/baglay.xlsx", sheet = "Мутантный тип")
+
+d = 
+  wt %>% 
+  rename("number" = "Номер кадра") %>% 
+  pivot_longer(-number) %>% 
+  mutate(cell_type = "wt")
+
+d = 
+  mt %>% 
+  rename("number" = "Номер кадра") %>% 
+  pivot_longer(-number) %>% 
+  mutate(cell_type = "mt") %>% 
+  bind_rows(d)
+
+d %>% 
+  ggplot(aes(x=number, y=value, col=name)) + 
+  geom_point(alpha=.1) +
+  geom_line(alpha=.1) +
+  facet_grid(cell_type ~ .) + 
+  scale_color_discrete(guide=F) + 
+  geom_vline(xintercept = c(0, 6, 25), col="red", linetype="dashed")
+
+# remove baseline
+d %>% 
+  mutate(cell_type = factor(cell_type, levels = c("wt", "mt"))) %>% 
+  group_by(cell_type, name) %>% 
+  nest() %>% 
+  mutate(baselevel = map(data, ~{
+    .x %>% filter(number < 7) %>% pull(value) %>% mean()
+  })) %>% 
+  unnest(c(data, baselevel)) %>% 
+  ungroup() %>% 
+  mutate(value = value - baselevel) %>% 
+  select(-baselevel) -> d_nb
+
+d_nb %>% 
+  ggplot(aes(x=number, y=value, col=name)) + 
+  geom_point(alpha=.1) +
+  geom_line(alpha=.1) +
+  facet_grid(cell_type ~ .) + 
+  scale_color_discrete(guide=F) + 
+  geom_vline(xintercept = c(0, 6, 25), col="red", linetype="dashed")
+
+d_nb %>% 
+  group_by(cell_type, name) %>% 
+  nest() %>% 
+  mutate(peak = map(data, ~{
+    .x %>% filter(number < 25) %>% pull(value) %>% max()
+  })) %>% 
+  unnest(peak) %>% 
+  select(-data) %>% 
+  ungroup() -> d_peaks
+
+d_peaks %>% 
+  ggplot(aes(x=cell_type, y=peak)) + 
+  geom_point(position = position_jitter(.1))
+
+d_peaks %>% 
+  ggplot(aes(x=cell_type, y=log(peak))) + 
+  geom_point(position = position_jitter(.1))
+
+d_peaks %>% 
+  group_by(cell_type) %>% 
+  summarise(mean = mean(peak),
+            median = median(peak), 
+            sd = sd(peak),
+            Q1 = quantile(peak, .25),
+            Q3 = quantile(peak, .75))
+
+# rank test
+library(rstatix)
+wilcox_test(d_peaks, peak ~ cell_type)
+
+# permutation test
+library(coin)
+independence_test(peak ~ cell_type, d_peaks %>% mutate_if(is.character, as.factor))
+detach("package:coin", unload = T)
+
+# bootstrap the difference CI
+diff_boot = function(d, i){
+  #mean(d[i, 3])
+  d[i, ] %>%
+    group_by(cell_type) %>%
+    summarise(mean = mean(peak)) %>%
+    pull(mean) %>%
+    diff()
+}
+
+library(boot)
+boot.s = boot(data = 
+                d_peaks %>% 
+                as.data.frame(), 
+              statistic = diff_boot, 
+              R = 1000, 
+              strata = d_peaks$cell_type %>% as.factor())
+boot.ci(boot.s, type = "bca") # mt - wt
+```
+
 ## Р.
 
 1. её я в будущем хотела бы решить, пока не знаю как. я работаю с абберантно гликозилированными клетками. мы нокаутируем шаперон гликозилтрансферазы, она ломается и перестает делать нормальный углеводный антиген, вместо него образуется куцый углеводный остаток. мы заметили, что такие модифицированные клетки гораздо хуже повергаются трипсинолизу (они прикрепленные). исходной культуре требуется инкубация минут 10 с трипсином- максимум, и они теряют контакты с поверхностью, ошариваются и превращаются в суспензию. модифицированным клеткам же требуется 30 (!) минут, и то их приходится все равно буквально сдирать с поверхности чашки струей из пипетки. очень интересно было бы как-то оценить, насколько сильно меняются адгезионные способности у модифицированных клеток. мне кажется, это не прям такая сложная задача, но мне она актуальна
