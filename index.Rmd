@@ -21,6 +21,7 @@ title: "Статистика в `R` для биохимиков - 2019"
   + [Основы программирования на R (Stepik)](https://stepik.org/course/497/promo)
   + [Анализ данных в R (Stepik)](https://stepik.org/course/129/promo)
   + http://bdemeshev.github.io/r_cycle/
+  + [Просто о статистике (Coursera)](https://ru.coursera.org/specializations/prosto-o-statistike)
   + [Statistics with R (Coursera)](https://www.coursera.org/specializations/statistics)
 + Книги
   + Учебник по работе в `R` для экологов: [R-ecology](https://datacarpentry.org/R-ecology-lesson/index.html)
