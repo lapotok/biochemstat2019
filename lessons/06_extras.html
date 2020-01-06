@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>06_extras.utf8.md</title>
+
+<script src="libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="libs/bootstrap-3.3.5/css/lumen.min.css" rel="stylesheet" />
+<script src="libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="libs/navigation-1.1/tabsets.js"></script>
+<script src="libs/navigation-1.1/codefolding.js"></script>
+<link href="libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="../imports/style.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="fluid-row" id="header">
+
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+
+</div>
+
+
+<!--
+# Что осталось на конец
+
++ а у меня R не установлен... компьютер сломался и т.п.
+  + online R console 
+    (импорт данных: Excel copy-paste -> read.table(text="", sep="\t") )
+  + online RStudio
++ отягчающие факторы при статистическом анализе
+  + малая выборка
+  + зависимость между наблюдениями/измерениями
+    + неизвестные группы, неизвестная представленность
+    + пространственная корреляция
+    + временная корреляция (автокорреляция)
+  + ненормальность распределения (residuals!)
+  + гетероскедантичность и как с ней бороться
+    + тесты с поправками
+    + трансформация данных (?)
+    + GLM
+    + Contigency tables vs GLMs
+  + ошибки измерения, типы реплик (технические и биологические)
+  + выбросы
+    + visual
+    + метод median +- 1.5 IQR
+    + outliers: grubbs.test(), dixon.test(), chisq.out.test() 
+    + car::outlierTest
+    + rosnerTest() in EnvStats
+    + lofactor() in DMwR
+    + dr4pl::OutlierDetection
+    + cook distance / pareto k diagnostics 
+    + residuals/standardized residuals
+  + Множество гипотез, а не H0/H1
++ как объединять разные предсказания с разными ошибками - мета-анализ
++ регрессия как инструмент для нахождения зависимостей
+  + подбор предикторов
+    + мультиколлинеарность
+    + качество фита vs переобучение
+    + значимость коэффициентов - как интерпретировать
+      + либо значимость есть, либо - не понятно; 
+      + выкидывать ли? 
+      + может быть полезен для предсказания!
+    + вклад в объяснение дисперсии (adj R2/D2)
+    + вклад в предсказание нового (CV, AIC)
+    + деление на группы (эффект Симпсона)
+    + ДАГи
+      + вилка (общая причина)
+      + коллайдер (ложная зависимость через общее влияние предиктора и ауткама)
+      + цепи (блокировка сигнала по пути)
++ примеры из работы
+  + Lowry/Bradford
+  + ELISA/FIA
+  + stability combine predictions
+  + PAGE/WB
+  + Octet baseline
+  + фитирование нелинейных кривых (S-образных)
+    + goodness of fit
+    + сравнение углов наклона
+    + вычитание базовой линии
+  + границы линейной зависимости (концентрация, флуоресценция, кинетика)
+  + сравнение чего-то по 3м точкам (форезы/блоты) - калибровки, ошибка и т.п.
+  + много спектров
+  + выявление влияния разных факторов на какой-то процесс
+  + подбор оптимальных условий (ДОЕ)
++ предсказание и классификация (ML)
+  + supervised vs unsupervised
+    + discriminant analysis
+    + Clustering
+    + RandomForest
+    + NNs
++ визуализация многомерных данных
+  + PCA/tSNE/FA
+  + dendrogram
+  + heatmaps
++ визуализация кучи измерений
+  + x, y (z)
+  + color
+  + alpha
+  + size, linewidth
+  + animation (time)
+  + shape, linetype
+  + facets
++ подходы к статистике
+  + Frequentist
+  + Bootstrap/Resampling
+  + Bayesian
+-->
+<div id="значимость-предикторов-и-выбор-наилучшей-модели-не-закончено" class="section level1">
+<h1>Значимость предикторов и выбор наилучшей модели [НЕ ЗАКОНЧЕНО]</h1>
+<ul>
+<li>ANOVA, R2, G2</li>
+<li>AIC, deviance, likelihood</li>
+<li>prediction vs inference
+<ul>
+<li>fitting vs prediction accuracy, overfitting</li>
+<li>multicollinearity</li>
+<li>DAGs &amp; fallacies
+<ul>
+<li>correlation vs causation (common cause)</li>
+<li>non-independence (grouping: simpson’s paradox)</li>
+<li>blocking in information paths</li>
+<li>common consequence (collider = inverse fork)</li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+<div id="линейные-модели-и-оптимизация-условий-дизайн-эксперимента-doe" class="section level1">
+<h1>Линейные модели и оптимизация условий (дизайн эксперимента, DoE)</h1>
+<p>Регрессия позволяет нам сделать модель, которая способна извлекать из данных информацию о характере завимисимости, а также потом делать предсказания для неизвестных значений данных. Это “умение” моделей можно использовать, например, при дизайне эксперимента. Если мы изучим, например, различные условия для наибольшей активности фермента (или для экспрессии белка), то собрав несколько экспериментальных точек с разными условиями мы сможем предсказать такое сочетание, которое бы дало наиболее высокий выход.</p>
+<p><a href="methods/DoE_notes.html">Здесь</a> описывается как это работает на примере максимизации выручки магазина, если мы меняем такие параметры, как цена на товар и высота расположения товара на полке.</p>
+</div>
+<div id="нелинейная-регрессия" class="section level1">
+<h1>Нелинейная регрессия</h1>
+<p>Для некоторых случаев зависимость нельзя описать полиномом, либо зависимость описывается хорошо известным нелинейным уравнением. Для этого используется другая разновидность регрессии - нелинейная.</p>
+<p>Типичными примерами, когда требуется использование нелинейной регрессии, являются</p>
+<ul>
+<li>ферментативная кинетика (определение параметров уравнения Михаэлиса-Ментен);</li>
+<li>измерение кинетики реакций для определения концентрации субстратов;</li>
+<li>измерение кинетики связывания модекул для определения аффинности;</li>
+<li>измерение концентрации.</li>
+</ul>
+<p>Рассмотрим несколько примеров.</p>
+<div id="кинетика-реакций-определение-начальной-скорости-по-зависимости-концентрации-от-времени" class="section level2">
+<h2>Кинетика реакций: определение начальной скорости по зависимости концентрации от времени</h2>
+<p>Классическая задача - определение скорости реакции при разных условиях (например, при разной концентрации фермента). В данном примере речь идет об определении начальной скорости реакции образования 1,3-ФГК, каталицируемой ГАФД, по кривым увеличения оптической плотности при 340 нм в результате образования NADH (пример с практикума по энзимологии на 3 курсе).</p>
+<blockquote>
+<p>Активность ГАФД определяли спектрофотометрически при 340 нм по увеличению оптической плотности в результате образования NADH. Реакционная среда для определения активности ГАФД состоит из 0,1 М глицинового буфера (pH 8,9), 5 мМ ЭДТА, 1 мМ NAD+, 5 мМ Na3AsO4 и ГАФД (3 мл среды в кювете). Реакцию начинали внесением ГАФД. Вместо неорганического фосфата использовали арсенат, для того, чтобы сдвинуть реакцию в сторону образования продуктов, поскольку 1-арсенат-3-ФГК легко распадается на арсенат и 3-ФГК. Количество фермента подбирали экспериментально.</p>
+</blockquote>
+<p>Откроем данные. В первой колонке - время измерения, сек. В остальных колонках - измерения (OD340) для разных количеств фермента, мкл.</p>
+<pre class="r"><code># данные лежат в https://github.com/lapotok/biochemstat2019/tree/master/data
+GAPDH_curves = rio::import(&quot;data/GAPDH_kinetic_curves.csv&quot;)
+
+# Преобразуем файл в &quot;длинный формат&quot;
+GAPDH_curves_long = 
+  GAPDH_curves %&gt;%
+  pivot_longer(-time, &quot;group&quot;) %&gt;% 
+  mutate(group = factor(group, levels=c(5,10,15)))
+
+# Посмотрим на исходные данные
+GAPDH_curves_long %&gt;% 
+  ggplot(aes(x=time, y=value, col=group)) +
+  geom_point(alpha=.7, size=2) +
+  labs(title=&quot;&quot;, x=&quot;Время, сек&quot;, y=&quot;OD340&quot;)</code></pre>
+<p><img src="06_extras_files/figure-html/unnamed-chunk-2-1.svg" width="480" /></p>
+<p>Теперь смоделируем каждую кривую и посмотрим на значения подобранных коэффициентов. Для моделирования этих кривых используем функцию <code>AR.3()</code>, обозначающую асимптотическую функцию (также в пакете <code>drc</code> имеется большое разнообразие других функций для других кривых - можно смотреть, какая функция подойдет лучше для конкретных нужд).</p>
+<p><span class="math display">\[
+f(t) = c + (d-c) \cdot \Big(1 - \exp\big(-t/e\big)\Big)
+\]</span></p>
+<pre class="r"><code>m = drm(value ~ time, # формула
+        group, # идентификаторы групп
+        data = GAPDH_curves_long, # данные
+        fct=AR.3()) # асимптотическая функция, которую используем для подгонки модели
+m</code></pre>
+<pre><code>## 
+## A &#39;drc&#39; model.
+## 
+## Call:
+## drm(formula = value ~ time, curveid = group, data = GAPDH_curves_long,     fct = AR.3())
+## 
+## Coefficients:
+##        c:5        c:10        c:15         d:5        d:10        d:15  
+## -1.612e-04   3.751e-04   7.572e-04   1.776e-01   2.143e-01   2.161e-01  
+##        e:5        e:10        e:15  
+##  1.234e+02   1.039e+02   6.168e+01</code></pre>
+<p>Мы видим, что для каждой концентрации определились свои коэффициенты. Создадим предсказания с помощью построенной модели и изобразим их на графике.</p>
+<pre class="r"><code># создаем таблицу с исходными данными по предсказаниям
+pred_grid = expand.grid(group = levels(GAPDH_curves_long$group), time = seq(0, 60, length=100))
+pred_grid$predicted = predict(m, newdata = pred_grid)
+pred_grid %&gt;% head()</code></pre>
+<pre><code>##   group      time     predicted
+## 1     5 0.0000000 -0.0001612345
+## 2    10 0.0000000  0.0003750892
+## 3    15 0.0000000  0.0007571967
+## 4     5 0.6060606  0.0007096038
+## 5    10 0.6060606  0.0016195309
+## 6    15 0.6060606  0.0028624263</code></pre>
+<pre class="r"><code># рисуем график
+GAPDH_curves_long %&gt;% 
+  ggplot(aes(x=time, y=value, col=group)) +
+  geom_point(alpha=.7, size=hatvalues(m)*30) +
+  geom_line(aes(x=time, y=predicted), data=pred_grid, alpha=0.8, linetype=&quot;dotted&quot;) + 
+  labs(x=&quot;Время, сек&quot;, y=&quot;OD340&quot;) + scale_color_discrete(name = &quot;количество\nфермента&quot;)</code></pre>
+<p><img src="06_extras_files/figure-html/unnamed-chunk-4-1.svg" width="480" /></p>
+<p>Мы подобрали коэффициенты для построения модели всей кривой, для этого использовались все точки. При этом разные точки имеют разную важность для подбора коэффициентов. Точки большего размера (с краев диапазона) сильнее влияют на коэффициенты. Чем больше точек мы анализируем, тем больше информации получаем о форме кривой.</p>
+<p>Теперь, если нам интересно оценить начальную скорость (касательную в нулевой точке) по полученной кривой, то мы можем использовать тот факт, что скорость - это производная концентрации по времени, <span class="math inline">\(v = dC/dt\)</span>. К счастью, зная формулу для описания кинетической кривой мы можем легко получить в <code>R</code> и формулу для производной.</p>
+<pre class="r"><code>m_deriv = D(expression(c + (d-c) * (1 - exp(-t/e))), &#39;t&#39;)
+m_deriv</code></pre>
+<pre><code>## (d - c) * (exp(-t/e) * (1/e))</code></pre>
+<p><span class="math display">\[
+\begin{aligned}
+v(t) &amp; = \frac{d\bigg(c + (d-c) \cdot \Big(1 - \exp\big(-t/e)\Big)\bigg)}{dt} = (d-c) \cdot \exp\big(-t/e)\cdot(1/e) \\
+v(0) &amp; = (d-c) \cdot \exp\big(-0/e)\cdot(1/e) = (d-c) \cdot (1/e) 
+\end{aligned}
+\]</span></p>
+<p>Теперь по этой формуле мы можем вычислить начальную скорость для каждой кривой. А после этого можем построить прямую начальной скорости.</p>
+<pre class="r"><code>m_coeff = coef(m) # достаем коэффициенты
+init_preds = tibble()
+time_points = c(0, 60)
+# считаем предсказания для начальной скорости
+for (group in levels(GAPDH_curves_long$group)) {
+  intercept = m_coeff[paste0(&quot;c:&quot;, group)]
+  slope = (m_coeff[paste0(&quot;d:&quot;, group)] - m_coeff[paste0(&quot;c:&quot;, group)]) * (1/m_coeff[paste0(&quot;e:&quot;, group)])
+  tmp = tibble(
+    time = time_points,
+    group = group,
+    predicted =  slope * time_points
+  )
+  init_preds = bind_rows(init_preds, tmp)
+}
+
+GAPDH_curves_long %&gt;% 
+  ggplot(aes(x=time, y=value, col=group)) +
+  geom_point(alpha=.7, size=hatvalues(m)*30) +
+  geom_line(aes(x=time, y=predicted), data=pred_grid, alpha=0.8, linetype=&quot;dotted&quot;) + 
+  geom_line(aes(x=time, y=predicted), data=init_preds, alpha=0.8) + 
+  coord_cartesian(ylim=c(0, 0.15)) +
+  labs(x=&quot;Время, сек&quot;, y=&quot;OD340&quot;) + scale_color_discrete(name = &quot;количество\nфермента&quot;)</code></pre>
+<p><img src="06_extras_files/figure-html/unnamed-chunk-6-1.svg" width="480" /></p>
+<p>А теперь было бы интересно сравнить те кривые, которые получились при расчете с использованием всех точек кривых (пунктир) и те, которые получились при попытках визуально отобрать наиболее линейный участок (линии без пунктира).</p>
+<p><img src="06_extras_files/figure-html/unnamed-chunk-7-1.svg" width="480" /></p>
+<p>Можно заметить, что на глаз мы стремимся проводить более горизонтальные прямые. Мы считаем, что для большей достоверности нам нужно больше точек, однако в данном случае это черевато недооценкой реальной скорости. Метод с производной позволяет извлекать из всех точек информацию о нормальной скорости.</p>
+</div>
+<div id="пример-анализа-ферментативная-кинетика-пример" class="section level2">
+<h2>Пример анализа ферментативная кинетика пример</h2>
+<p>Уравнение Михаэлиса-Ментен используется для количественного описания ферментативной кинетики.</p>
+<p><span class="math display">\[
+v = \frac{V_{max} \cdot S}{K_M+S} = \frac{V_{max}}{{\large\frac{K_M}{S}}+1}
+\]</span></p>
+<p>Готовая функция <code>MM.2()</code> из пакета <code>drc</code> служит для моделирования кривых Михаэлис-Ментен. Она имеет следующие параметры:</p>
+<p><span class="math display">\[
+\begin{aligned}
+&amp; y = \frac{d}{{\large\frac{e}{x}+1}} \\
+&amp; y = v \\
+&amp; d = V_{max} \\
+&amp; e = K_M \\
+&amp; x = S
+\end{aligned}
+\]</span></p>
+<p>В качесте примера рассмотрим задачу определения ферментативной кинетики с практикума по энзимологии на 3 курсе (определение каталитической активности ЛДГ по пирувату). Для каждой концентрации пирувата (s, мМ) имеется измерение скорости реакции (v, мкмоль/мин).</p>
+<pre class="r"><code># данные доступны на https://github.com/lapotok/biochemstat2019/tree/master/data
+d = rio::import(&quot;data/LDH_km_vmax.csv&quot;)
+
+# преобразуем исходные данные в координаты 
+# А) Лайнуивера-Берка, Б) Иди-Хофсти
+d %&lt;&gt;% 
+  mutate(is=1/s, iv=1/v, vs=v/s) 
+
+# посмотрим на исходные данные в разных координатах
+p_sv = 
+  ggplot(d, aes(x=s,y=v)) + 
+  geom_point(alpha=.6, size=2, col=&quot;dodgerblue&quot;) + 
+  labs(subtitle = &quot;Координаты Михаэлиса-Ментен&quot;)
+p_isiv = 
+  ggplot(d, aes(x=1/s,y=1/v)) + 
+  geom_point(alpha=.6, size=2, col=&quot;dodgerblue&quot;) + 
+  labs(subtitle = &quot;Координаты Лайнуивера-Берка&quot;)
+p_vvs = 
+  ggplot(d, aes(x=v/s,y=v)) + 
+  geom_point(alpha=.6, size=2, col=&quot;dodgerblue&quot;) + 
+  labs(subtitle = &quot;Координаты Иди-Хофсти&quot;)
+
+plot_grid(p_sv, p_isiv, p_vvs, nrow = 1)</code></pre>
+<p><img src="06_extras_files/figure-html/unnamed-chunk-8-1.svg" width="864" /></p>
+<p>Можно заметить, что в разных координатах</p>
+<ul>
+<li>разброс точек ведет себя по-разному;</li>
+<li>в случае Лайнуивера-Берка точки более скученны, а далеко отстоящие точки сильнее будут влиять на коэффициенты (неточно измеренные концентрации в точках с наименьшей концентрации будут особенно критичны);</li>
+<li>в случае Иди-Хофсти обе координаты зависят от измеряемой величины - скорости, поэтому содержат ошибку измерения.</li>
+</ul>
+<p>Таким образом, используемые методы линеаризации <a href="https://en.wikipedia.org/wiki/Michaelis%E2%80%93Menten_kinetics#Determination_of_constants">искажают структуру ошибок</a> и приводят к нарушению предпосылок для использования линейных моделей.</p>
+<p>На графиках ниже можно видеть кривые, подобранные разными методами. Разная величина точек отражает разный вклад (вес) этих точек в результат подбора коэффициентов кривой разными методами (для нелинейной регрессии вклад всех точек примерно одинаков, т.е. выше устойчивость к выбросам единичных точек). Для этих данных адекватные кривые получились с помощью метода нелинейной регрессии и линеаризации Иди-Хофсти (которых на других данных с большим вкладом ошибок может быть менее надежен).</p>
+<pre class="r"><code>m_mm = drm(v ~ s, data = d, fct = MM.2(names = c(&quot;Vmax&quot;, &quot;Km&quot;))) # red
+m_lb = lm(iv ~ is, data = d) # blue
+m_eh = lm(v ~ vs, data = d) # green
+
+new_s = with(d, seq(min(s), max(s), l=200))
+new_vs = with(d, seq(min(vs), max(vs), l=200))
+predictions = data.frame(s=new_s, is=1/new_s, vs=new_vs)
+predictions$mm = predict(m_mm, newdata = predictions)
+predictions$lb = 1/predict(m_lb, newdata = predictions)
+predictions$eh = predict(m_eh, newdata = predictions)
+predictions$s_eh = predictions$eh/predictions$vs
+
+predictions %&gt;% 
+  pivot_longer(-(s:vs)) -&gt; predictions_long
+
+# mm leverage
+p_sv_mm = 
+  ggplot(d, aes(x=s,y=v)) + 
+  geom_point(aes(size=hatvalues(m_mm)), alpha=.6, col=&quot;dodgerblue&quot;) +
+  geom_line(aes(x=s, y=mm), data=predictions, col=&quot;red&quot;, alpha=.5) +
+  labs(subtitle = &quot;AR.3():\nвеса точек и итоговая модель&quot;) + 
+  theme(legend.position = &quot;none&quot;)
+
+p_sv_lb = 
+  ggplot(d, aes(x=s,y=v)) + 
+  geom_point(aes(size=hatvalues(m_lb)), alpha=.6, col=&quot;dodgerblue&quot;) +
+  geom_line(aes(x=s, y=lb), data=predictions, col=&quot;orange&quot;, alpha=.5) +
+  labs(subtitle = &quot;Метод Лайнуивера-Берк:\nвеса точек и итоговая модель&quot;) + 
+  theme(legend.position = &quot;none&quot;)
+
+p_sv_eh = 
+  ggplot(d, aes(x=s,y=v)) + 
+  geom_point(aes(size=hatvalues(m_eh)), alpha=.6, col=&quot;dodgerblue&quot;) +
+  geom_line(aes(x=s_eh, y=eh), data=predictions, col=&quot;green&quot;, alpha=.5) +
+  labs(subtitle = &quot;Метод Иди-Хофсти:\nвеса точек и итоговая модель&quot;) + 
+  theme(legend.position = &quot;none&quot;)
+
+plot_grid(p_sv_mm, p_sv_lb, p_sv_eh, nrow = 1)</code></pre>
+<p><img src="06_extras_files/figure-html/unnamed-chunk-9-1.svg" width="864" /></p>
+<pre class="r"><code>m_mm</code></pre>
+<pre><code>## 
+## A &#39;drc&#39; model.
+## 
+## Call:
+## drm(formula = v ~ s, data = d, fct = MM.2(names = c(&quot;Vmax&quot;, &quot;Km&quot;)))
+## 
+## Coefficients:
+## Vmax:(Intercept)    Km:(Intercept)  
+##          0.11593           0.08567</code></pre>
+</div>
+<div id="кинетика-связывания" class="section level2">
+<h2>Кинетика связывания […]</h2>
+<p>Пример с октетом</p>
+<ul>
+<li>удаление базовой линии</li>
+<li>фитирование диссоциации</li>
+<li>фитирование ассоциации</li>
+</ul>
+</div>
+<div id="анализ-кривых-иммуноэссеев" class="section level2">
+<h2>Анализ кривых иммуноэссеев</h2>
+<p>Множество биологических процессов описывается S-образной кривой. Характерным примером является зависимость сигнала (оптическая плотность, флуоресценция, фосфоресценция и т.п.) от концентрации при анализе с помощью различных иммуноэссеев.</p>
+<p>Мы рассмотрим пример построения нелинейной модели для S-образной калибровочной кривой. Зачастую исследователи находят линейный участок кривой и ограничиваются им, однако использование всех точек позволяет точнее установить форму зависимости и получить меньшие ошибки. Такой анализ будет нечувствителен к субъективному выбору точек для “линейного участка”.</p>
+<p><span class="math display">\[
+signal = c + \frac{d-c}{\bigg(1 + \exp\Big(b\cdot\big(\log(conc)-\log(e) \big)\Big)\bigg)^f}
+\]</span></p>
+<p>В данной формуле все параметры имеют интерпретируемое значение: <span class="math inline">\(b\)</span> - наклон кривой (“крутизна”), <span class="math inline">\(c\)</span> - нижняя асимптота по оси (минимальный сигнал), <span class="math inline">\(d\)</span> - верхняя асимптота (максимальный сигнал), <span class="math inline">\(e\)</span> - сдвиг кривой по оси концентрации, <span class="math inline">\(f\)</span> - ассиметричность кривой относительно точки изгиба.</p>
+<pre class="r"><code># данные с https://github.com/lapotok/biochemstat2019/tree/master/data
+calibr = rio::import(&quot;data/igfbp4_3_cal_curve.csv&quot;)
+# для моделирования используем 5PL функцию
+m_drc = drm(signal ~ conc, data=calibr, fct=LL.5())
+m_drc</code></pre>
+<pre><code>## 
+## A &#39;drc&#39; model.
+## 
+## Call:
+## drm(formula = signal ~ conc, data = calibr, fct = LL.5())
+## 
+## Coefficients:
+## b:(Intercept)  c:(Intercept)  d:(Intercept)  e:(Intercept)  f:(Intercept)  
+##    -5.133e+00      1.607e+03      1.069e+06      5.348e+01      2.694e-01</code></pre>
+<pre class="r"><code># predictions
+new_x = exp(seq(log(0.05), log(100), l=200))
+pred = predict(m_drc, newdata = data.frame(conc=new_x), interval = &quot;prediction&quot;)</code></pre>
+<p>После фитирования наложим предсказанные кривые на экспериментальные точки. Видно, что на всем диапазоне линия проходит близко к точкам, незначительные выбросы не оказывают влияние на форму кривой.</p>
+<p><img src="06_extras_files/figure-html/cal_coords-1.svg" width="768" /></p>
+<p>Отметим, что традиционный способ построения модели основан на наблюдении, что у раститровки в двойных логарифмических координатах есть так называемый “линейный участок”, т.е. участок, который в двойных логарифмических координатах выглядит линейным. Разброс (дисперсия) в этих координатах выглядит равномерной (часто), а в прямых координатах он растет с увеличением измеряемых значений сигнала. При этом либо ищется линейная зависимость в двойных логарифмических координатах (степенная функция) <span class="math inline">\(log(\text{signal}) = a + b \cdot log(\text{conc})\)</span>, либо подбираются коэффициенты для степенной функции <span class="math inline">\(\text{signal} = e^a \cdot \text{conc}^b = a^* \cdot \text{conc}^b\)</span>.</p>
+<p>Что с этим способом не так?</p>
+<ul>
+<li>Если мы выбрасываем часть измеренных точек, то теряем точность предсказания кривой, ибо выбрасываем часть информации, которая могла бы нами быть использована для повышения точности.</li>
+<li>Неправильно определяем линейный участок.</li>
+<li>Не можем определить ошибку предсказания для опытных точек.</li>
+</ul>
+<p><img src="06_extras_files/figure-html/cal_lin2-1.svg" width="672" /></p>
+<p>После того, как калибровка построена (нелинейная модель с 5 параметрами), можно определить по ней концентрацию в пробе с неизвестной концентрацией.</p>
+<pre class="r"><code># данные с https://github.com/lapotok/biochemstat2019/tree/master/data
+titrated_sample = rio::import(&quot;data/igfbp4_3_titrated_sample.csv&quot;)
+
+# сохраняем предсказания
+predicted_diluted = 
+  ED(m_drc, # модель для рассчета
+     respLev = titrated_sample$signal, # для каких значений сигнала предсказываем концентрацию
+     interval = &quot;delta&quot;, # нужен ли доверительный интервал
+     type = &quot;absolute&quot;, # задаем абсолютные значения сигнала, а не проценты
+     display = F)
+# пока у нас предсказания для разбавлений образца
+predicted_diluted %&lt;&gt;% as_tibble() 
+# пересчитаем то же для неразбавленного образца 
+predicted_undiluted = predicted_diluted * titrated_sample$dilution</code></pre>
+<p>Некоторые точкми выпали из калибровки, некоторые имеют очень большую ошибку. Почему так происходит? Если мы наложим на кривую интервалы предсказаний для всех уровней сигнала для всех разведений образца, то мы увидим, что некоторые образцы слишком концентрированы и находятся на уровне нуля или плато кривой (отсюда большая ошибка), либо даже выходят за эти рамки (отсюда выпадение из калибровки). По величине ошибок предсказаний можно посмотреть, каким точкам стоит доверять. Мы также можем грубо прикинуть по правилу 1.5 IQR, какие из точек являются выбросами (в <code>R</code> это можно сделать командой <code>boxplot(x, plot = F)$out</code>); на графике красным отмечены выбросы.</p>
+<p><img src="06_extras_files/figure-html/range_int-1.svg" width="384" /></p>
+<p>Если пересчитать предсказанные концентрации в разбавлениях образца в исходную концентрацию, то мы сами можем увидить выбросы в полученных точках.</p>
+<p><img src="06_extras_files/figure-html/box-1.svg" width="384" /></p>
+<p>Также мы можем для каждой оценки образца в пересчете на исходную концентрацию посмотреть на ошибки предсказания. Явно, что выбросы надо убрать.</p>
+<pre class="r"><code>pr =
+  predicted_undiluted %&gt;% 
+  ggplot(aes(y=rowname, x=Estimate, xmin=Lower, xmax=Upper, col=titrated_sample$dilution)) +
+  geom_point(size =(titrated_sample$dilution)^(1/8)*1.5,
+             shape = shape_outlier) +
+  geom_linerangeh() +
+  scale_color_gradient(low = &quot;blue&quot;, high=&quot;red&quot;, name=&quot;dilution&quot;) + 
+  scale_y_continuous(breaks = 1:31) +
+  theme(axis.ticks.y = element_blank(),
+        axis.title.y = element_blank()) + 
+  labs(subtitle = &quot;Оценки концентрации и их ошибки&quot;)
+
+pr</code></pre>
+<p><img src="06_extras_files/figure-html/errors-1.svg" width="480" /></p>
+<p>Что же со всем этим делать? После удаления выбросов обычно люди усредняют оценки и выдают полученное число за искомую концентрацию в образце. Однако таким образом мы не сможем указать ошибку этой оценки, а также мы не принимаем в расчет то, что для каждой точки разведения у нас есть своя ошибка. Для того, чтобы сводить воедино несколько оценок с разными ошибками можно использовать мета-анализ.</p>
+</div>
+<div id="мета-анализ---пример" class="section level2">
+<h2>Мета-анализ - пример</h2>
+<p>Мета-анализ обычно используют, когда нужно обобщить результаты из нескольких исследований, от нескольких лабораторий.</p>
+<p>При этом разные исследования могут быть попытками воспроизведения одной и той же методики на одном и том же объекте и получать оценку одной и той же величины. В таком случае, в разных исследованиях мы будем видеть случайные отклонения от единого истинного <strong>фиксированного</strong> значения эффекта (это мета-анализ фиксированных эффектов).</p>
+<p>Однако также разные исследования могут пытаться перепроверить некую величину разными методами или на разных объектах (видах животных). Таким образом, оценки получаемые разными исследованиями будут отличаться не только ошибками измерения, но и различиями в объектах, методах - т.е. каждый раз будет измеряться какая-то своя величина со своей ошибкой. И в итоге анализ пытается установить, какую общую величину представляют все эти частные проявления величины, которые все эти исследования по-своему пытаются оценить (это мета-анализ случайных эффектов).</p>
+<p>В используемом примере с оценками концентрации по разным точкам образца (одним и тем же методом, одна и та же проба) нас будет интересовать мета-анализ фиксированных эффектов.</p>
+<pre class="r"><code>suppressPackageStartupMessages(library(meta))
+suppressPackageStartupMessages(library(metafor))
+
+# возьмем первые несколько оценок
+ix = 2:8
+estimates = predicted_undiluted[ix,]
+
+# запускаем мета-анализ
+m_res = metagen(TE = estimates$Estimate, # точечные оценки
+                seTE = estimates$`Std. Error`, # ошибки
+                studlab = as.character(ix)) # названия для точек
+
+# строим график
+m_res %&gt;% forest(xlim=c(50, 200))</code></pre>
+<p><img src="06_extras_files/figure-html/meta-1.svg" width="960" /></p>
+<p>Видно, что данные точки хорошо согласуются друг с другом (т.к. в них не попали выбросы). Мы видим, что средняя оценка по результатам мета-анализа составило <span class="math inline">\(138.3\ [130.9, 145.72]\)</span>.</p>
+<p>Однако если включить в анализ точки с выбросами, то они начинают “перетягивать” среднее в свою сторону. В данном случае мета-анализ случайных эффектов оказывается ближе к оценке без выбросов, т.к. он “воспринимает” отклонение выброса, как некую индивидуальную особенность данного “исследования” и не позволяет ей существенно искажать результат.</p>
+<pre class="r"><code># возьмем первые 8 оценок
+ix = 18:24
+estimates = predicted_undiluted[ix,]
+
+# запускаем мета-анализ
+m_res = metagen(TE = estimates$Estimate, # точечные оценки
+                seTE = estimates$`Std. Error`, # ошибки
+                studlab = as.character(ix)) # названия для точек
+
+# строим график
+m_res %&gt;% forest(xlim=c(0, 450))</code></pre>
+<p><img src="06_extras_files/figure-html/meta2-1.svg" width="960" /></p>
+</div>
+</div>
+<div id="корреляция" class="section level1">
+<h1>Корреляция</h1>
+<p>Корреляция проверяет наличие совместного возрастания/убывания значений какого-то признака. В отличие от регрессии она симметрична. Для измерения степени взаимосвязи используют коэффициент корреляции. Если взаимодействие линейно, то используют коэффициент линейной корреляции Пирсона, если наблюдается нелинейная монотонная взаимосвязь - ранговые коэффициенты корреляции. Если признаков много - можно расчитывать корреляции для каждой пары.</p>
+<p>Значения коэффициентов корреляции находятся в области от -1 до 1. При этом значению 0 соответствует ситуация отсутствия корреляции, а чем больше значение по модулю, тем сильнее взаимодействие.</p>
+<p>Градации коэффициента корреляции (по модулю, корреляция бывает положительная и отрицательная):</p>
+<ul>
+<li>0-0.3 - очень слабая;</li>
+<li>0.3-0.5 - слабая;</li>
+<li>0.5-0.7 - средняя;</li>
+<li>0.7-0.9 - высокая;</li>
+<li>0.9-1 - очень высокая.</li>
+</ul>
+<p>Кроме значения коэффициента очень важно смотреть на его статистическую значимость. Если значение незначимо &lt;отличается от 0&gt; (каким бы оно ни было) - значит мы ничего не можем сказать о силе корреляции. Наконец, всегда полезно смотреть на графики попарных взаимодействий, чтобы быть в курсе особенностей данных, которые не адекватно описываются коэффициентом корреляции, например, нелинейность данных.</p>
+<p>Рассмотрим пример инструментов для анализа корреляций в <code>R</code>. Загрузим и подготовим данные.</p>
+<pre class="r"><code># &gt;&gt;&gt; https://rcompanion.org/handbook/I_10.html
+# Brendon Small and company recorded several measurements for students in their classes 
+# related to their nutrition education program: Grade, Weight in kilograms, intake 
+# of Calories per day, daily Sodium intake in milligrams, and Score 
+# on the assessment of knowledge gain.
+
+# данные с https://github.com/lapotok/biochemstat2019/tree/master/data
+load(&quot;data/BrendonSmall_nutrition.RData&quot;)
+
+# оставим только численные переменные
+BrendonSmall_nutrition_num = BrendonSmall_nutrition %&gt;% select(-Instructor)
+BrendonSmall_nutrition_num %&gt;% head()</code></pre>
+<pre><code>##   Grade Weight Calories Sodium Score
+## 1     6     43     2069   1287    77
+## 2     6     41     1990   1164    76
+## 3     6     40     1975   1177    76
+## 4     6     44     2116   1262    84
+## 5     6     45     2161   1271    86
+## 6     6     44     2091   1222    87</code></pre>
+<p>Посчитаем значения одного из коэффициентов корреляции и его уровня значимости.</p>
+<pre class="r"><code># r and p-values
+cor.test(BrendonSmall_nutrition_num[,5], BrendonSmall_nutrition_num[,4])</code></pre>
+<pre><code>## 
+##  Pearson&#39;s product-moment correlation
+## 
+## data:  BrendonSmall_nutrition_num[, 5] and BrendonSmall_nutrition_num[, 4]
+## t = -3.302, df = 43, p-value = 0.001938
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  -0.6566022 -0.1799772
+## sample estimates:
+##       cor 
+## -0.449751</code></pre>
+<p>Мы видим, что само значение коэффициента корреляции небольшое, но оно значимо отличается от нуля (см. доверительный интервал или <em>p-value</em> теста на равенство коэффициента корреляции нулю).</p>
+<p>Можно посмотреть на таблицу всех коэффициентов корреляции, но без значимостей эти коэффициенты на мало о чем говорят!</p>
+<pre class="r"><code># cor matrix
+BrendonSmall_nutrition_num_cor = BrendonSmall_nutrition_num %&gt;% cor(method = &quot;pearson&quot;) 
+BrendonSmall_nutrition_num_cor %&gt;% round(2)</code></pre>
+<pre><code>##          Grade Weight Calories Sodium Score
+## Grade     1.00   0.85     0.85   0.79 -0.70
+## Weight    0.85   1.00     0.99   0.87 -0.48
+## Calories  0.85   0.99     1.00   0.85 -0.48
+## Sodium    0.79   0.87     0.85   1.00 -0.45
+## Score    -0.70  -0.48    -0.48  -0.45  1.00</code></pre>
+<p>Построим графики попарных взаимодействий. Есть разные пакеты, которые показывают корреляции по-разному.</p>
+<p>Построим просто точки. Можно для наглядности покрасить точки в цвета категорийного признака (для которого нельзя посчитать корреляции).</p>
+<pre class="r"><code>pairs(BrendonSmall_nutrition_num, col = BrendonSmall_nutrition$Instructor)</code></pre>
+<p><img src="06_extras_files/figure-html/unnamed-chunk-13-1.svg" width="672" /></p>
+<p>Точки, зависимости, коэффициенты и их значимость.</p>
+<pre class="r"><code>PerformanceAnalytics::chart.Correlation(BrendonSmall_nutrition_num, method = &quot;pearson&quot;)</code></pre>
+<p><img src="06_extras_files/figure-html/unnamed-chunk-14-1.svg" width="672" /></p>
+<pre class="r"><code># пример с незначимыми коэффицентами
+PerformanceAnalytics::chart.Correlation(iris[, 1:4], method = &quot;pearson&quot;)</code></pre>
+<p><img src="06_extras_files/figure-html/unnamed-chunk-14-2.svg" width="672" /></p>
+<p>Коэффициенты и их значимость.</p>
+<pre class="r"><code>iris_cor_p = corrplot::cor.mtest(iris[, 1:4], conf.level = .95)$p
+corrplot::corrplot.mixed(cor(iris[, 1:4]), upper=&quot;ellipse&quot;, p.mat=iris_cor_p)</code></pre>
+<p><img src="06_extras_files/figure-html/unnamed-chunk-15-1.svg" width="384" /></p>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
