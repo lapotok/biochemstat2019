@@ -1029,68 +1029,7 @@ summary(m2) # видим еще один коэффициент, он ненул
 <pre class="r"><code>invest(m2, y0=0.6) # с такой моделью тоже можно получать обратные предсказания (и прямые, естественно, тоже)</code></pre>
 <pre><code>#&gt; estimate    lower    upper 
 #&gt; 21.84616 20.64182 23.10868</code></pre>
-</div>
-<div id="нелинейная-регрессия-не-закончено" class="section level1">
-<h1>Нелинейная регрессия (НЕ ЗАКОНЧЕНО)</h1>
-<p>Для некоторых случаев зависимость нельзя описать полиномом, либо зависимость описывается хорошо известным нелинейным уравнением. Для этого используется другая разновидность регрессии - нелинейная.</p>
-<pre class="r"><code>load(&quot;data/dr_data.RData&quot;)
-
-nt_igfbp4_1 %&gt;% 
-  ggplot()+
-  geom_point(aes(x=dilution, y=signal, col=sample_id)) +
-  scale_y_log10() + scale_x_log10()
-
-calibr = nt_igfbp4_1 %&gt;% filter(sample_id == &quot;NT-IGFBP4 (HEK)&quot; &amp; dilution != Inf)
-
-calibr %&gt;% 
-  ggplot()+
-  geom_point(aes(x=dilution, y=signal, col=sample_id)) +
-  scale_y_log10() + scale_x_log10()
-
-# c = low, d = up, b = slope, e = offset
-m3.0 = nls(signal ~ c+(d-c)/(1+exp(b*(log(dilution)-e))), 
-           data=calibr, 
-           start=list(d=1e6, c=1e2, e=1, b=4), trace=TRUE)
-summary(m3.0)
-# inverse prediction: exp(log(((d - c)/(signal - c)) - 1)/b + log(e))
-
-library(drc)
-m3.1 = drm(signal ~ dilution, data = calibr, fct = LL.4())
-m3.1
-ED(m3.1, c(1e4, 2e5), type = &quot;absolute&quot;, interval = &quot;delta&quot;)</code></pre>
-</div>
-<div id="корреляция-не-закончено" class="section level1">
-<h1>Корреляция (НЕ ЗАКОНЧЕНО)</h1>
-<pre class="r"><code># &gt;&gt;&gt; https://rcompanion.org/handbook/I_10.html
-# Brendon Small and company recorded several measurements for students in their classes 
-# related to their nutrition education program: Grade, Weight in kilograms, intake 
-# of Calories per day, daily Sodium intake in milligrams, and Score 
-# on the assessment of knowledge gain.
-
-load(&quot;data/BrendonSmall_nutrition.RData&quot;)
-
-# var types
-BrendonSmall_nutrition %&gt;% head()
-BrendonSmall_nutrition_num = BrendonSmall_nutrition[,c(&quot;Grade&quot;, &quot;Weight&quot;, &quot;Calories&quot;, &quot;Sodium&quot;, &quot;Score&quot;)]
-
-# cor matrix
-BrendonSmall_nutrition_num_cor = BrendonSmall_nutrition_num %&gt;% cor(method = &quot;pearson&quot;) 
-BrendonSmall_nutrition_num_cor %&gt;% round(2)
-
-# visual
-pairs(BrendonSmall_nutrition_num, col = BrendonSmall_nutrition$Instructor)
-
-# r and p-values
-cor.test(BrendonSmall_nutrition_num[,1], BrendonSmall_nutrition_num[,2])
-
-library(PerformanceAnalytics)
-chart.Correlation(BrendonSmall_nutrition_num, method = &quot;pearson&quot;)
-
-# plotting them all
-library(corrplot)
-iris_cor_p = cor.mtest(iris[, 1:4], conf.level = .95)$p
-corrplot::corrplot.mixed(cor(iris[, 1:4]), upper=&quot;ellipse&quot;, p.mat=iris_cor_p)
-chart.Correlation(iris[, 1:4], method = &quot;pearson&quot;)</code></pre>
+<p>Продолжение см. <a href="05_regression_new.html">здесь</a>.</p>
 </div>
 
 
